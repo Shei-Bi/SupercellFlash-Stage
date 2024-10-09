@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DisplayObject.h"
+#include "DisplayObjectOriginal.h"
 #include "flash/flash_tags.h"
 
 namespace sc
@@ -8,7 +8,7 @@ namespace sc
 	namespace flash {
 		class SupercellSWF;
 
-		class MovieClipModifier : public DisplayObject
+		class MovieClipModifier : public DisplayObjectOriginal
 		{
 		public:
 			MovieClipModifier() {};

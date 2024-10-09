@@ -82,8 +82,13 @@ namespace sc
 					stream.read_string(export_name.name);
 				}
 			}
-
-			return load_tags();
+			if (load_tags()) {
+				for (ExportName& export_name : exports) {
+					getOriginalMovieClip(export_name.id, &export_name.name).name = &export_name.name;
+				}
+				return true;
+			}
+			else return false;
 		}
 
 		bool SupercellSWF::load_tags()
@@ -337,14 +342,14 @@ namespace sc
 				}
 			}
 
-			for (const Shape& shape : shapes)
+			for (const ShapeOriginal& shape : shapes)
 			{
 				size_t position = stream.write_tag_header(shape.tag(*this));
 				shape.save(*this);
 				stream.write_tag_final(position);
 			}
 
-			for (const TextField& textField : textfields)
+			for (const TextFieldOriginal& textField : textfields)
 			{
 				size_t position = stream.write_tag_header(textField.tag(*this));
 				textField.save(*this);
@@ -378,7 +383,7 @@ namespace sc
 				}
 			}
 
-			for (const MovieClip& movieclip : movieclips)
+			for (const MovieClipOriginal& movieclip : movieclips)
 			{
 				size_t position = stream.write_tag_header(movieclip.tag(*this));
 				movieclip.save(*this);
@@ -444,9 +449,9 @@ namespace sc
 			throw new Exception("Failed to get Display Object");
 		}
 
-		DisplayObject& SupercellSWF::GetDisplayObjectByID(uint16_t id)
+		DisplayObjectOriginal& SupercellSWF::getOriginalDisplayObject(uint16_t id, SWFString* exportNameForDebug = nullptr)
 		{
-			for (Shape& shape : shapes)
+			for (ShapeOriginal& shape : shapes)
 			{
 				if (shape.id == id)
 				{
@@ -454,7 +459,7 @@ namespace sc
 				}
 			}
 
-			for (TextField& textfield : textfields)
+			for (TextFieldOriginal& textfield : textfields)
 			{
 				if (textfield.id == id)
 				{
@@ -470,7 +475,7 @@ namespace sc
 				}
 			}
 
-			for (MovieClip& movie : movieclips)
+			for (MovieClipOriginal& movie : movieclips)
 			{
 				if (movie.id == id)
 				{
@@ -481,10 +486,9 @@ namespace sc
 			throw new Exception("Failed to get Display Object");
 		}
 
-		MovieClip& SupercellSWF::GetDisplayObjectByName(SWFString& name)
+		MovieClipOriginal& SupercellSWF::getOriginalMovieClip(uint16_t id, SWFString* exportNameForDebug = nullptr)
 		{
-			uint16_t id = GetDisplayObjectID(name);
-			for (MovieClip& movie : movieclips)
+			for (MovieClipOriginal& movie : movieclips)
 			{
 				if (movie.id == id)
 				{
@@ -492,7 +496,7 @@ namespace sc
 				}
 			}
 
-			throw new Exception("Failed to get Display Object");
+			throw new Exception("Unable to find MovieClip id %d from %s needed by export name %s", id, "ui.sc", (exportNameForDebug == nullptr ? "null" : exportNameForDebug->data()));
 		}
 	}
 }

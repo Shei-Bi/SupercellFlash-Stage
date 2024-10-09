@@ -1,4 +1,6 @@
 
+set(ENV{http_proxy} "http://127.0.0.1:7897")
+set(ENV{https_proxy} "http://127.0.0.1:7897")
 # install supercell-core
 FetchContent_Declare(
     supercell-core

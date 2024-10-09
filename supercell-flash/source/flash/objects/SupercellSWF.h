@@ -12,9 +12,9 @@
 
 #include "flash/transform/MatrixBank.h"
 
-#include "flash/display_object/Shape.h"
-#include "flash/display_object/MovieClip.h"
-#include "flash/display_object/TextField.h"
+#include "flash/display_object/ShapeOriginal.h"
+#include "flash/display_object/MovieClipOriginal.h"
+#include "flash/display_object/TextFieldOriginal.h"
 #include "flash/display_object/MovieClipModifier.h"
 
 #define MULTIRES_DEFAULT_SUFFIX "_highres"
@@ -36,9 +36,9 @@ namespace sc
 			SWFVector<MatrixBank> matrixBanks;
 
 			SWFVector<SWFTexture> textures;
-			SWFVector<Shape> shapes;
-			SWFVector<MovieClip> movieclips;
-			SWFVector<TextField> textfields;
+			SWFVector<ShapeOriginal> shapes;
+			SWFVector<MovieClipOriginal> movieclips;
+			SWFVector<TextFieldOriginal> textfields;
 			SWFVector<MovieClipModifier> movieclip_modifiers;
 
 		public:
@@ -58,8 +58,8 @@ namespace sc
 
 		public:
 			uint16_t GetDisplayObjectID(SWFString& name);
-			DisplayObject& GetDisplayObjectByID(uint16_t id);
-			MovieClip& GetDisplayObjectByName(SWFString& name);
+			DisplayObjectOriginal& getOriginalDisplayObject(uint16_t id, SWFString* exportNameForDebug);
+			MovieClipOriginal& getOriginalMovieClip(uint16_t id, SWFString* exportNameForDebug);
 
 		public:
 			// Saves all textures to _tex.sc if true

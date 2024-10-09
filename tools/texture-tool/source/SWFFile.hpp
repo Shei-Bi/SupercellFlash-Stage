@@ -338,7 +338,7 @@ namespace sc
 					data.textures.emplace_back(texture.image()->width(), texture.image()->height());
 				}
 
-				for (Shape& shape : shapes)
+				for (ShapeOriginal& shape : shapes)
 				{
 					for (ShapeDrawBitmapCommand& command : shape.commands)
 					{
