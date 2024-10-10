@@ -215,7 +215,7 @@ int main(int argc, char* argv[])
 	glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
 
 
-
+	Stage::constructInstance();
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -237,6 +237,7 @@ int main(int argc, char* argv[])
 		// render container
 		ourShader.use();
 		shape->render();
+		Stage::getInstance()->render(0.0, true);
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);

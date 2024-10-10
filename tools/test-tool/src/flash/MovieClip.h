@@ -1,7 +1,6 @@
 #pragma once
 #include <flash/display_object/MovieClipOriginal.h>
 #include <flash/Sprite.h>
-// #include <
 class MovieClip :public Sprite
 {
 private:
