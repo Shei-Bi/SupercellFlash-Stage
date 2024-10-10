@@ -45,7 +45,7 @@ public:
             format = GL_LUMINANCE;
             break;
         }
-        printf("width: %d\nheight: %d\n(uint8_t)texture.pixel_format(): %d", texture.image()->width(), texture.image()->height(), (uint8_t)texture.pixel_format());
+        printf("width: %d\nheight: %d\n(uint8_t)texture.pixel_format(): %d\n", texture.image()->width(), texture.image()->height(), (uint8_t)texture.pixel_format());
 
         glTexImage2D(GL_TEXTURE_2D, 0, format, texture.image()->width(), texture.image()->height(), 0, format, pixelType, texture.image()->data());
         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);

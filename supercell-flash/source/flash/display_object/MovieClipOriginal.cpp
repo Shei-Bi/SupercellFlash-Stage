@@ -86,6 +86,7 @@ namespace sc
 				{
 				case TAG_MOVIE_CLIP_FRAME_2:
 					frames[frames_total].load(swf);
+					// printf("%d %s\n", frames_total, frames[frames_total].label.data());
 					frames_total++;
 					break;
 
@@ -217,8 +218,20 @@ namespace sc
 				int s = instances.size();
 				displayObjects = new DisplayObjectOriginal * [s];
 				for (int i = 0;i < s;i++) {
-					printf("DisplayObjectInstance.name: %s\n", instances[i].name.data());
 					displayObjects[i] = &swf.getOriginalDisplayObject(instances[i].id, nullptr);
+					char* name;
+					if (displayObjects[i]->is_modifier())
+						name = "MovieClipModifier";
+					if (displayObjects[i]->is_movieclip())
+						name = "MovieClip";
+					if (displayObjects[i]->is_shape())
+						name = "Shape";
+					if (displayObjects[i]->is_textfield())
+						name = "TextField";
+					printf("%s fetched: %s\n", name, instances[i].name.data());
+				}
+				for (int i = 0;i < frames.size();i++) {
+					printf("frame name: %s index: %d\n", frames[i].label.data(), i);
 				}
 				// instances.~vector();
 			}

@@ -4,12 +4,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <flash/Stage.h>
+#include <flash/Shape.h>
 #include <GLImage.h>
 #include <stdio.h>
 
 #include <core/stb/stb.h>
 #include <core/image/raw_image.h>
 #include <learnopengl_s.h>
+#include<core/exception/exception.h>
 
 #include <iostream>
 #include <chrono>
@@ -126,46 +128,7 @@ int main(int argc, char* argv[])
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------
-	float vertices[] = {
-		// positions          // colors           // texture coords
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
-	};
-	// float vertices[] = {
-	// 	// positions          // colors           // texture coords
-	// 	 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.304509 ,0.959884, // top right
-	// 	 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,  0.304509 ,0.948425, // bottom right
-	// 	-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,    0.284566, 0.948425, // bottom left
-	// 	-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,  0.284566,0.959884  // top left 
-	// };
-	unsigned int indices[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
-	};
-	unsigned int VBO, VAO, EBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
 
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	// texture coord attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
 
 
 	// load and create a texture 
@@ -186,36 +149,42 @@ int main(int argc, char* argv[])
 	// stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
 	// The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
 
-	GLImage* i = new GLImage();
-	i->bind();
-	int index;
-	std::cin >> index;
-	sc::flash::SWFTexture tex = swf.textures[index];
-	tex.linear(!tex.linear());
-	i->createWithFormat(tex);
-	i->unbind();
+
 	// for (int j = 0;j < swf.exports.size();j++) {
 	// 	printf("%s\n", swf.exports[j].name.data());
 	// }
+	char* name = "emoji_colette_trixie_happy";
+	// std::cin >> name;
+
+	MovieClipOriginal movieClip;
 	{
-		MovieClipOriginal movieClip;
-		{
-			for (ExportName& export_name : swf.exports) {
-				if (export_name.name == "item_popup") {
-					printf("found\n");
-					movieClip = swf.getOriginalMovieClip(export_name.id, new SWFString("item_popup"));
-					break;
-				}
+		for (ExportName& export_name : swf.exports) {
+			if (export_name.name == name) {
+				printf("found\n");
+				movieClip = swf.getOriginalMovieClip(export_name.id, nullptr);
+				goto find;
 			}
 		}
-		movieClip.createTimelineChildren(swf);
-		printf("test!\n");
-		for (int j = 0;j < movieClip.instances.size();j++) {
-			printf("test: %d\n", j);
-			if (movieClip.displayObjects[j]->is_movieclip());
-			// printf("TimelineChildren: %s\n", ((MovieClipOriginal*)movieClip.displayObjects[j])->name->data());
-		}
+		throw new sc::Exception("not found");
+	find:;
 	}
+	movieClip.createTimelineChildren(swf);
+	// printf("test!\n");
+	// for (int j = 0;j < movieClip.instances.size();j++) {
+	// 	printf("test: %d\n", j);
+	// 	if (movieClip.displayObjects[j]->is_movieclip());
+	// 	// printf("TimelineChildren: %s\n", ((MovieClipOriginal*)movieClip.displayObjects[j])->name->data());
+	// }
+
+	Shape* shape = Shape::createShape((sc::flash::ShapeOriginal*)movieClip.displayObjects[1]);
+	GLImage* i = new GLImage();
+	i->bind();
+	sc::flash::SWFTexture tex = swf.textures[((sc::flash::ShapeOriginal*)movieClip.displayObjects[1])->commands[0].texture_index];
+	tex.linear(!tex.linear());
+	i->createWithFormat(tex);
+	i->unbind();
+	// shape->render();
+	// return;
 	// ShapeDrawBitmapCommand c = swf.shapes[113].commands[0];
 	// printf("texture_index: %d\n", c.texture_index);
 	// for (int j = 0;j < c.vertices.size();j++) {
@@ -267,9 +236,7 @@ int main(int argc, char* argv[])
 
 		// render container
 		ourShader.use();
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
+		shape->render();
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
@@ -278,9 +245,9 @@ int main(int argc, char* argv[])
 
 	// optional: de-allocate all resources once they've outlived their purpose:
 	// ------------------------------------------------------------------------
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
+	// glDeleteVertexArrays(1, &VAO);
+	// glDeleteBuffers(1, &VBO);
+	// glDeleteBuffers(1, &EBO);
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
