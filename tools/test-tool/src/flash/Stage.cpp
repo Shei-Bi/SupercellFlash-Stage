@@ -1,6 +1,8 @@
+#pragma once
+#include <flash/objects/SupercellSWF.h>
 #include <flash/Stage.h>
-// #include <GLImage.h>
 #include <stdio.h>
+#include <flash/StageSprite.h>
 
 Stage* Stage::sm_pInstance = nullptr;
 Stage* Stage::getInstance() {
@@ -12,6 +14,7 @@ void Stage::constructInstance()
         Stage::sm_pInstance = new Stage();
 }
 Stage::Stage() {
+    StageSprit = new StageSprite(10);
     currentBucket = new StageDrawBucket();
 }
 bool Stage::shapeStart(GLImage* texture) {
@@ -35,10 +38,15 @@ void Stage::addTriangles(int count) {
     currentBucket->triangleCount += count;
     currentBucket->pointCount += count + 2;
 }
+
 void Stage::render(float deltaTime, bool clear) {
     if (clear) glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-    // currentBucket->texture->bind();
+    resetRenderVariables();
+    StageSprit->render();
+    renderBuckets();
+}
+void Stage::renderBuckets() {
+    currentBucket->texture->bind();
     unsigned int VBO, VAO, EBO;
 
     glGenVertexArrays(1, &VAO);
@@ -47,12 +55,12 @@ void Stage::render(float deltaTime, bool clear) {
 
     glBindVertexArray(VAO);
 
-    // for (int i = 0;i < currentBucket->vertices.size();i++) {
-    //     printf("vertices[%i]: %f\n", i, currentBucket->vertices[i]);
-    // }
-    // for (int i = 0;i < currentBucket->indices.size();i++) {
-    //     printf("indices[%i]: %i\n", i, currentBucket->indices[i]);
-    // }
+    for (int i = 0;i < currentBucket->vertices.size();i++) {
+        printf("vertices[%i]: %f\n", i, currentBucket->vertices[i]);
+    }
+    for (int i = 0;i < currentBucket->indices.size();i++) {
+        printf("indices[%i]: %i\n", i, currentBucket->indices[i]);
+    }
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, currentBucket->pointCount * 4 * sizeof(float), currentBucket->vertices.data(), GL_STATIC_DRAW);
 
@@ -75,5 +83,12 @@ void Stage::render(float deltaTime, bool clear) {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
+
+    resetRenderVariables();
+}
+void Stage::resetRenderVariables() {
     currentBucket->reset();
+}
+void Stage::addChild(DisplayObject* child) {
+    StageSprit->addChild(child);
 }

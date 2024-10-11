@@ -5,11 +5,10 @@
 #include <GLFW/glfw3.h>
 #include <flash/Stage.h>
 #include <flash/Shape.h>
-#include <GLImage.h>
 #include <stdio.h>
 
-#include <core/stb/stb.h>
-#include <core/image/raw_image.h>
+// #include <core/stb/stb.h>
+// #include <core/image/raw_image.h>
 #include <learnopengl_s.h>
 #include<core/exception/exception.h>
 
@@ -57,40 +56,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 int main(int argc, char* argv[])
 {
-	SupercellSWF swf1;
-	SupercellSWF swf2;
-
-	swf1 = swf2;
-
-	if (argc <= 1) {
-		return 1;
-	}
-
-	fs::path filepath = argv[1];
-	if (!fs::exists(filepath)) {
-		cout << "File not found";
-		return 1;
-	}
-
-	/* Loading test */
-	time_point loading_start = high_resolution_clock::now();
-	sc::Timer loading;
-	SupercellSWF swf;
-	swf.load("/ui.sc");
-
-	cout << "Loading took: ";
-	cout << loading.elapsed() << endl << endl;
-	loading.reset();
-
-	// Stage::getInstance();
-	// swf.textures[0].downscaling
-
-	cout << "Shapes Count:" << swf.shapes.size() << endl
-		<< "textures Count:" << swf.textures.size() << endl
-		<< "movieclips Count:" << swf.movieclips.size() << endl
-		<< "textfields Count:" << swf.textfields.size() << endl;
-
-
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
@@ -121,15 +86,42 @@ int main(int argc, char* argv[])
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-
 	// build and compile our shader zprogram
 	// ------------------------------------
-	Shader ourShader("4.2.texture.vs", "4.2.texture.fs");
+	Shader ourShader("C:/Users/EDY/source/repos/SupercellFlash-Stage/build/tools/test-tool/Debug/4.2.texture.vs", "C:/Users/EDY/source/repos/SupercellFlash-Stage/build/tools/test-tool/Debug/4.2.texture.fs");
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------
 
 
+	if (argc <= 1) {
+		return 1;
+	}
+
+	fs::path filepath = argv[1];
+	if (!fs::exists(filepath)) {
+		cout << "File not found";
+		return 1;
+	}
+
+	/* Loading test */
+
+	time_point loading_start = high_resolution_clock::now();
+	sc::Timer loading;
+	SupercellSWF swf;
+	swf.load(filepath);
+
+	cout << "Loading took: ";
+	cout << loading.elapsed() << endl << endl;
+	loading.reset();
+
+	// Stage::getInstance();
+	// swf.textures[0].downscaling
+
+	cout << "Shapes Count:" << swf.shapes.size() << endl
+		<< "textures Count:" << swf.textures.size() << endl
+		<< "movieclips Count:" << swf.movieclips.size() << endl
+		<< "textfields Count:" << swf.textfields.size() << endl;
 
 	// load and create a texture 
 	// -------------------------
@@ -177,12 +169,14 @@ int main(int argc, char* argv[])
 	// }
 
 	Shape* shape = Shape::createShape((sc::flash::ShapeOriginal*)movieClip.displayObjects[1]);
-	GLImage* i = new GLImage();
-	i->bind();
-	sc::flash::SWFTexture tex = swf.textures[((sc::flash::ShapeOriginal*)movieClip.displayObjects[1])->commands[0].texture_index];
-	tex.linear(!tex.linear());
-	i->createWithFormat(tex);
-	i->unbind();
+	Stage::constructInstance();
+	Stage::getInstance()->addChild(shape);
+	// GLImage* i = new GLImage();
+	// i->bind();
+	// sc::flash::SWFTexture tex = swf.textures[((sc::flash::ShapeOriginal*)movieClip.displayObjects[1])->commands[0].texture_index];
+	// tex.linear(!tex.linear());
+	// i->createWithFormat(tex);
+	// i->unbind();
 	// shape->render();
 	// return;
 	// ShapeDrawBitmapCommand c = swf.shapes[113].commands[0];
@@ -215,7 +209,6 @@ int main(int argc, char* argv[])
 	glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
 
 
-	Stage::constructInstance();
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -231,12 +224,11 @@ int main(int argc, char* argv[])
 
 		// bind textures on corresponding texture units
 		glActiveTexture(GL_TEXTURE0);
-		i->bind();
 		// glBindTexture(GL_TEXTURE_2D, texture1);
 
 		// render container
 		ourShader.use();
-		shape->render();
+		// shape->render();
 		Stage::getInstance()->render(0.0, true);
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------

@@ -1,9 +1,8 @@
 #pragma once
+#include <flash/objects/SWFTexture.h>
 #include <glad/glad.h>
-// #include <GLImage.h>
 #include <flash/types/SWFContainer.hpp>
 
-class GLImage;
 class StageDrawBucket
 {
 private:

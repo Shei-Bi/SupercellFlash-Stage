@@ -1,3 +1,4 @@
+#pragma once
 class DisplayObject
 {
 private:
@@ -5,12 +6,7 @@ private:
 public:
     DisplayObject(/* args */);
     ~DisplayObject();
+
+    virtual bool render();
+
 };
-
-DisplayObject::DisplayObject(/* args */)
-{
-}
-
-DisplayObject::~DisplayObject()
-{
-}

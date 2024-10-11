@@ -7,7 +7,7 @@ namespace sc
 	namespace flash {
 		void ShapeDrawBitmapCommand::load(SupercellSWF& swf, uint8_t tag)
 		{
-			texture_index = swf.stream.read_unsigned_byte();
+			GLImage = swf.textures[swf.stream.read_unsigned_byte()].GLImag;
 
 			uint8_t vertices_count = tag == 4 ? 4 : swf.stream.read_unsigned_byte();
 			vertices.resize(vertices_count);

@@ -2,6 +2,8 @@
 
 #include "flash/types/SWFContainer.hpp"
 
+class GLImage;
+
 namespace sc
 {
 	namespace flash {
@@ -31,6 +33,9 @@ namespace sc
 			virtual void save(SupercellSWF& swf) const;
 
 			virtual uint8_t tag(SupercellSWF& swf) const;
+
+		public:
+			GLImage* GLImage;
 		};
 	}
 }

@@ -4,7 +4,6 @@
 
 using namespace sc::texture;
 using namespace sc::compression;
-
 namespace sc
 {
 	namespace flash {
@@ -221,6 +220,8 @@ namespace sc
 			}
 
 			load_from_buffer(swf.stream, width, height, type, has_data);
+			if (!linear()) linear(true);
+			GLImag->createWithFormat(*this);
 		};
 
 		void SWFTexture::save(SupercellSWF& swf, bool has_data, bool is_lowres) const

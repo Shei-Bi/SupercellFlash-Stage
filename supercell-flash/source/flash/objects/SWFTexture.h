@@ -2,11 +2,11 @@
 
 #include <core/image/raw_image.h>
 #include <texture/texture.h>
+#include <flash/objects/GLImage.h>
 
 #include "flash/types/SWFContainer.hpp"
 
 #define SWFTEXTURE_BLOCK_SIZE 32
-
 namespace sc
 {
 	namespace flash {
@@ -15,7 +15,9 @@ namespace sc
 		class SWFTexture
 		{
 		public:
-			SWFTexture() {};
+			SWFTexture() {
+				GLImag = new GLImage();
+			};
 			virtual ~SWFTexture() = default;
 
 		public:
@@ -92,6 +94,9 @@ namespace sc
 			virtual void save(SupercellSWF& swf, bool has_data, bool is_lowres) const;
 			virtual void save_buffer(Stream& stream, bool is_lowres) const;
 			virtual uint8_t tag(SupercellSWF& swf, bool has_data = false) const;
+
+		public:
+			GLImage* GLImag;
 		};
 	}
 }
