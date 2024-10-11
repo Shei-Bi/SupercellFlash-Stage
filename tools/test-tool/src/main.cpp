@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 	time_point loading_start = high_resolution_clock::now();
 	sc::Timer loading;
 	SupercellSWF swf;
-	swf.load(filepath);
+	swf.load("/ui.sc");
 
 	cout << "Loading took: ";
 	cout << loading.elapsed() << endl << endl;
