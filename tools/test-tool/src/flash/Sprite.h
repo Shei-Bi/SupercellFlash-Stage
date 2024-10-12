@@ -12,8 +12,10 @@ public:
 
     Sprite(/* args */);
     ~Sprite();
-    Sprite(int initialCapacity);
-    void allocateMemory(int capacity);
+    Sprite(short initialCapacity);
+    void allocateMemory(short capacity);
     void addChild(DisplayObject* child);
-    bool render();
+    void addChildAt(DisplayObject* child, short);
+    void removeChildAt(short);
+    bool render(Matrix2x3*);
 };

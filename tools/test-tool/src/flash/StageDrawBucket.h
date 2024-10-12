@@ -22,7 +22,7 @@ public:
     }
     void reset() {
         vertices.clear();
-        // indices.clear();
+        indices.clear();
         triangleCount = 0;
         pointCount = 0;
     }

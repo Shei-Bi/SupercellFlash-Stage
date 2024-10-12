@@ -4,7 +4,7 @@
 class StageSprite :public Sprite
 {
 public:
-    StageSprite::StageSprite(int initialCapacity) :Sprite(initialCapacity) {
+    StageSprite::StageSprite(short initialCapacity) :Sprite(initialCapacity) {
         ;
     }
 };

@@ -71,6 +71,7 @@ namespace sc
 			}
 
 			uint16_t frames_total = 0;
+			int frames_elements_total = 0;
 			while (true)
 			{
 				uint8_t frame_tag = swf.stream.read_unsigned_byte();
@@ -82,10 +83,16 @@ namespace sc
 				if (frame_tag_length < 0)
 					throw Exception("Negative tag length");
 
+				MovieClipFrame* framf;
 				switch (frame_tag)
 				{
 				case TAG_MOVIE_CLIP_FRAME_2:
-					frames[frames_total].load(swf);
+					framf = &frames[frames_total];
+					framf->load(swf);
+					framf->frameElements = new MovieClipFrameElement * [framf->elements_count];
+					for (int i = 0;i < framf->elements_count;i++) {
+						framf->frameElements[i] = &frame_elements[frames_elements_total++];
+					}
 					// printf("%d %s\n", frames_total, frames[frames_total].label.data());
 					frames_total++;
 					break;
@@ -213,12 +220,12 @@ namespace sc
 			return true;
 		}
 
-		void MovieClipOriginal::createTimelineChildren(SupercellSWF& swf) {
+		void MovieClipOriginal::createTimelineChildren(SupercellSWF* swf) {
 			if (displayObjects == nullptr) {
 				int s = instances.size();
 				displayObjects = new DisplayObjectOriginal * [s];
 				for (int i = 0;i < s;i++) {
-					displayObjects[i] = &swf.getOriginalDisplayObject(instances[i].id, nullptr);
+					displayObjects[i] = &swf->getOriginalDisplayObject(instances[i].id, nullptr);
 					char* name;
 					if (displayObjects[i]->is_modifier())
 						name = "MovieClipModifier";

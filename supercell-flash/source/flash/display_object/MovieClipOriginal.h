@@ -16,12 +16,7 @@ namespace sc
 	namespace flash {
 		class SupercellSWF;
 
-		struct MovieClipFrameElement
-		{
-			uint16_t instance_index;
-			uint16_t matrix_index = 0xFFFF;
-			uint16_t colorTransform_index = 0xFFFF;
-		};
+		struct MovieClipFrameElement;
 
 		struct DisplayObjectInstance
 		{
@@ -84,7 +79,7 @@ namespace sc
 
 			SWFString* name = nullptr;
 
-			void createTimelineChildren(SupercellSWF& swf);
+			void createTimelineChildren(SupercellSWF* swf);
 		};
 	}
 }

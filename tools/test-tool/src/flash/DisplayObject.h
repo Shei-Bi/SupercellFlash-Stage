@@ -1,12 +1,18 @@
 #pragma once
+#include <flash/transform/Matrix2x3.h>
+
+using Matrix2x3 = sc::flash::Matrix2x3;
+
 class DisplayObject
 {
-private:
-    /* data */
+public:
+    Matrix2x3 Matrix;
 public:
     DisplayObject(/* args */);
     ~DisplayObject();
-
-    virtual bool render();
+    void setX(float);
+    void setY(float);
+    void setXY(float, float);
+    virtual bool render(Matrix2x3*);
 
 };

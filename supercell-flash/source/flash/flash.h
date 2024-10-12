@@ -12,5 +12,5 @@
 #include "flash/display_object/TextFieldOriginal.h"
 
 #include "flash/transform/ColorTransform.h"
-#include "flash/transform/Matrix2D.h"
+#include "flash/transform/Matrix2x3.h"
 #include "flash/transform/MatrixBank.h"

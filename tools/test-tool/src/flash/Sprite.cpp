@@ -1,13 +1,13 @@
 #pragma once
 #include <flash/Sprite.h>
 
-Sprite::Sprite(int initialCapacity) :DisplayObject() {
+Sprite::Sprite(short initialCapacity) :DisplayObject() {
     children = nullptr;
     size = 0;
     capacity = 0;
-    allocateMemory(initialCapacity);
+    if (initialCapacity != -1) allocateMemory(initialCapacity);
 }
-void Sprite::allocateMemory(int newCapacity) {
+void Sprite::allocateMemory(short newCapacity) {
     if (newCapacity > capacity) {
         DisplayObject** newArray = new DisplayObject * [newCapacity];
         if (children) delete(children);
@@ -16,10 +16,42 @@ void Sprite::allocateMemory(int newCapacity) {
     }
 }
 void Sprite::addChild(DisplayObject* child) {
-    children[size++] = child;
+    addChildAt(child, size);
 }
-bool Sprite::render() {
-    for (int i = 0;i < size;i++) children[i]->render();
+void Sprite::addChildAt(DisplayObject* child, short index) {
+    if (size == capacity) {
+        short newCapacity = capacity == 0 ? 1 : capacity * 2;
+        DisplayObject** newArray = new DisplayObject * [newCapacity];
+        if (children != nullptr) {
+            for (int i = 0;i < size;i++) {
+                newArray[i] = children[i];
+            }
+            delete(children);
+        }
+        children = newArray;
+        capacity = newCapacity;
+    }
+    if (index < size) {
+        for (int i = size;i > index;i--) {
+            children[i] = children[i - 1];
+        }
+    }
+    children[index] = child;
+    size++;
+}
+void Sprite::removeChildAt(short index) {
+    size--;
+    if (index < size) {
+        for (int i = index;i < size;i++) {
+            children[i] = children[i + 1];
+        }
+    }
+    children[size] = nullptr;
+}
+bool Sprite::render(Matrix2x3* mat) {
+    Matrix2x3* n = new Matrix2x3(Matrix);
+    n->multiply(mat);
+    for (int i = 0;i < size;i++) children[i]->render(n);
     return true;
 }
 Sprite::Sprite(/* args */)

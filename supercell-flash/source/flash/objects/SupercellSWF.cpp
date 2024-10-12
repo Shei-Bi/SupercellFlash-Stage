@@ -368,7 +368,7 @@ namespace sc
 					stream.write_unsigned_short(bank.color_transforms.size());
 				}
 
-				for (const Matrix2D& matrix : bank.matrices)
+				for (const Matrix2x3& matrix : bank.matrices)
 				{
 					size_t position = stream.write_tag_header(matrix.tag(*this));
 					matrix.save(*this);

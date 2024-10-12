@@ -10,7 +10,7 @@ namespace sc {
 			color_transforms.resize(color_transforms_count);
 		}
 
-		bool MatrixBank::get_matrix_index(const Matrix2D& matrix, uint16_t& index) const
+		bool MatrixBank::get_matrix_index(const Matrix2x3& matrix, uint16_t& index) const
 		{
 			if (floatEqual(matrix.a, 1.0f) &&
 				floatEqual(matrix.b, 0) &&
@@ -23,7 +23,7 @@ namespace sc {
 			}
 
 			for (uint16_t i = 0; matrices.size() > i; i++) {
-				const Matrix2D& other = matrices[i];
+				const Matrix2x3& other = matrices[i];
 
 				if (other == matrix) {
 					index = i;

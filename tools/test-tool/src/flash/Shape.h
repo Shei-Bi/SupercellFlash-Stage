@@ -13,5 +13,5 @@ private:
     /* data */
 public:
     static Shape* createShape(sc::flash::ShapeOriginal* original);
-    bool render();
+    bool render(Matrix2x3* mat);
 };

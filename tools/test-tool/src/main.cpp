@@ -6,6 +6,10 @@
 #include <flash/Stage.h>
 #include <flash/Shape.h>
 #include <stdio.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <ResourceManager.h>
 
 // #include <core/stb/stb.h>
 // #include <core/image/raw_image.h>
@@ -20,23 +24,6 @@ using namespace std::chrono;
 using namespace sc::flash;
 
 namespace fs = std::filesystem;
-
-// settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
-
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}\n\0";
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
@@ -69,7 +56,7 @@ int main(int argc, char* argv[])
 
 	// glfw window creation
 	// --------------------
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -86,81 +73,11 @@ int main(int argc, char* argv[])
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-	// build and compile our shader zprogram
-	// ------------------------------------
-	Shader ourShader("C:/Users/EDY/source/repos/SupercellFlash-Stage/build/tools/test-tool/Debug/4.2.texture.vs", "C:/Users/EDY/source/repos/SupercellFlash-Stage/build/tools/test-tool/Debug/4.2.texture.fs");
-
-	// set up vertex data (and buffer(s)) and configure vertex attributes
-	// ------------------------------------------------------------------
-
-
-	if (argc <= 1) {
-		return 1;
-	}
-
-	fs::path filepath = argv[1];
-	if (!fs::exists(filepath)) {
-		cout << "File not found";
-		return 1;
-	}
-
-	/* Loading test */
-
-	time_point loading_start = high_resolution_clock::now();
-	sc::Timer loading;
-	SupercellSWF swf;
-	swf.load(filepath);
-
-	cout << "Loading took: ";
-	cout << loading.elapsed() << endl << endl;
-	loading.reset();
-
-	// Stage::getInstance();
-	// swf.textures[0].downscaling
-
-	cout << "Shapes Count:" << swf.shapes.size() << endl
-		<< "textures Count:" << swf.textures.size() << endl
-		<< "movieclips Count:" << swf.movieclips.size() << endl
-		<< "textfields Count:" << swf.textfields.size() << endl;
-
-	// load and create a texture 
-	// -------------------------
-	// unsigned int texture1;
-	// texture 1
-	// ---------
-	// glGenTextures(1, &texture1);
-	// glBindTexture(GL_TEXTURE_2D, texture1);
-	// // set the texture wrapping parameters
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// // set texture filtering parameters
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// // load image, create texture and generate mipmaps
-	// int width, height, nrChannels;
-	// stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-	// The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-
-
-	// for (int j = 0;j < swf.exports.size();j++) {
-	// 	printf("%s\n", swf.exports[j].name.data());
-	// }
-	char* name = "emoji_colette_trixie_happy";
+	// char* name = "emoji_colette_trixie_happy";
+	char* name = "text_buble_small";
+	// char* name = "land_zone";
 	// std::cin >> name;
-
-	MovieClipOriginal movieClip;
-	{
-		for (ExportName& export_name : swf.exports) {
-			if (export_name.name == name) {
-				printf("found\n");
-				movieClip = swf.getOriginalMovieClip(export_name.id, nullptr);
-				goto find;
-			}
-		}
-		throw new sc::Exception("not found");
-	find:;
-	}
-	movieClip.createTimelineChildren(swf);
+	ResourceManager::addFile("C:/Users/EDY/source/repos/SupercellFlash-Stage/build/tools/test-tool/Debug/ui.sc");
 	// printf("test!\n");
 	// for (int j = 0;j < movieClip.instances.size();j++) {
 	// 	printf("test: %d\n", j);
@@ -168,82 +85,40 @@ int main(int argc, char* argv[])
 	// 	// printf("TimelineChildren: %s\n", ((MovieClipOriginal*)movieClip.displayObjects[j])->name->data());
 	// }
 
-	Shape* shape = Shape::createShape((sc::flash::ShapeOriginal*)movieClip.displayObjects[1]);
 	Stage::constructInstance();
-	Stage::getInstance()->addChild(shape);
-	// GLImage* i = new GLImage();
-	// i->bind();
-	// sc::flash::SWFTexture tex = swf.textures[((sc::flash::ShapeOriginal*)movieClip.displayObjects[1])->commands[0].texture_index];
-	// tex.linear(!tex.linear());
-	// i->createWithFormat(tex);
-	// i->unbind();
-	// shape->render();
-	// return;
-	// ShapeDrawBitmapCommand c = swf.shapes[113].commands[0];
-	// printf("texture_index: %d\n", c.texture_index);
-	// for (int j = 0;j < c.vertices.size();j++) {
-	// 	printf("%f ", c.vertices[j].u);
-	// 	printf("%f \n", c.vertices[j].v);
-	// }
-	// sc::RawImage* image = nullptr;
-	// sc::InputFileStream image_file("awesomeface.png");
-	// sc::stb::load_image(image_file, &image);
-	// StraightToPremultiply(*image);
+	Stage::getInstance()->init(0, 0, 800, 600);
+	MovieClip* e = ResourceManager::getMovieClip("C:/Users/EDY/source/repos/SupercellFlash-Stage/build/tools/test-tool/Debug/ui.sc", name);
+	Stage::getInstance()->addChild(e);
 
-	// unsigned char* data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
-	// if (data)
-	// {
-	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width(), image->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image->data());
-	// glGenerateMipmap(GL_TEXTURE_2D);
-	// }
-	// 	else
-	// 	{
-	// 		std::cout << "Failed to load texture" << std::endl;
-	// 	}
-	// 	stbi_image_free(data);
-
-	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-	// -------------------------------------------------------------------------------------------
-	ourShader.use(); // don't forget to activate/use the shader before setting uniforms!
-	// either set it manually like so:
-	glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
-
-
-	// render loop
-	// -----------
+	float xxxx = 400.0;
+	float yyyy = 300.0;
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	while (!glfwWindowShouldClose(window))
 	{
 		// input
 		// -----
 		processInput(window);
-
-		// render
-		// ------
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+			yyyy -= 20.0;
+		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+			yyyy += 20.0;
+		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+			xxxx -= 20.0;
+		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+			xxxx += 20.0;
+		e->setXY(xxxx, yyyy);
 
 		// bind textures on corresponding texture units
 		glActiveTexture(GL_TEXTURE0);
 		// glBindTexture(GL_TEXTURE_2D, texture1);
 
 		// render container
-		ourShader.use();
-		// shape->render();
 		Stage::getInstance()->render(0.0, true);
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
-	// optional: de-allocate all resources once they've outlived their purpose:
-	// ------------------------------------------------------------------------
-	// glDeleteVertexArrays(1, &VAO);
-	// glDeleteBuffers(1, &VBO);
-	// glDeleteBuffers(1, &EBO);
-
-	// glfw: terminate, clearing all previously allocated GLFW resources.
-	// ------------------------------------------------------------------
 	glfwTerminate();
 	return 0;
 }
