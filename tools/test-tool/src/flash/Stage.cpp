@@ -47,8 +47,10 @@ Stage::Stage() {
     right = 800;
     bottom = 600;
     loadDefaultShader(0);
+    abort = false;
 }
 bool Stage::shapeStart(GLImage* texture) {
+    if (abort) return false;
     // if (currentBucket->texture == texture) return true;
     for (int i = 0;i < bucketsUsed;i++) {
         if (buckets[i]->texture == texture) {
@@ -82,8 +84,7 @@ void Stage::addTriangles(int count) {
 void Stage::render(float deltaTime, bool clear) {
     if (clear) glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     resetRenderVariables();
-    Matrix2x3* mat = new Matrix2x3();
-    StageSprit->render(mat);
+    StageSprit->render(new Matrix2x3(), new ColorTransform(), deltaTime);
     renderBuckets();
 }
 void Stage::renderBuckets() {
@@ -99,27 +100,33 @@ void Stage::renderBuckets() {
 
         glBindVertexArray(VAO);
 
-        for (int i = 0;i < currentBucket->vertices.size();i++) {
-            printf("vertices[%i]: %f\n", i, currentBucket->vertices[i]);
-        }
-        for (int i = 0;i < currentBucket->indices.size();i++) {
-            printf("indices[%i]: %i\n", i, currentBucket->indices[i]);
-        }
+        // for (int i = 0;i < currentBucket->vertices.size();i++) {
+        //     printf("vertices[%i]: %f\n", i, currentBucket->vertices[i]);
+        // }
+        // for (int i = 0;i < currentBucket->indices.size();i++) {
+        //     printf("indices[%i]: %i\n", i, currentBucket->indices[i]);
+        // }
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, currentBucket->pointCount * 4 * sizeof(float), currentBucket->vertices.data(), GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, currentBucket->pointCount * 11 * sizeof(float), currentBucket->vertices.data(), GL_STREAM_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, currentBucket->triangleCount * 3 * sizeof(unsigned int), currentBucket->indices.data(), GL_STREAM_DRAW);
 
         // position attribute
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
         // color attribute
         // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
         // glEnableVertexAttribArray(1);
         // texture coord attribute
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(2 * sizeof(float)));
         glEnableVertexAttribArray(1);
+
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(4 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
+        glEnableVertexAttribArray(3);
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, currentBucket->triangleCount * 3, GL_UNSIGNED_INT, 0);
@@ -145,3 +152,55 @@ void Stage::init(int top, int left, int width, int height) {
     Renderer::setViewport(this->top, this->left, this->right, this->bottom);
     Stage::firstTimeShaderInit(shader, Renderer::getPixelMatrix());
 }
+// Stage::getInstance()->shader->use();
+// 		((SupercellSWF*)ResourceManager::Resources[0].second)->textures[2].GLImag->bind();
+// 		unsigned int VBO, VAO, EBO;
+
+// 		glGenVertexArrays(1, &VAO);
+// 		glGenBuffers(1, &VBO);
+// 		glGenBuffers(1, &EBO);
+
+// 		glBindVertexArray(VAO);
+// 		float vertices[] = {
+// 			//     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
+// 				 800.0f, 600.0f, 1.0f, 1.0f,   // 右上
+// 				 800.0f, 0.0f,1.0f, 0.0f,   // 右下
+// 				0.0f, 0.0f, 0.0f, 0.0f,   // 左下
+// 				0.0f, 600.0f,0.0f, 1.0f    // 左上
+// 		};
+// 		unsigned int indices[] = {
+// 			// 注意索引从0开始! 
+// 			// 此例的索引(0,1,2,3)就是顶点数组vertices的下标，
+// 			// 这样可以由下标代表顶点组合成矩形
+
+// 			0, 1, 3, // 第一个三角形
+// 			1, 2, 3  // 第二个三角形
+// 		};
+// 		// for (int i = 0;i < currentBucket->vertices.size();i++) {
+// 		//     printf("vertices[%i]: %f\n", i, currentBucket->vertices[i]);
+// 		// }
+// 		// for (int i = 0;i < currentBucket->indices.size();i++) {
+// 		//     printf("indices[%i]: %i\n", i, currentBucket->indices[i]);
+// 		// }
+// 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+// 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STREAM_DRAW);
+
+// 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+// 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STREAM_DRAW);
+
+// 		// position attribute
+// 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+// 		glEnableVertexAttribArray(0);
+// 		// color attribute
+// 		// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+// 		// glEnableVertexAttribArray(1);
+// 		// texture coord attribute
+// 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+// 		glEnableVertexAttribArray(1);
+
+// 		glBindVertexArray(VAO);
+// 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+// 		glDeleteVertexArrays(1, &VAO);
+// 		glDeleteBuffers(1, &VBO);
+// 		glDeleteBuffers(1, &EBO);

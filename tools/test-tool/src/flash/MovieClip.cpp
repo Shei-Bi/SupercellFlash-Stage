@@ -16,7 +16,10 @@ MovieClip* MovieClip::createMovieClip(sc::flash::MovieClipOriginal* movieClipOri
         sc::flash::DisplayObjectOriginal* a = movieClipOriginal->displayObjects[i];
         DisplayObject* b = nullptr;
         if (a->is_movieclip()) b = MovieClip::createMovieClip((sc::flash::MovieClipOriginal*)a, swf);
-        if (a->is_shape()) b = Shape::createShape((sc::flash::ShapeOriginal*)a);
+        if (a->is_shape()) {
+            b = Shape::createShape((sc::flash::ShapeOriginal*)a);
+            for (sc::flash::ShapeDrawBitmapCommand c : *((Shape*)b)->commands) printf("texture_index:%d\n", c.texture_index);
+        }
         // if (a->is()) b = nullptr;
         // if (a->is_movieclip()) b = nullptr;
         movieClip->timelineChildren[i] = b;
@@ -26,6 +29,8 @@ MovieClip* MovieClip::createMovieClip(sc::flash::MovieClipOriginal* movieClipOri
     movieClip->matrixBank = &swf->matrixBanks[movieClipOriginal->bank_index];
     movieClip->frames = &movieClipOriginal->frames;
     movieClip->setFrame(0);
+    movieClip->frameTime = 0.0f;
+    movieClip->secondPerFrame = 1.0f / movieClipOriginal->frame_rate;
     return movieClip;
 }
 void MovieClip::setFrame(int index) {
@@ -37,11 +42,17 @@ void MovieClip::setFrame(int index) {
         DisplayObject* child = timelineChildren[element->instance_index];
         if (child == nullptr) continue;
         if (element->matrix_index != 65535) child->Matrix = matrixBank->matrices[element->matrix_index];
+        if (element->colorTransform_index != 65535) child->colorTransform = matrixBank->color_transforms[element->colorTransform_index];
         addChildAt(child, childIndex++);
     }
     for (int i = size - 1;i >= childIndex;i--) removeChildAt(i);
 }
-bool MovieClip::render(Matrix2x3* mat) {
-    setFrame((frameIndex + 1) % (*frames).size());
-    return Sprite::render(mat);
+bool MovieClip::render(Matrix2x3* mat, ColorTransform* c, float deltaTime) {
+    if (frameTime >= secondPerFrame) {
+        int framePassed = (int)(frameTime / secondPerFrame);
+        frameTime -= framePassed * secondPerFrame;
+        setFrame((frameIndex + framePassed) % (*frames).size());
+    }
+    frameTime += deltaTime;
+    return Sprite::render(mat, c, deltaTime);
 }

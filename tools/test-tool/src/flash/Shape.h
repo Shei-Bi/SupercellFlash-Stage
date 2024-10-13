@@ -7,11 +7,11 @@
 
 class Shape :public DisplayObject
 {
-private:
+public:
     sc::flash::SWFVector<sc::flash::ShapeDrawBitmapCommand>* commands = nullptr;
 
     /* data */
 public:
     static Shape* createShape(sc::flash::ShapeOriginal* original);
-    bool render(Matrix2x3* mat);
+    bool render(Matrix2x3* mat, ColorTransform* c, float);
 };

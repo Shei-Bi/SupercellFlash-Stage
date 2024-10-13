@@ -238,7 +238,7 @@ namespace sc
 					printf("%s fetched: %s\n", name, instances[i].name.data());
 				}
 				for (int i = 0;i < frames.size();i++) {
-					printf("frame name: %s index: %d\n", frames[i].label.data(), i);
+					// printf("frame name: %s index: %d\n", frames[i].label.data(), i);
 				}
 				// instances.~vector();
 			}

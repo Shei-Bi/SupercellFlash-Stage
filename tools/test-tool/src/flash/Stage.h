@@ -36,4 +36,5 @@ public:
     void loadDefaultShader(int);
     Shader* shader;
     void increaseBucketCapacity(int);
+    bool abort;
 };

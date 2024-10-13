@@ -46,6 +46,16 @@ namespace sc
 			return false;
 		}
 
+		void ColorTransform::multiplyy(ColorTransform* color) {
+			multiply.r = fmin(multiply.r * color->multiply.r / 255.0f, 255.0f);
+			multiply.g = fmin(multiply.g * color->multiply.g / 255.0f, 255.0f);
+			multiply.b = fmin(multiply.b * color->multiply.b / 255.0f, 255.0f);
+			alpha = fmin(alpha * color->alpha / 255.0f, 255.0f);
+			add.r = fmin(add.r + color->add.r, 255.0f);
+			add.g = fmin(add.g + color->add.g, 255.0f);
+			add.b = fmin(add.b + color->add.b, 255.0f);
+		}
+
 		uint8_t ColorTransform::tag(SupercellSWF&) const
 		{
 			return TAG_COLOR_TRANSFORM;

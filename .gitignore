@@ -5,3 +5,4 @@ android_build
 *.vcxproj*
 Makefile
 *.make
+/assets

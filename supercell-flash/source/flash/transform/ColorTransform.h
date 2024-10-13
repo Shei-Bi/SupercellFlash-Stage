@@ -27,6 +27,8 @@ namespace sc
 
 		public:
 			bool operator==(const ColorTransform& color) const;
+
+			void multiplyy(ColorTransform* matrix);
 		};
 	}
 }

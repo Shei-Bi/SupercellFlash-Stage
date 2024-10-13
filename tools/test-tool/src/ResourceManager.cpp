@@ -4,9 +4,10 @@
 #include <flash/display_object/MovieClipOriginal.h>
 #include <flash/objects/SupercellSWF.h>
 #include <stdio.h>
-
+namespace fs = std::filesystem;
 std::vector<std::pair<char*, void*>> ResourceManager::Resources = std::vector<std::pair<char*, void*>>();
 MovieClip* ResourceManager::getMovieClip(char* file, char* name) {
+    printf("getting %s", name);
     sc::flash::SupercellSWF* swf = getSupercellSWF(file, name);
     sc::flash::MovieClipOriginal* movieClip;
     {
@@ -24,7 +25,7 @@ MovieClip* ResourceManager::getMovieClip(char* file, char* name) {
 }
 void ResourceManager::addFile(char* file) {
     sc::flash::SupercellSWF* swf = new sc::flash::SupercellSWF();;
-    swf->load(file);
+    swf->load(fs::absolute(fs::path("assets") / file));
     printf("%s loaded:\nShapes Count:%d\ntextures Count:%d\nmovieclips Count:%d\ntextfields Count:%d\n", file, swf->shapes.size(), swf->textures.size(), swf->movieclips.size(), swf->textfields.size());
     Resources.push_back(std::pair<char*, void*>(file, swf));
 }
