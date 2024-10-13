@@ -17,6 +17,9 @@ public:
     static Stage* getInstance();
     StageSprite* StageSprit;
     StageDrawBucket* currentBucket;
+    StageDrawBucket** buckets;
+    int bucketCapacity;
+    int bucketsUsed;
     static void constructInstance();
     void render(float deltaTime, bool clear);
     void renderBuckets();
@@ -32,4 +35,5 @@ public:
     void firstTimeShaderInit(Shader*, glm::mat4);
     void loadDefaultShader(int);
     Shader* shader;
+    void increaseBucketCapacity(int);
 };

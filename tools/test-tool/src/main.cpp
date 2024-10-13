@@ -73,22 +73,20 @@ int main(int argc, char* argv[])
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-	// char* name = "emoji_colette_trixie_happy";
-	char* name = "text_buble_small";
-	// char* name = "land_zone";
+	// char* name = "text_buble_small";
 	// std::cin >> name;
 	ResourceManager::addFile("C:/Users/EDY/source/repos/SupercellFlash-Stage/build/tools/test-tool/Debug/ui.sc");
-	// printf("test!\n");
-	// for (int j = 0;j < movieClip.instances.size();j++) {
-	// 	printf("test: %d\n", j);
-	// 	if (movieClip.displayObjects[j]->is_movieclip());
-	// 	// printf("TimelineChildren: %s\n", ((MovieClipOriginal*)movieClip.displayObjects[j])->name->data());
-	// }
 
 	Stage::constructInstance();
 	Stage::getInstance()->init(0, 0, 800, 600);
-	MovieClip* e = ResourceManager::getMovieClip("C:/Users/EDY/source/repos/SupercellFlash-Stage/build/tools/test-tool/Debug/ui.sc", name);
+	MovieClip* e = ResourceManager::getMovieClip("C:/Users/EDY/source/repos/SupercellFlash-Stage/build/tools/test-tool/Debug/ui.sc", "land_zone");
+	MovieClip* f = ResourceManager::getMovieClip("C:/Users/EDY/source/repos/SupercellFlash-Stage/build/tools/test-tool/Debug/ui.sc", "emoji_colette_trixie_happy");
+	MovieClip* g = ResourceManager::getMovieClip("C:/Users/EDY/source/repos/SupercellFlash-Stage/build/tools/test-tool/Debug/ui.sc", "text_buble_small");
+	Stage::getInstance()->addChild(f);
 	Stage::getInstance()->addChild(e);
+	Stage::getInstance()->addChild(g);
+	f->setXY(100.0, 200.0);
+	g->setXY(300.0, 300.0);
 
 	float xxxx = 400.0;
 	float yyyy = 300.0;
