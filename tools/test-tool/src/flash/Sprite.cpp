@@ -48,12 +48,12 @@ void Sprite::removeChildAt(short index) {
     }
     children[size] = nullptr;
 }
-bool Sprite::render(Matrix2x3* mat, ColorTransform* c, float deltaTime) {
+bool Sprite::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) {
     Matrix2x3* n = new Matrix2x3(Matrix);
     n->multiply(mat);
     ColorTransform* ct = new ColorTransform(colorTransform);
     ct->multiplyy(c);
-    for (int i = 0;i < size;i++) children[i]->render(n, ct, deltaTime);
+    for (int i = 0;i < size;i++) if (children[i]->visible) children[i]->render(n, ct, renderConfig & 0x3FF | rc, deltaTime);
     return true;
 }
 Sprite::Sprite(/* args */)

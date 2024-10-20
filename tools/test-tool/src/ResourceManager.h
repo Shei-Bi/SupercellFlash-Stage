@@ -5,7 +5,9 @@
 class ResourceManager
 {
 public:
+    static std::filesystem::path rootPath;
     static std::vector<std::pair<char*, void*>> Resources;
+    static void init();
     static MovieClip* getMovieClip(char* file, char* name);
     static void addFile(char* file);
     static sc::flash::SupercellSWF* getSupercellSWF(char* name, char* needby);

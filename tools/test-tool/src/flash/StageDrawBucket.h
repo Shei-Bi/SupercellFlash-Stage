@@ -13,12 +13,14 @@ public:
     int triangleCount;
     int pointCount;
     GLImage* texture;
+    int renderConfig;
 
     // void StageDrawBucket() {
     //     ;
     // }
-    void initForUse(GLImage* g) {
+    void initForUse(GLImage* g, int rc) {
         texture = g;
+        renderConfig = rc;
     }
     void reset() {
         vertices.clear();

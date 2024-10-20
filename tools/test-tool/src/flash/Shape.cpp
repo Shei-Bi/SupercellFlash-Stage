@@ -12,14 +12,14 @@ Shape* Shape::createShape(sc::flash::ShapeOriginal* original) {
     shape->commands = &original->commands;
     return shape;
 }
-bool Shape::render(Matrix2x3* mat, ColorTransform* c, float deltaTime) {
+bool Shape::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) {
     Stage* Stage = Stage::getInstance();
     Matrix2x3* n = new Matrix2x3(Matrix);
     n->multiply(mat);
     ColorTransform* cT = new ColorTransform(colorTransform);
     cT->multiplyy(c);
     for (sc::flash::ShapeDrawBitmapCommand command : *commands) {
-        if (Stage->shapeStart(command.GLImage)) {
+        if (Stage->shapeStart(command.GLImage, rc)) {
             int triangleCount = command.vertices.size() - 2;
             Stage->addTriangles(triangleCount);
             sc::flash::SWFVector<float>* v = &Stage->currentBucket->vertices;
@@ -39,28 +39,6 @@ bool Shape::render(Matrix2x3* mat, ColorTransform* c, float deltaTime) {
                 v->push_back(cT->add.g / 255.0f);
                 v->push_back(cT->add.b / 255.0f);
             }
-            // int triangleCount = 2;
-            // Stage->addTriangles(triangleCount);
-            // sc::flash::SWFVector<float>* v = &Stage->currentBucket->vertices;
-            // int required = v->size() + 16;
-            // if (v->capacity() < required) v->reserve(v->capacity() + 512 * 4 * 3);
-            // v->push_back(n->applyX(-100, -100));
-            // v->push_back(n->applyY(-100, -100));
-            // v->push_back(-1.0);
-            // v->push_back(-1.0);
-            // v->push_back(n->applyX(-100, 100));
-            // v->push_back(n->applyY(-100, 100));
-            // v->push_back(-1.0);
-            // v->push_back(1.0);
-            // v->push_back(n->applyX(100, 100));
-            // v->push_back(n->applyY(100, 100));
-            // v->push_back(1.0);
-            // v->push_back(1.0);
-            // v->push_back(n->applyX(100, -100));
-            // v->push_back(n->applyY(100, -100));
-            // v->push_back(1.0);
-            // v->push_back(-1.0);
-            // Stage->abort = true;
         }
     }
     return true;

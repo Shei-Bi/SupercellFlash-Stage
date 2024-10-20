@@ -39,9 +39,7 @@ void processInput(GLFWwindow* window)
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	// make sure the viewport matches the new window dimensions; note that width and 
-	// height will be significantly larger than specified on retina displays.
-	glViewport(0, 0, width, height);
+	if (Stage::getInstance())  Stage::getInstance()->init(0, 0, 800, 600);
 }
 int main(int argc, char* argv[])
 {
@@ -70,24 +68,15 @@ int main(int argc, char* argv[])
 	unsigned long long programStartTime = xTimer::getNativeTime();
 	GameMain::constructInstance();
 	GameMain::getInstance()->init();
-	char* filename = "sc/ui_new.sc";
-	ResourceManager::addFile(filename);
+	// ResourceManager::addFile("sc/ui_new.sc");
+	ResourceManager::addFile("sc/loading.sc");
 
-	Stage::getInstance()->init(0, 0, 800, 600);
-	MovieClip* e = ResourceManager::getMovieClip(filename, "ingame_hud_top");
-	// MovieClip* f = ResourceManager::getMovieClip(filename, "emoji_colette_trixie_happy");
-	MovieClip* f = ResourceManager::getMovieClip(filename, "emoji_colette_trixie_happy");
-	MovieClip* g = ResourceManager::getMovieClip(filename, "text_buble_small");
-	// Stage::getInstance()->addChild(e);
-	Stage::getInstance()->addChild(f);
-	// Stage::getInstance()->addChild(g);
-	f->setXY(100.0, 200.0);
-	g->setXY(300.0, 300.0);
 
-	float xxxx = 400.0;
-	float yyyy = 300.0;
-	float ssss = 1.0;
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glfwMaximizeWindow(window);
+	int width;
+	int height;
+	glfwGetWindowSize(window, &width, &height);
+	Stage::getInstance()->init(0, 0, width, height);
 	unsigned long long programPrevTime = xTimer::getNativeTime();
 	GameMain* GameMain = GameMain::getInstance();
 	while (!glfwWindowShouldClose(window))
@@ -95,20 +84,6 @@ int main(int argc, char* argv[])
 		// input
 		// -----
 		processInput(window);
-		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-			yyyy -= 20.0;
-		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-			yyyy += 20.0;
-		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-			xxxx -= 20.0;
-		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-			xxxx += 20.0;
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			ssss *= 1.1;
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			ssss /= 1.1;
-		f->setXY(xxxx, yyyy);
-		f->setScale(ssss);
 
 		glActiveTexture(GL_TEXTURE0);
 

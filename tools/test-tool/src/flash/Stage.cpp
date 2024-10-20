@@ -48,19 +48,25 @@ Stage::Stage() {
     bottom = 600;
     loadDefaultShader(0);
     abort = false;
+    glEnable(GL_BLEND);
+    glBlendEquation(GL_FUNC_ADD);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 }
-bool Stage::shapeStart(GLImage* texture) {
+void Stage::setBackgroundColor(int col32) {
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+}
+bool Stage::shapeStart(GLImage* texture, int renderConfig) {
     if (abort) return false;
     // if (currentBucket->texture == texture) return true;
     for (int i = 0;i < bucketsUsed;i++) {
-        if (buckets[i]->texture == texture) {
+        if (buckets[i]->texture == texture && buckets[i]->renderConfig == renderConfig) {
             currentBucket = buckets[i];
             return true;
         }
     }
     if (bucketsUsed == bucketCapacity) increaseBucketCapacity(bucketsUsed * 5 / 4);
     currentBucket = buckets[bucketsUsed++];
-    currentBucket->initForUse(texture);
+    currentBucket->initForUse(texture, renderConfig);
     return true;
 }
 void Stage::addTriangles(int count) {
@@ -84,7 +90,10 @@ void Stage::addTriangles(int count) {
 void Stage::render(float deltaTime, bool clear) {
     if (clear) glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     resetRenderVariables();
-    StageSprit->render(new Matrix2x3(), new ColorTransform(), deltaTime);
+    Matrix2x3* matrix = new Matrix2x3();
+    matrix->a = pointSize;
+    matrix->d = pointSize;
+    StageSprit->render(matrix, new ColorTransform(), 0, deltaTime);
     renderBuckets();
 }
 void Stage::renderBuckets() {
@@ -127,7 +136,7 @@ void Stage::renderBuckets() {
 
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
         glEnableVertexAttribArray(3);
-
+        bindBlendMode(currentBucket->renderConfig & 0x380);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, currentBucket->triangleCount * 3, GL_UNSIGNED_INT, 0);
 
@@ -136,6 +145,19 @@ void Stage::renderBuckets() {
         glDeleteBuffers(1, &EBO);
     }
     resetRenderVariables();
+}
+bool Stage::bindBlendMode(int b) {
+    int v2 = b & 0x380;
+    switch ((v2 - 128) >> 7)
+    {
+    case 0:
+        glBlendFunc(GL_ONE, GL_ONE);
+        break;
+    default:
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        break;
+    }
+    return true;
 }
 void Stage::resetRenderVariables() {
     for (int i = 0;i < bucketsUsed;i++) buckets[i]->reset();
@@ -151,6 +173,18 @@ void Stage::init(int top, int left, int width, int height) {
     this->bottom = top + height;
     Renderer::setViewport(this->top, this->left, this->right, this->bottom);
     Stage::firstTimeShaderInit(shader, Renderer::getPixelMatrix());
+    float s = width * 0.00097656;
+    if (height / s < 576)
+        s = height * 0.0017361;
+    setPointSize(s);
+}
+void Stage::setPointSize(float s) {
+    pointSize = s;
+    updateStageSizeVariables();
+}
+void Stage::updateStageSizeVariables() {
+    matrixX = (right - left) / pointSize;
+    matrixY = (bottom - top) / pointSize;
 }
 // Stage::getInstance()->shader->use();
 // 		((SupercellSWF*)ResourceManager::Resources[0].second)->textures[2].GLImag->bind();

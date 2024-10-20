@@ -4,8 +4,20 @@
 #include <flash/display_object/MovieClipOriginal.h>
 #include <flash/objects/SupercellSWF.h>
 #include <stdio.h>
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
 namespace fs = std::filesystem;
+
 std::vector<std::pair<char*, void*>> ResourceManager::Resources = std::vector<std::pair<char*, void*>>();
+fs::path ResourceManager::rootPath = fs::path("");
+// ResourceManager::rootPath = fs::path;
+void ResourceManager::init() {
+    char filename[255];
+    GetModuleFileNameA(NULL, filename, 255);
+    rootPath = fs::path(filename).parent_path();
+}
+
 MovieClip* ResourceManager::getMovieClip(char* file, char* name) {
     printf("getting %s", name);
     sc::flash::SupercellSWF* swf = getSupercellSWF(file, name);
@@ -25,7 +37,7 @@ MovieClip* ResourceManager::getMovieClip(char* file, char* name) {
 }
 void ResourceManager::addFile(char* file) {
     sc::flash::SupercellSWF* swf = new sc::flash::SupercellSWF();;
-    swf->load(fs::absolute(fs::path("assets") / file));
+    swf->load(fs::absolute(rootPath / fs::path("assets") / file));
     printf("%s loaded:\nShapes Count:%d\ntextures Count:%d\nmovieclips Count:%d\ntextfields Count:%d\n", file, swf->shapes.size(), swf->textures.size(), swf->movieclips.size(), swf->textfields.size());
     Resources.push_back(std::pair<char*, void*>(file, swf));
 }

@@ -17,5 +17,5 @@ public:
     void addChild(DisplayObject* child);
     void addChildAt(DisplayObject* child, short);
     void removeChildAt(short);
-    bool render(Matrix2x3*, ColorTransform* c, float);
+    bool render(Matrix2x3*, ColorTransform* c, int,float);
 };

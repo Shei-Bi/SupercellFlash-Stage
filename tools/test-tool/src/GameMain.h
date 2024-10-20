@@ -1,4 +1,5 @@
 #pragma once
+#include <flash/Sprite.h>
 
 class GameMain
 {
@@ -11,4 +12,6 @@ public:
     void update(float, float);
     void draw(float);
     float deltaTime;
+    Sprite* screenSprite;
+    Sprite* loadingScreenSprite;
 };
