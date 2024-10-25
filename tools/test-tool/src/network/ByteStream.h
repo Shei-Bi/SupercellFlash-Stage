@@ -24,6 +24,7 @@ public:
     bool readBoolean();
     short readShort();
     int readInt();
+    long long readLongLong();
     int readVInt();
     void readBytes(char* output, int length);
     char* readBytes(int length, int maxCapacity);

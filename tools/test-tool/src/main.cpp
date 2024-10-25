@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
 	GameMain::getInstance()->init();
 	// ResourceManager::addFile("sc/ui_new.sc");
 	ResourceManager::addFile("sc/loading.sc");
-
+	ResourceManager::loadNextResource();
 
 	glfwMaximizeWindow(window);
 	int width;

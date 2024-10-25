@@ -21,9 +21,13 @@ bool Shape::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) {
     for (sc::flash::ShapeDrawBitmapCommand command : *commands) {
         if (Stage->shapeStart(command.GLImage, rc)) {
             int triangleCount = command.vertices.size() - 2;
-            Stage->addTriangles(triangleCount);
             sc::flash::SWFVector<float>* v = &Stage->currentBucket->vertices;
             int required = v->size() + command.vertices.size() * 11;
+            if (required > 65535) {
+                printf("Stage vertex overflow, required:%d", required);
+                return true;
+            }
+            Stage->addTriangles(triangleCount);
             if (v->capacity() < required) v->reserve(v->capacity() + 512 * 11 * 3);
             for (int i = 0;i < command.vertices.size();i++) {
                 sc::flash::ShapeDrawBitmapCommandVertex vertex = command.vertices[i];

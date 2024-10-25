@@ -1,5 +1,7 @@
 #pragma once
 #include <GameState.h>
+#include <logic/LogicClientHome.hpp>
+#include <logic/LogicClientAvatar.hpp>
 
 class GameStateManager
 {
@@ -21,10 +23,17 @@ public:
     void init();
     void update(float, float);
     void draw(float);
+    bool isChangingMode();
+    bool hasGameData();
+    void setGameData(LogicClientHome*, LogicClientAvatar*);
+
     // void createState(StateId);
     GameState* loadingScreen;
     GameState* currentState;
     StateId currentStateId;
     StateId pendingStateId;
     float intervalTime;
+    LogicClientHome* home;
+    LogicClientAvatar* avatar;
+    int gameDataLoaded;
 };

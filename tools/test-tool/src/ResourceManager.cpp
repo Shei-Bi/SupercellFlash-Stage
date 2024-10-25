@@ -10,6 +10,7 @@
 namespace fs = std::filesystem;
 
 std::vector<std::pair<char*, void*>> ResourceManager::Resources = std::vector<std::pair<char*, void*>>();
+std::set<char*> ResourceManager::ResourcesToLoad = std::set<char*>();
 fs::path ResourceManager::rootPath = fs::path("");
 // ResourceManager::rootPath = fs::path;
 void ResourceManager::init() {
@@ -36,10 +37,23 @@ MovieClip* ResourceManager::getMovieClip(char* file, char* name) {
     return MovieClip::createMovieClip(movieClip, swf);
 }
 void ResourceManager::addFile(char* file) {
+    ResourcesToLoad.insert(file);
+    // sc::flash::SupercellSWF* swf = new sc::flash::SupercellSWF();;
+    // swf->load(fs::absolute(rootPath / fs::path("assets") / file));
+    // printf("%s loaded:\nShapes Count:%d\ntextures Count:%d\nmovieclips Count:%d\ntextfields Count:%d\n", file, swf->shapes.size(), swf->textures.size(), swf->movieclips.size(), swf->textfields.size());
+    // Resources.push_back(std::pair<char*, void*>(file, swf));
+}
+void ResourceManager::loadNextResource() {
+    if (ResourcesToLoad.size() == 0) return;
+    char* file = *ResourcesToLoad.begin();
+    ResourcesToLoad.erase(file);
     sc::flash::SupercellSWF* swf = new sc::flash::SupercellSWF();;
     swf->load(fs::absolute(rootPath / fs::path("assets") / file));
     printf("%s loaded:\nShapes Count:%d\ntextures Count:%d\nmovieclips Count:%d\ntextfields Count:%d\n", file, swf->shapes.size(), swf->textures.size(), swf->movieclips.size(), swf->textfields.size());
     Resources.push_back(std::pair<char*, void*>(file, swf));
+}
+bool ResourceManager::resourceToLoad() {
+    return ResourcesToLoad.size() != 0;
 }
 sc::flash::SupercellSWF* ResourceManager::getSupercellSWF(char* name, char* needby) {
     for (std::pair<char*, void*> p : Resources) {

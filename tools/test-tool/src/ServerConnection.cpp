@@ -3,6 +3,9 @@
 #include <network/ClientHelloMessage.h>
 #include <network/LoginMessage.h>
 #include <LogicLong.hpp>
+#include <GameStateManager.h>
+#include <LogicDataTables.h>
+#include <MessageManager.h>
 
 ServerConnection* ServerConnection::sm_pInstance = nullptr;
 ServerConnection* ServerConnection::getInstance() {
@@ -13,6 +16,8 @@ ServerConnection::ServerConnection() {
     WSAStartup(MAKEWORD(2, 2), &wsaData);
     messaging = new Messaging();
     state = Start;
+
+    MessageManager::constructInstance(messaging);
 }
 void ServerConnection::constructInstance()
 {
@@ -51,5 +56,16 @@ void ServerConnection::update(float deltaTime) {
             l->token = new std::string("adx49wypcz7r3mjahk7ejgsrrhpbwknzdwb9rtw4");
             messaging->pendingLoginMessage = l;
         }
+        break;
+    case Connected:
+    case Logining:
+    case Logined:
+        if (!GameStateManager::getInstance()->isChangingMode() && LogicDataTables::isLoaded()) {
+            PiranhaMessage* m;
+            while ((m = messaging->nextMessage(), m != nullptr)) {
+                if (MessageManager::getInstance()->receiveMessage(m)) delete m;
+            }
+        }
+        break;
     }
 }

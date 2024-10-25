@@ -45,3 +45,6 @@ void DisplayObject::setScaleY(float s) {
 void DisplayObject::setBlendMode(int b) {
     renderConfig = renderConfig & 0xFFFFFC7F | (((b >> 7) & 7) << 7);
 }
+void DisplayObject::setAlpha(float a) {
+    colorTransform.alpha = a * 255.0f;
+}

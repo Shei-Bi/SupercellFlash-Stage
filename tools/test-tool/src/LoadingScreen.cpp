@@ -34,6 +34,7 @@ void LoadingScreen::setAlpha(float a) {
 }
 void LoadingScreen::updateLoadingProgress(float deltaTime) {
     if (loading_screen) {
+        loading_screen->setAlpha(alpha);
         GameStateManager* GameStateManager = GameStateManager::getInstance();
         if (GameStateManager->currentState) {
             float progress = fmax(0.0, fmin(1.0, GameStateManager->currentState->getLoadingProgress()));

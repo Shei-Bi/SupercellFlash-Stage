@@ -26,6 +26,8 @@ public:
     bool readBlocking(void*, int);
     void close();
     void sendPepperLogin(ServerHelloMessage*);
+    void handlePepperLoginResponse(PiranhaMessage*);
+    PiranhaMessage* nextMessage();
 
     bool connected;
     bool hasConnectFailed;
@@ -46,7 +48,8 @@ public:
     int bufferSize;
 
     int cryptoState;
-    PepperEncrypter* crypto;
+    PepperEncrypter* encrypter;
+    PepperEncrypter* decrypter;
 
     unsigned char encryptNonce[24];
     unsigned char decryptNonce[24];

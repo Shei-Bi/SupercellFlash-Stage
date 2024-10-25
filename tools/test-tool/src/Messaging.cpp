@@ -97,6 +97,8 @@ Messaging::Messaging() {
     buffer = nullptr;
     bufferSize = 0;
     cryptoState = 0;
+    encrypter = nullptr;
+    decrypter = nullptr;
 }
 void Messaging::connectToNextPort() {
     struct addrinfo* result = NULL, hints;
@@ -184,6 +186,14 @@ void Messaging::onDisconnect() {
 void Messaging::onConnectionFailed() {
     hasConnectFailed = true;
 }
+PiranhaMessage* Messaging::nextMessage() {
+    if (incomingMessages.size() == 0) return nullptr;
+    incomingMessagesMutex.lock();
+    PiranhaMessage* m = incomingMessages.front();
+    incomingMessages.pop();
+    incomingMessagesMutex.unlock();
+    return m;
+}
 void Messaging::onWakeup() {
     while (outgoingMessages.size() > 0) {
         outgoingMessagesMutex.lock();
@@ -200,7 +210,7 @@ void Messaging::onWakeup() {
         memcpy(buffer + 7, m->getByteStream()->getByteArray(), m->getEncodingLength());
         writeHeader(m, buffer, m->getEncodingLength());
         writeBlocking(buffer, EncodingLength);
-        m->~PiranhaMessage();
+        delete(m);
     }
 }
 void Messaging::writeBlocking(void* buf, int length) {
@@ -235,14 +245,21 @@ void Messaging::onReceive() {
     if (!readBlocking(rest, length)) {
         return;
     }
+    if (decrypter != nullptr) {
+        if (decrypter->decrypt(rest, rest, length)) abort();
+        length -= decrypter->getEncryptionOverhead();
+    }
     if (!m) {
-        delete(rest);
+        delete[] rest;
         printf("Ignoring message of unknown type %d\n", type);
         return;
     }
     printf("receive message of type %d\n", type);
     m->setMessageVersion(version);
     m->getByteStream()->setByteArray(rest, length);
+    if (cryptoState == 2) {
+        handlePepperLoginResponse(m);
+    }
     m->decode();
     if (type == 20100) {
         sendPepperLogin((ServerHelloMessage*)m);
@@ -258,6 +275,16 @@ void box(unsigned char* in, int insize, unsigned char* out, unsigned char* nonce
     memcpy(gCryptoScratch + 32, in, insize);
     crypto_box_curve25519xsalsa20poly1305_tweet(gCryptoScratch, gCryptoScratch, insize + 32, nonce, spk, csk);
     memcpy(out, gCryptoScratch + 16, insize + 16);
+}
+bool box_open(unsigned char* in, int insize, unsigned char* out, unsigned char* nonce, unsigned char* spk, unsigned char* csk) {
+    unsigned char* gCryptoScratch = new unsigned char[insize + 16];
+    memset(gCryptoScratch, 0, 16);
+    memcpy(gCryptoScratch + 16, in, insize);
+    int result = crypto_box_curve25519xsalsa20poly1305_tweet_open(gCryptoScratch, gCryptoScratch, insize + 16, nonce, spk, csk);
+    if (!result) {
+        memcpy(out, gCryptoScratch + 32, insize - 16);
+    }
+    return result;
 }
 void Messaging::sendPepperLogin(ServerHelloMessage* m) {
     cryptoState = 2;
@@ -282,29 +309,46 @@ void Messaging::sendPepperLogin(ServerHelloMessage* m) {
 
     box(unciphered, len, ciphered + 32, nonce, spk, csk);
 
-    // printf("ciphered:\n");
-    logChars(ciphered, 32);
     memcpy(ciphered, cpk, 32);
     pendingLoginMessage->getByteStream()->setByteArray((char*)ciphered, 32 + len + 16);
     pendingLoginMessage->getByteStream()->setOffset(32 + len + 16);
     send(pendingLoginMessage);
 
-    // printf("nonce:\n");
-    // logChars(nonce, 24);
-    // printf("cpk:\n");
-    // logChars(cpk, 32);
-    // printf("csk:\n");
-    // logChars(csk, 32);
-    // printf("spk:\n");
-    // logChars(spk, 32);
-    // printf("ServerHelloToken:\n");
-    // logChars(ServerHelloToken, 24);
-    // printf("encryptNonce:\n");
-    // logChars(encryptNonce, 24);
-    // printf("uncipered:\n");
-    // logChars(unciphered, len);
-    // printf("pendingLoginMessage:\n");
-    // logChars(ciphered, 32 + len + 16);
+    delete[] unciphered;
+    delete[] ServerHelloToken;
+    // delete pendingLoginMessage; //deleted by onWakeup
+    pendingLoginMessage = nullptr;
+}
+void Messaging::handlePepperLoginResponse(PiranhaMessage* m) {
+    unsigned char nonce[24];
+    blake2b_state hash;
+    blake2b_init(&hash, 24);
+    blake2b_update(&hash, encryptNonce, 24);
+    blake2b_update(&hash, cpk, 32);
+    blake2b_update(&hash, spk, 32);
+    blake2b_final(&hash, nonce, 24);
+
+    int len = m->getByteStream()->getLength() - 16;
+    unsigned char* unciphered = new unsigned char[len];
+
+    if (box_open((unsigned char*)m->getByteStream()->getByteArray(), len + 16, unciphered, nonce, spk, csk)) {
+        abort();
+    }
+
+    memcpy(decryptNonce, unciphered, 24);
+    unsigned char sharedKey[32];
+    memcpy(sharedKey, unciphered + 24, 32);
+
+    unsigned char* payload = new unsigned char[len - 56];
+    memcpy(payload, unciphered + 56, len - 56);
+    m->getByteStream()->setByteArray((char*)payload, len - 56);
+
+    decrypter = new PepperEncrypter(sharedKey, decryptNonce);
+    encrypter = new PepperEncrypter(sharedKey, encryptNonce);
+
+    cryptoState = 3;
+
+    delete[] unciphered;
 }
 bool Messaging::readBlocking(void* buf, int length) {
     if (length == 0) return true;

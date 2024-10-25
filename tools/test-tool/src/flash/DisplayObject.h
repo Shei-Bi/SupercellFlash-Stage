@@ -28,4 +28,5 @@ public:
     void setScaleY(float);
     virtual bool render(Matrix2x3*, ColorTransform*, int, float);
     void setBlendMode(int);
+    void setAlpha(float);
 };

@@ -90,7 +90,7 @@ short ByteStream::readShort() {
         return 0;
     }
 
-    short retval = (short)((this->buffer[this->offset] << 8) |
+    short retval = (short)((unsigned char)(this->buffer[this->offset] << 8) |
         this->buffer[this->offset + 1] & 0xFF);
     this->offset += 2;
     return retval;
@@ -102,12 +102,17 @@ int ByteStream::readInt() {
         return 0;
     }
 
-    int retval = (this->buffer[this->offset] << 24) |
-        (this->buffer[this->offset + 1] << 16) |
-        (this->buffer[this->offset + 2] << 8) |
+    int retval = ((unsigned char)this->buffer[this->offset] << 24) |
+        ((unsigned char)this->buffer[this->offset + 1] << 16) |
+        ((unsigned char)this->buffer[this->offset + 2] << 8) |
         this->buffer[this->offset + 3] & 0xFF;
     this->offset += 4;
     return retval;
+}
+
+long long ByteStream::readLongLong() {
+    int high = readInt();
+    return LogicLong::toLong(high, readInt());
 }
 
 int ByteStream::readVInt() {
