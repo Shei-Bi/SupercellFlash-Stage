@@ -16,6 +16,7 @@ GameStateManager::GameStateManager() {
     gameDataLoaded = -1;
     home = nullptr;
     avatar = nullptr;
+    intervalTime = 0.0f;
 }
 void GameStateManager::constructInstance()
 {
@@ -55,24 +56,47 @@ void GameStateManager::update(float sinceStart, float deltaTime) {
             currentState->update(sinceStart, deltaTime);
         }
         else {
-            currentState->updateLoading(deltaTime);
+            if (intervalTime >= 0.99f)
+                currentState->updateLoading(deltaTime);
             if (currentState->isLoaded()) {
                 currentState->update(sinceStart, 0.0f);
             }
         }
     }
+    float clampedTime = fminf(deltaTime, 0.1f);
     if (currentState && (!currentState->isLoaded() || !currentState->isInited()) || pendingStateId) {
-        if (!loadingScreen) {
-            loadingScreen = createState(Loading);
-            loadingScreen->enter();
+        intervalTime += clampedTime * 1.6667f;
+        if (intervalTime > 1.0f) {
+            intervalTime = 1.0f;
+            if (!loadingScreen) goto LABEL_39;
+            goto LABEL_32;
         }
     }
     else {
-        loadingScreen->setAlpha(0.0);
-        return;
+        intervalTime -= clampedTime * 1.6667f;
+        if (intervalTime < 0.0f) {
+            intervalTime = 0.0f;
+            if (loadingScreen) {
+            LABEL_34:
+                loadingScreen->exit();
+                delete loadingScreen;
+                loadingScreen = nullptr;
+            }
+            return;
+        }
+    }
+    if (intervalTime > 0.0f && !loadingScreen) {
+    LABEL_39:
+        loadingScreen = createState(Loading);
+        loadingScreen->enter();
+        intervalTime = 0.01f;
+    }
+LABEL_32:
+    if (intervalTime < 0.01f) {
+        if (loadingScreen) goto LABEL_34;
     }
     if (loadingScreen) {
-        loadingScreen->setAlpha(1.0);
+        loadingScreen->setAlpha(intervalTime);
         loadingScreen->update(sinceStart, deltaTime);
     }
 }

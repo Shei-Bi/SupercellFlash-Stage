@@ -7,6 +7,8 @@ using Matrix2x3 = sc::flash::Matrix2x3;
 using ColorTransform = sc::flash::ColorTransform;
 using Rect = sc::RectF;
 
+class Sprite;
+
 class DisplayObject
 {
 public:
@@ -14,6 +16,9 @@ public:
     bool visible;
     Matrix2x3 Matrix;
     int renderConfig;
+    Sprite* parent;
+    int indexInParent;
+
 public:
     DisplayObject(/* args */);
     ~DisplayObject();
@@ -29,4 +34,6 @@ public:
     virtual bool render(Matrix2x3*, ColorTransform*, int, float);
     void setBlendMode(int);
     void setAlpha(float);
+    float getWidth();
+    float getHeight();
 };

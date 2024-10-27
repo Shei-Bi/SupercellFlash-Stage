@@ -4,6 +4,10 @@
 #include <core/io/file_stream.h>
 #include <compression/compression.h>
 
+#include "core/time/timer.h"
+#include <stdio.h>
+#include <core/crypto/md5.h>
+
 #include "SWFString.hpp"
 
 namespace sc
@@ -23,9 +27,11 @@ namespace sc
 			void open_file(const std::filesystem::path& path)
 			{
 				clear();
+				// sc::Timer operation_timer;
 
 				InputFileStream file(path);
 				Decompressor::decompress(file, *this);
+				// printf("Decompressing SC %s took %d ms\n", path.filename().string().c_str(), (int)operation_timer.elapsed());
 
 				seek(0);
 			}
@@ -33,6 +39,26 @@ namespace sc
 			void save_file(const std::filesystem::path& path, Signature signature)
 			{
 				OutputFileStream file(path);
+				if (static_cast<int>(signature) == -1) {
+					seek(0);
+					file.write_unsigned_short(SC_MAGIC);
+					file.write_int(2, Endian::Big);
+					// hash MD5
+					{
+						MD5::md5 md_ctx;
+						std::uint8_t hash[MD5::HASH_LENGTH];
+
+						md_ctx.update((std::uint8_t*)data(), length());
+
+						md_ctx.final(hash);
+
+						file.write_unsigned_int((uint32_t)MD5::HASH_LENGTH, Endian::Big);
+						file.write(&hash, MD5::HASH_LENGTH);
+					}
+					file.write(data(), length());
+					clear();
+					return;
+				}
 
 				Compressor::Context context;
 				context.signature = signature;

@@ -55,7 +55,7 @@ void MovieClip::setFrame(int index) {
         if (element->colorTransform_index != 65535) child->colorTransform = matrixBank->color_transforms[element->colorTransform_index];
         addChildAt(child, childIndex++);
     }
-    for (int i = size - 1;i >= childIndex;i--) removeChildAt(i);
+    for (int i = size - 1;i >= childIndex;i--) Sprite::removeChildAt(i);
 }
 bool MovieClip::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) {
     if (deltaTime <= 0.0) goto skip;
@@ -129,4 +129,17 @@ void MovieClip::gotoAndPlayFrameIndex(int index, int loopFrame) {
             frameTime = 0.0f;
         }
     }
+}
+void MovieClip::removeChildAt(short index) {
+    for (int i = 0;i < timelineChildrenCount;i++) {
+        if (timelineChildren[i] == children[index]) timelineChildren[i] = nullptr;
+    }
+    Sprite::removeChildAt(index);
+}
+MovieClip::~MovieClip() {
+    for (int i = 0;i < timelineChildrenCount;i++) {
+        if (timelineChildren[i]) delete timelineChildren[i];
+    }
+    if (timelineChildren) delete[] timelineChildren;
+    timelineChildren = nullptr;
 }

@@ -115,6 +115,7 @@ namespace sc
 				if (tag_length < 0)
 					throw Exception("Negative tag length");
 
+				// sc::Timer operation_timer;
 				switch (tag)
 				{
 				case TAG_USE_MULTI_RES_TEXTURE:
@@ -147,8 +148,8 @@ namespace sc
 					if (textures.size() < textures_loaded) {
 						throw Exception("Trying to load too many textures");
 					}
-
 					textures[textures_loaded].load(*this, tag, !has_external_texture);
+					// printf("loading texure #%d from SC %s took %d ms\n", textures_loaded, current_file.stem().string().c_str(), (int)operation_timer.elapsed());
 					textures_loaded++;
 					break;
 

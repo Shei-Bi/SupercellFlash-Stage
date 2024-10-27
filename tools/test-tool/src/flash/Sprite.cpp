@@ -34,16 +34,22 @@ void Sprite::addChildAt(DisplayObject* child, short index) {
     if (index < size) {
         for (int i = size;i > index;i--) {
             children[i] = children[i - 1];
+            children[i]->indexInParent = i;
         }
     }
     children[index] = child;
+    child->parent = this;
+    child->indexInParent = index;
     size++;
 }
 void Sprite::removeChildAt(short index) {
+    children[index]->parent = nullptr;
+    children[index]->indexInParent = -1;
     size--;
     if (index < size) {
         for (int i = index;i < size;i++) {
             children[i] = children[i + 1];
+            children[i]->indexInParent = i;
         }
     }
     children[size] = nullptr;
@@ -60,6 +66,7 @@ Sprite::Sprite(/* args */)
 {
 }
 
-Sprite::~Sprite()
-{
+Sprite::~Sprite() {
+    if (children) delete[] children;
+    children = nullptr;
 }

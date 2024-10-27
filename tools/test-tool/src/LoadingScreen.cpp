@@ -53,3 +53,7 @@ void LoadingScreen::showOnlyLocalizedLogo(char* languageCode, MovieClip* movieCl
     if (logo_CNT) logo_CNT->visible = false;
     if (logo_CNS) logo_CNS->visible = false;
 }
+void LoadingScreen::exit() {
+    if (loading_screen) delete loading_screen;
+    loading_screen = nullptr;
+}

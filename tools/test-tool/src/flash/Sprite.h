@@ -16,6 +16,6 @@ public:
     void allocateMemory(short capacity);
     void addChild(DisplayObject* child);
     void addChildAt(DisplayObject* child, short);
-    void removeChildAt(short);
-    bool render(Matrix2x3*, ColorTransform* c, int,float);
+    virtual void removeChildAt(short);
+    bool render(Matrix2x3*, ColorTransform* c, int, float);
 };

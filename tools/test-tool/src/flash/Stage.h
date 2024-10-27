@@ -24,7 +24,7 @@ public:
     void render(float deltaTime, bool clear);
     void renderBuckets();
     void resetRenderVariables();
-    bool shapeStart(GLImage* texture, int renderConfig);
+    bool shapeStart(float, float, float, float, GLImage* texture, int renderConfig);
     void addTriangles(int count);
     void addChild(DisplayObject* child);
     int left;
@@ -44,4 +44,8 @@ public:
     float matrixY;
     bool bindBlendMode(int);
     void setBackgroundColor(int);
+    bool isCalculatingBounds;
+    Rect* currentBounds;
+    void calculateDisplayObjectBounds(DisplayObject*, const Sprite*, Rect*);
+    static void updateBound(Rect* r, float x, float y);
 };

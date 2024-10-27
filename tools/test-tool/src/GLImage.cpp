@@ -41,10 +41,27 @@ void GLImage::createWithFormat(sc::flash::SWFTexture texture) {
         format = GL_LUMINANCE;
         break;
     }
-    printf("width: %d\nheight: %d\n(uint8_t)texture.pixel_format(): %d\n", texture.image()->width(), texture.image()->height(), (uint8_t)texture.pixel_format());
+    // printf("width: %d\nheight: %d\n(uint8_t)texture.pixel_format(): %d\n", texture.image()->width(), texture.image()->height(), (uint8_t)texture.pixel_format());
 
     glTexImage2D(GL_TEXTURE_2D, 0, format, texture.image()->width(), texture.image()->height(), 0, format, pixelType, texture.image()->data());
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+    if (glGetError() == GL_INVALID_ENUM && (format == GL_LUMINANCE_ALPHA || format == GL_LUMINANCE)) {
+        int swizzleMask[4] = { GL_RED,GL_RED,GL_RED,GL_GREEN };
+        switch (format) {
+        case GL_LUMINANCE_ALPHA:
+            format = GL_RG;
+            break;
+        case GL_LUMINANCE:
+            format = GL_RED;
+            swizzleMask[3] = 1;
+            break;
+        }
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture.image()->width(), texture.image()->height(), 0, format, pixelType, texture.image()->data());
+        if (glGetError() == GL_NO_ERROR) glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
+
+    }
+    // glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     glGenerateMipmap(GL_TEXTURE_2D);
     unbind();
 }

@@ -1,13 +1,18 @@
 #pragma once
 #include <flash/DisplayObject.h>
+#include <flash/Sprite.h>
+#include <flash/Stage.h>
+
 DisplayObject::DisplayObject(/* args */)
 {
     visible = true;
     renderConfig = 0;
+    parent = nullptr;
+    indexInParent = -1;
 }
 
-DisplayObject::~DisplayObject()
-{
+DisplayObject::~DisplayObject() {
+    if (parent) parent->removeChildAt(indexInParent);
 }
 bool DisplayObject::render(Matrix2x3* mat, ColorTransform* c, int, float deltaTime) {
     return true;
@@ -47,4 +52,18 @@ void DisplayObject::setBlendMode(int b) {
 }
 void DisplayObject::setAlpha(float a) {
     colorTransform.alpha = a * 255.0f;
+}
+float DisplayObject::getWidth() {
+    Rect rect;
+    bool visible = this->visible;
+    Stage::getInstance()->calculateDisplayObjectBounds(this, nullptr, &rect);
+    this->visible = visible;
+    return rect.width;
+}
+float DisplayObject::getHeight() {
+    Rect rect;
+    bool visible = this->visible;
+    Stage::getInstance()->calculateDisplayObjectBounds(this, nullptr, &rect);
+    this->visible = visible;
+    return rect.height;
 }

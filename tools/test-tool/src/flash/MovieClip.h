@@ -30,6 +30,7 @@ public:
     MovieClip::MovieClip() :Sprite(-1) {
         ;
     }
+    MovieClip::~MovieClip();
     void setFrame(int);
     bool render(Matrix2x3*, ColorTransform* c, int, float);
     MovieClip* getMovieClipByName(char*);
@@ -38,4 +39,5 @@ public:
     int getTotalFrames();
     void gotoAndStopFrameIndex(int);
     void gotoAndPlayFrameIndex(int, int);
+    void removeChildAt(short);
 };

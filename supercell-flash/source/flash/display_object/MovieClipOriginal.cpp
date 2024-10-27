@@ -226,16 +226,17 @@ namespace sc
 				displayObjects = new DisplayObjectOriginal * [s];
 				for (int i = 0;i < s;i++) {
 					displayObjects[i] = &swf->getOriginalDisplayObject(instances[i].id, nullptr);
-					char* name;
+					// char* name;
 					if (displayObjects[i]->is_modifier())
-						name = "MovieClipModifier";
-					if (displayObjects[i]->is_movieclip())
-						name = "MovieClip";
-					if (displayObjects[i]->is_shape())
-						name = "Shape";
-					if (displayObjects[i]->is_textfield())
-						name = "TextField";
-					printf("%s fetched: %s\n", name, instances[i].name.data());
+						printf("movieclipmodifier unsupported\n");
+
+					// if (displayObjects[i]->is_movieclip())
+					// 	name = "MovieClip";
+					// if (displayObjects[i]->is_shape())
+					// 	name = "Shape";
+					// if (displayObjects[i]->is_textfield())
+					// 	name = "TextField";
+					// printf("%s fetched: %s\n", name, instances[i].name.data());
 				}
 				for (int i = 0;i < frames.size();i++) {
 					// printf("frame name: %s index: %d\n", frames[i].label.data(), i);

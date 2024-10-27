@@ -9,6 +9,7 @@ public:
     // LoadingScreen();
     void update(float, float);
     void enter();
+    void exit();
     MovieClip* loading_screen;
     MovieClip* progress_bar;
     TextField* text;

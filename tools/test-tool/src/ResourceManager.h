@@ -7,6 +7,7 @@ class ResourceManager
 {
 public:
     static std::filesystem::path rootPath;
+    static std::filesystem::path cachePath;
     static std::vector<std::pair<char*, void*>> Resources;
     static std::set<char*> ResourcesToLoad;
     static void init();

@@ -18,8 +18,13 @@ bool Shape::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) {
     n->multiply(mat);
     ColorTransform* cT = new ColorTransform(colorTransform);
     cT->multiplyy(c);
+    Rect* bounds = new Rect();
     for (sc::flash::ShapeDrawBitmapCommand command : *commands) {
-        if (Stage->shapeStart(command.GLImage, rc)) {
+        for (int i = 0;i < command.vertices.size();i++) {
+            sc::flash::ShapeDrawBitmapCommandVertex* vertex = &command.vertices[i];
+            Stage::updateBound(bounds, n->applyX(vertex->x, vertex->y), n->applyY(vertex->x, vertex->y));
+        }
+        if (Stage->shapeStart(bounds->x, bounds->y, bounds->x + bounds->width, bounds->y + bounds->height, command.GLImage, rc)) {
             int triangleCount = command.vertices.size() - 2;
             sc::flash::SWFVector<float>* v = &Stage->currentBucket->vertices;
             int required = v->size() + command.vertices.size() * 11;
