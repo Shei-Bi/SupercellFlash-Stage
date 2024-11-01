@@ -47,6 +47,12 @@ void DisplayObject::setScaleX(float s) {
 void DisplayObject::setScaleY(float s) {
     Matrix.d = s;
 }
+float DisplayObject::getScaleX() {
+    return Matrix.a;
+}
+float DisplayObject::getScaleY() {
+    return Matrix.d;
+}
 void DisplayObject::setBlendMode(int b) {
     renderConfig = renderConfig & 0xFFFFFC7F | (((b >> 7) & 7) << 7);
 }

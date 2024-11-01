@@ -26,13 +26,13 @@ void ResourceManager::init() {
 }
 
 MovieClip* ResourceManager::getMovieClip(char* file, char* name) {
-    printf("getting %s", name);
+    // printf("getting %s", name);
     sc::flash::SupercellSWF* swf = getSupercellSWF(file, name);
     sc::flash::MovieClipOriginal* movieClip;
     {
         for (sc::flash::ExportName& export_name : swf->exports) {
             if (export_name.name == name) {
-                printf("found\n");
+                // printf("found\n");
                 movieClip = &swf->getOriginalMovieClip(export_name.id, nullptr);
                 goto find;
             }

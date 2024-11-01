@@ -40,4 +40,11 @@ public:
     void gotoAndStopFrameIndex(int);
     void gotoAndPlayFrameIndex(int, int);
     void removeChildAt(short);
+    void stop(void);
+
+    void initScreenContainers(char*, std::vector<MovieClip*>&);
+    MovieClip* createScreenContainer(char*, int);
+    MovieClip* getMovieClipRecursive(char*);
+
+    virtual bool isMovieClip() const;
 };

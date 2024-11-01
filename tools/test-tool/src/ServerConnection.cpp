@@ -6,6 +6,8 @@
 #include <GameStateManager.h>
 #include <LogicDataTables.h>
 #include <MessageManager.h>
+#include <LogicVersion.h>
+#include <network/OwnHomeDataMessage.hpp>
 
 ServerConnection* ServerConnection::sm_pInstance = nullptr;
 ServerConnection* ServerConnection::getInstance() {
@@ -31,6 +33,11 @@ void ServerConnection::connect() {
 void ServerConnection::update(float deltaTime) {
     switch (state) {
     case Start:
+        if (LogicVersion::isContentValidationMode()) {
+            state = Logined;
+            MessageManager::getInstance()->receiveMessage(new OwnHomeDataMessage());
+            return;
+        }
         connect();
         break;
     case Connecting:

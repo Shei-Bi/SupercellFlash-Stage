@@ -6,6 +6,8 @@
 #include <flash/objects/SupercellSWF.h>
 #include <flash/Shape9Slice.h>
 #include <flash/TextField.h>
+#include <ResourceManager.h>
+#include <flash/Stage.h>
 
 int BLEND_MODE_MAP[] = { 0, 0, 0, 0x100, 0x180, 0, 0, 0, 0x80, 0, 0, 0, 0x200, 0, 0, 0x200 };
 MovieClip* MovieClip::createMovieClip(sc::flash::MovieClipOriginal* movieClipOriginal, sc::flash::SupercellSWF* swf) {
@@ -130,11 +132,97 @@ void MovieClip::gotoAndPlayFrameIndex(int index, int loopFrame) {
         }
     }
 }
+void MovieClip::stop() {
+    if (state != STOPPED) {
+        state = STOPPED;
+        frameTime = 0.0f;
+    }
+}
 void MovieClip::removeChildAt(short index) {
     for (int i = 0;i < timelineChildrenCount;i++) {
         if (timelineChildren[i] == children[index]) timelineChildren[i] = nullptr;
     }
     Sprite::removeChildAt(index);
+}
+MovieClip* MovieClip::createScreenContainer(char* name, int index) {
+    std::string s("");
+    float x = Stage::getInstance()->matrixX;
+    float y = Stage::getInstance()->matrixY;
+    switch (index) {
+    case 0:
+        s = "bg";
+        x *= 0.5f;
+        y *= 0.5f;
+        break;
+    case 1:
+        s = "center";
+        x *= 0.5f;
+        y *= 0.5f;
+        break;
+    case 2:
+        s = "hud_top";
+        x *= 0.5f;
+        y = 0.0f;
+        break;
+    case 3:
+        s = "hud_bottom";
+        x *= 0.5f;
+        break;
+    case 4:
+        s = "hud_bottom_right";
+        break;
+    case 5:
+        s = "hud_left";
+        y *= 0.5f;
+        break;
+    case 6:
+        s = "hud_right";
+        y *= 0.5f;
+        break;
+    case 7:
+        s = "hud_top_left";
+        y = 0.0f;
+        break;
+    case 8:
+        s = "hud_top_right";
+        y *= 0.5f;
+        break;
+    case 9:
+        s = "hud_bottom_left";
+        break;
+    }
+    sc::flash::SupercellSWF* supercellSWF = ResourceManager::getSupercellSWF("sc/ui.sc", nullptr);
+
+    MovieClip* c = nullptr;
+    if (supercellSWF->hasExportName((char*)(std::string(name) + s).c_str())) {
+        c = ResourceManager::getMovieClip("sc/ui.sc", (char*)(std::string(name) + s).c_str());
+        addChild(c);
+        c->setPixelSnappedXY(x, y);
+    }
+    return c;
+}
+void MovieClip::initScreenContainers(char* name, std::vector<MovieClip*>& vector) {
+    for (int i = 0;i < 10;i++) {
+        vector.push_back(createScreenContainer(name, i));
+    }
+}
+MovieClip* MovieClip::getMovieClipRecursive(char* name) {
+    DisplayObject* e = nullptr;
+    for (int i = 0;i < timelineChildrenCount;i++) {
+        e = timelineChildren[i];
+        if (e) {
+            if ((*instances)[i].name == name) break;
+            if (e->isMovieClip()) {
+                e = ((MovieClip*)e)->getMovieClipRecursive(name);
+                if (e) break;
+            }
+        }
+    }
+    if (e && e->isMovieClip()) return (MovieClip*)e;
+    return nullptr;
+}
+bool MovieClip::isMovieClip() const {
+    return true;
 }
 MovieClip::~MovieClip() {
     for (int i = 0;i < timelineChildrenCount;i++) {

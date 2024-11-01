@@ -60,6 +60,7 @@ namespace sc
 			uint16_t GetDisplayObjectID(SWFString& name);
 			DisplayObjectOriginal& getOriginalDisplayObject(uint16_t id, SWFString* exportNameForDebug);
 			MovieClipOriginal& getOriginalMovieClip(uint16_t id, SWFString* exportNameForDebug);
+			bool hasExportName(char* name);
 
 		public:
 			// Saves all textures to _tex.sc if true

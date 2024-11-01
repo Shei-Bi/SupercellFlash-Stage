@@ -499,5 +499,14 @@ namespace sc
 
 			throw new Exception("Unable to find MovieClip id %d from %s needed by export name %s", id, "ui.sc", (exportNameForDebug == nullptr ? "null" : exportNameForDebug->data()));
 		}
+
+		bool SupercellSWF::hasExportName(char* name) {
+			for (ExportName& export_name : exports) {
+				if (export_name.name == name) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }

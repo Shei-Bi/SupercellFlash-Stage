@@ -31,9 +31,16 @@ public:
     void setScale(float);
     void setScaleX(float);
     void setScaleY(float);
+    float getScaleX();
+    float getScaleY();
     virtual bool render(Matrix2x3*, ColorTransform*, int, float);
     void setBlendMode(int);
     void setAlpha(float);
     float getWidth();
     float getHeight();
+
+    virtual bool isShape() const { return false; };
+    virtual bool isMovieClip() const { return false; };
+    virtual bool isMovieClipModifier() const { return false; };
+    virtual bool isTextfield() const { return false; };
 };
