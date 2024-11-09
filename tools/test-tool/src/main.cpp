@@ -68,7 +68,9 @@ int main(int argc, char* argv[])
 	unsigned long long programStartTime = xTimer::getNativeTime();
 	GameMain::constructInstance();
 	GameMain::getInstance()->init();
-	// ResourceManager::addFile("sc/ui_new.sc");
+	// sc::flash::SupercellSWF swf;
+	// swf.load_internal("C:/Users/EDY/Pictures/sc background_basic.sc", false);
+	// ResourceManager::addFile("sc/ui.sc");
 	ResourceManager::addFile("sc/loading.sc");
 	ResourceManager::loadNextResource();
 

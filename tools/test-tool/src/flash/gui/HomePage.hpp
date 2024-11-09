@@ -21,20 +21,20 @@ public:
                 header_bgr->setScaleX(header_bgr->getScaleX() * scaled);
         }
 
-        panel_invite = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_invite"));
-        panel_invite_2 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_invite_2"));
-        panel_invite_3 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_invite_3"));
-        panel_invite_4 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_invite_4"));
-        screenContainers[1]->addChild(panel_invite);
-        screenContainers[1]->addChild(panel_invite_2);
-        screenContainers[1]->addChild(panel_invite_3);
-        screenContainers[1]->addChild(panel_invite_4);
-        panel_invite->visible = false;
-        panel_invite_2->visible = false;
-        panel_invite_3->visible = false;
-        panel_invite_4->visible = false;
+        // panel_invite = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_invite"));
+        // panel_invite_2 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_invite_2"));
+        // panel_invite_3 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_invite_3"));
+        // panel_invite_4 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_invite_4"));
+        // screenContainers[1]->addChild(panel_invite);
+        // screenContainers[1]->addChild(panel_invite_2);
+        // screenContainers[1]->addChild(panel_invite_3);
+        // screenContainers[1]->addChild(panel_invite_4);
+        // panel_invite->visible = false;
+        // panel_invite_2->visible = false;
+        // panel_invite_3->visible = false;
+        // panel_invite_4->visible = false;
 
-        getClipFromContainers("player_1_area")->stop();
+        // getClipFromContainers("player_1_area")->stop();
     }
 
     MovieClip* getClipFromContainers(char* name) {

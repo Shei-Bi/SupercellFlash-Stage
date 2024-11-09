@@ -195,6 +195,7 @@ namespace sc
 					MemoryStream khronos_texture_data((uint8_t*)swf.stream.data() + swf.stream.position(), khronos_texture_length);
 					load_from_khronos_texture(khronos_texture_data);
 					swf.stream.seek(khronos_texture_length, Stream::SeekMode::Add);
+					GLImag->createWithFormat((KhronosTexture1*)m_image.get());
 					return;
 				}
 				else

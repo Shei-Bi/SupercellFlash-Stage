@@ -30,6 +30,11 @@ namespace sc
 				// sc::Timer operation_timer;
 
 				InputFileStream file(path);
+				// int len = file.length() - file.position();
+				// std::uint8_t* rest = new std::uint8_t[len];
+				// file.read(rest, len);
+				// (*this).write(rest, len);
+				// delete[] rest;
 				Decompressor::decompress(file, *this);
 				// printf("Decompressing SC %s took %d ms\n", path.filename().string().c_str(), (int)operation_timer.elapsed());
 

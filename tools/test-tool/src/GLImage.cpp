@@ -65,3 +65,24 @@ void GLImage::createWithFormat(sc::flash::SWFTexture texture) {
     glGenerateMipmap(GL_TEXTURE_2D);
     unbind();
 }
+
+void GLImage::createWithFormat(sc::texture::KhronosTexture1* texture) {
+    glGenTextures(1, &id);
+    bind();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GLint format = (GLint)texture->format();
+    GLenum pixelType = (GLenum)texture->type();
+    // printf("width: %d\nheight: %d\n(uint8_t)texture.pixel_format(): %d\n", texture.image()->width(), texture.image()->height(), (uint8_t)texture.pixel_format());
+    if (pixelType == 0) {
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, (GLenum)texture->internal_format(), texture->width(), texture->height(), 0, texture->data_length(0), texture->data(0)->data());
+    }
+    else glTexImage2D(GL_TEXTURE_2D, 0, format, texture->width(), texture->height(), 0, format, pixelType, texture->data(0));
+    printf("Error loading ktx: %d\n", glGetError());
+    // glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    unbind();
+}
