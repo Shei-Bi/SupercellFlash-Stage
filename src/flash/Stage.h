@@ -1,0 +1,49 @@
+#pragma once
+#include <flash/StageDrawBucket.h>
+#include <flash/StageSprite.h>
+#include <flash/DisplayObject.h>
+#include <learnopengl_s.h>
+#include <glm/glm.hpp>
+
+class Stage
+{
+private:
+    /* data */
+public:
+    Stage();
+    static Stage* sm_pInstance;
+    static Stage* getInstance();
+    StageSprite* StageSprit;
+    StageDrawBucket* currentBucket;
+    StageDrawBucket** buckets;
+    int bucketCapacity;
+    int bucketsUsed;
+    static void constructInstance();
+    void render(float deltaTime, bool clear);
+    void renderBuckets();
+    void resetRenderVariables();
+    bool shapeStart(float, float, float, float, GLImage* texture, int renderConfig);
+    void addTriangles(int count);
+    void addChild(DisplayObject* child);
+    int left;
+    int top;
+    int right;
+    int bottom;
+    float pointSize;
+    void init(int, int, int, int);
+    void firstTimeShaderInit(Shader*, glm::mat4);
+    void loadDefaultShader(int);
+    Shader* shader;
+    void increaseBucketCapacity(int);
+    bool abort;
+    void setPointSize(float);
+    void updateStageSizeVariables();
+    float matrixX;
+    float matrixY;
+    bool bindBlendMode(int);
+    void setBackgroundColor(int);
+    bool isCalculatingBounds;
+    Rect* currentBounds;
+    void calculateDisplayObjectBounds(DisplayObject*, const Sprite*, Rect*);
+    static void updateBound(Rect* r, float x, float y);
+};

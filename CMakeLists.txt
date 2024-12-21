@@ -1,25 +1,17 @@
+# Project: 
 cmake_minimum_required(VERSION 3.22)
+project(laser)
 
-# workspace
-project(supercell-sdk)
+set(CMAKE_CXX_STANDARD 17)
 
-# options
-option(SC_FLASH_BUILD_TOOLS "Build tools of supercell::flash library" ON)
+# C++ headers and source files
+file(GLOB_RECURSE HEADERS src/*.h)
+file(GLOB_RECURSE SOURCES src/*.c src/*.cpp src/*.hpp)
 
-# includes
-include(FetchContent)
+set(CLI_TARGET laser_client)
 
-if(SC_FLASH_BUILD_TOOLS)
-    set(SC_CLI_DEPENDENCIES ON)
-	set(SC_SERIALIZATION_DEPENDENCIES ON)
-endif()
+add_executable(${CLI_TARGET} ${HEADERS} ${SOURCES})
 
-include(cmake/dependencies.cmake)
-
-# projects
-add_subdirectory(supercell-flash)
-
-if(SC_FLASH_BUILD_TOOLS)
-    add_subdirectory(tools/test-tool)
-    # add_subdirectory(tools/texture-tool)
-endif()
+target_include_directories(${CLI_TARGET} PUBLIC include src)
+target_link_directories(${CLI_TARGET} PUBLIC lib)
+target_link_libraries(${CLI_TARGET} PRIVATE glfw3 supercell-flash-test-tool)
