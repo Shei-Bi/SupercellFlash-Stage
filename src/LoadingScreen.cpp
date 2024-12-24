@@ -42,7 +42,7 @@ void LoadingScreen::updateLoadingProgress(float deltaTime) {
         }
     }
 }
-void LoadingScreen::showOnlyLocalizedLogo(char* languageCode, MovieClip* movieClip) {
+void LoadingScreen::showOnlyLocalizedLogo(const char* languageCode, MovieClip* movieClip) {
     MovieClip* logo_EN = movieClip->getMovieClipByName("logo_EN");
     MovieClip* logo_KR = movieClip->getMovieClipByName("logo_KR");
     MovieClip* logo_JP = movieClip->getMovieClipByName("logo_JP");

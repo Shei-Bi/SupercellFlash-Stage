@@ -6,7 +6,7 @@
 class GUIContainer :public Sprite {
 public:
     MovieClip* movieClip;
-    GUIContainer(char* fileName, char* exportName) :Sprite(1) {
+    GUIContainer(const char* fileName, const  char* exportName) :Sprite(1) {
         movieClip = nullptr;
         setMovieClip(ResourceManager::getMovieClip(fileName, exportName));
     }

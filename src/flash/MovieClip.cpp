@@ -94,19 +94,19 @@ bool MovieClip::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTim
 skip:
     return Sprite::render(mat, c, rc, deltaTime);
 }
-MovieClip* MovieClip::getMovieClipByName(char* name) {
+MovieClip* MovieClip::getMovieClipByName(const char* name) {
     for (int i = 0;i < timelineChildrenCount;i++) {
         if (childrenNames[i] && strcmp(childrenNames[i], name) == 0) return (MovieClip*)timelineChildren[i];
     }
     return nullptr;
 }
-TextField* MovieClip::getTextFieldByName(char* name) {
+TextField* MovieClip::getTextFieldByName(const char* name) {
     for (int i = 0;i < timelineChildrenCount;i++) {
         if (childrenNames[i] && strcmp(childrenNames[i], name) == 0) return (TextField*)timelineChildren[i];
     }
     return nullptr;
 }
-void MovieClip::setChildVisible(char* name, bool v) {
+void MovieClip::setChildVisible(const char* name, bool v) {
     getMovieClipByName(name)->visible = v;
 }
 int MovieClip::getTotalFrames() {
@@ -147,7 +147,7 @@ void MovieClip::removeChildAt(short index) {
     }
     Sprite::removeChildAt(index);
 }
-MovieClip* MovieClip::createScreenContainer(char* name, int index) {
+MovieClip* MovieClip::createScreenContainer(const char* name, int index) {
     std::string s("");
     float x = Stage::getInstance()->matrixX;
     float y = Stage::getInstance()->matrixY;
@@ -204,7 +204,7 @@ MovieClip* MovieClip::createScreenContainer(char* name, int index) {
     }
     return c;
 }
-void MovieClip::initScreenContainers(char* name, std::vector<MovieClip*>& vector) {
+void MovieClip::initScreenContainers(const char* name, std::vector<MovieClip*>& vector) {
     for (int i = 0;i < 10;i++) {
         vector.push_back(createScreenContainer(name, i));
     }
@@ -233,4 +233,7 @@ MovieClip::~MovieClip() {
     }
     if (timelineChildren) delete[] timelineChildren;
     timelineChildren = nullptr;
+}
+MovieClip::MovieClip() :Sprite(-1) {
+    ;
 }

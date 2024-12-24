@@ -30,23 +30,21 @@ public:
         STOPPED
     };
     static MovieClip* createMovieClip(MovieClipOriginal* movieClipOriginal, SupercellSWF* swf);
-    MovieClip::MovieClip() :Sprite(-1) {
-        ;
-    }
-    MovieClip::~MovieClip();
+    MovieClip();
+    ~MovieClip();
     void setFrame(int);
     bool render(Matrix2x3*, ColorTransform* c, int, float);
-    MovieClip* getMovieClipByName(char*);
-    TextField* getTextFieldByName(char*);
-    void setChildVisible(char*, bool);
+    MovieClip* getMovieClipByName(const char*);
+    TextField* getTextFieldByName(const char*);
+    void setChildVisible(const char*, bool);
     int getTotalFrames();
     void gotoAndStopFrameIndex(int);
     void gotoAndPlayFrameIndex(int, int);
     void removeChildAt(short);
     void stop(void);
 
-    void initScreenContainers(char*, std::vector<MovieClip*>&);
-    MovieClip* createScreenContainer(char*, int);
+    void initScreenContainers(const char*, std::vector<MovieClip*>&);
+    MovieClip* createScreenContainer(const char*, int);
     MovieClip* getMovieClipRecursive(char*);
 
     virtual bool isMovieClip() const;

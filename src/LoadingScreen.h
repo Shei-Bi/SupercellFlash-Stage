@@ -13,7 +13,7 @@ public:
     MovieClip* loading_screen;
     MovieClip* progress_bar;
     TextField* text;
-    static void showOnlyLocalizedLogo(char*, MovieClip*);
+    static void showOnlyLocalizedLogo(const char*, MovieClip*);
     void updateLoadingProgress(float);
     void setAlpha(float);
     float alpha;

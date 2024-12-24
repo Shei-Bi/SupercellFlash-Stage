@@ -10,7 +10,7 @@ class Messaging {
 public:
     Messaging();
 
-    void connect(char*, char*);
+    void connect(const char*, const char*);
     void onStart();
     void onConnect();
     void onDisconnect();

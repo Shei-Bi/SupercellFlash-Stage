@@ -1,6 +1,8 @@
 #include "SWFTexture.h"
 #include "SupercellSWF.h"
 #include "assert.h"
+const unsigned char SWFTexture::ktxHeader[12] = { 0xAB, 'K', 'T', 'X', ' ', '1', '1', 0xBB, '\r', '\n', 0x1A, '\n' };
+
 void SWFTexture::load(SupercellSWF* sc) {
     int ktxLength = sc->readInt();
     pixelFormat = sc->readUnsignedChar();
@@ -8,7 +10,7 @@ void SWFTexture::load(SupercellSWF* sc) {
     height = sc->readShort();
     //ktx
     for (int i = 0;i < sizeof(ktxHeader);i++) {
-        assert(sc->readUnsignedChar() == ktxHeader[i]);
+        if (sc->readUnsignedChar() != ktxHeader[i]) abort();
     }
     sc->readInt();
     int glType = sc->readInt();

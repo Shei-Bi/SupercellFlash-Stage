@@ -11,19 +11,21 @@
 
 namespace fs = std::filesystem;
 
-std::vector<std::pair<char*, void*>> ResourceManager::Resources = std::vector<std::pair<char*, void*>>();
-std::set<char*> ResourceManager::ResourcesToLoad = std::set<char*>();
+std::vector<std::pair<const char*, void*>> ResourceManager::Resources = std::vector<std::pair<const char*, void*>>();
+std::set<const char*> ResourceManager::ResourcesToLoad = std::set<const char*>();
 fs::path ResourceManager::rootPath = fs::path("");
 fs::path ResourceManager::cachePath = fs::path("");
 // ResourceManager::rootPath = fs::path;
 void ResourceManager::init() {
-    char filename[255];
-    GetModuleFileNameA(NULL, filename, 255);
-    rootPath = fs::path(filename).parent_path();
-    cachePath = fs::path(filename).parent_path() / fs::path("cache");
+    // char filename[255];
+    // GetModuleFileNameA(NULL, filename, 255);
+    // rootPath = fs::path(filename).parent_path();
+    // cachePath = fs::path(filename).parent_path() / fs::path("cache");
+    // rootPath = fs::path(filename).parent_path();
+    cachePath = fs::path("cache");
 }
 
-MovieClip* ResourceManager::getMovieClip(char* file, char* name) {
+MovieClip* ResourceManager::getMovieClip(const char* file, const char* name) {
     // printf("getting %s", name);
     SupercellSWF* swf = getSupercellSWF(file, name);
     MovieClipOriginal* movieClip;
@@ -40,11 +42,11 @@ MovieClip* ResourceManager::getMovieClip(char* file, char* name) {
     }
     return MovieClip::createMovieClip(movieClip, swf);
 }
-void ResourceManager::addFile(char* file) {
-    for (std::pair<char*, void*> p : Resources) {
+void ResourceManager::addFile(const char* file) {
+    for (std::pair<const char*, void*> p : Resources) {
         if (strcmp(p.first, file) == 0) return;
     }
-    for (char* p : ResourcesToLoad) {
+    for (const char* p : ResourcesToLoad) {
         if (strcmp(p, file) == 0) return;
     }
     ResourcesToLoad.insert(file);
@@ -55,7 +57,7 @@ void ResourceManager::addFile(char* file) {
 }
 void ResourceManager::loadNextResource() {
     if (ResourcesToLoad.size() == 0) return;
-    char* file = *ResourcesToLoad.begin();
+    const  char* file = *ResourcesToLoad.begin();
     ResourcesToLoad.erase(file);
     SupercellSWF* swf = new SupercellSWF();
     unsigned long long NativeTime = xTimer::getNativeTime();
@@ -67,13 +69,13 @@ void ResourceManager::loadNextResource() {
     swf->loadInternal(cacheFilePath);
     printf("Loading SC %s took %d ms\n", file, (int)xTimer::getPassedTimeMs(NativeTime, xTimer::getNativeTime()));
     // printf("%s loaded:\nShapes Count:%d\ntextures Count:%d\nmovieclips Count:%d\ntextfields Count:%d\n", file, swf->shapes.size(), swf->textures.size(), swf->movieclips.size(), swf->textfields.size());
-    Resources.push_back(std::pair<char*, void*>(file, swf));
+    Resources.push_back(std::pair<const char*, void*>(file, swf));
 }
 bool ResourceManager::resourceToLoad() {
     return ResourcesToLoad.size() != 0;
 }
-SupercellSWF* ResourceManager::getSupercellSWF(char* name, char* needby) {
-    for (std::pair<char*, void*> p : Resources) {
+SupercellSWF* ResourceManager::getSupercellSWF(const char* name, const  char* needby) {
+    for (std::pair<const char*, void*> p : Resources) {
         if (strcmp(p.first, name) == 0) return (SupercellSWF*)p.second;
     }
     abort();

@@ -101,6 +101,7 @@ Messaging::Messaging() {
     decrypter = nullptr;
 }
 void Messaging::connectToNextPort() {
+    char kOne = 1;
     struct addrinfo* result = NULL, hints;
     ZeroMemory(&hints, sizeof(hints));
     hints.ai_family = AF_INET;
@@ -117,7 +118,6 @@ void Messaging::connectToNextPort() {
 
     onConnect();
     // setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, true, 4);
-    char kOne = 1;
     setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &kOne, 4);
     return;
 fail:
@@ -371,7 +371,7 @@ void Messaging::close() {
 void threadFunc(Messaging* m) {
     m->onStart();
 }
-void Messaging::connect(char*, char*) {
+void Messaging::connect(const char*, const char*) {
     connecting = true;
     // connected = true;
     hasConnectFailed = false;

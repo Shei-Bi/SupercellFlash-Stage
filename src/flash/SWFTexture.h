@@ -9,7 +9,7 @@ public:
     unsigned char pixelFormat;
     unsigned short width;
     unsigned short height;
-    const unsigned char ktxHeader[12] = { 0xAB, 'K', 'T', 'X', ' ', '1', '1', 0xBB, '\r', '\n', 0x1A, '\n' };
+    static const unsigned char ktxHeader[12];
     unsigned char** khronosDatas;
     int khronosDataSize;
     int levels;

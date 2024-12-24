@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(laser)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # C++ headers and source files
 file(GLOB_RECURSE HEADERS src/*.h)
@@ -15,3 +15,7 @@ add_executable(${CLI_TARGET} ${HEADERS} ${SOURCES})
 target_include_directories(${CLI_TARGET} PUBLIC include src)
 target_link_directories(${CLI_TARGET} PUBLIC lib)
 target_link_libraries(${CLI_TARGET} PRIVATE glfw3 supercell-flash-test-tool)
+target_compile_options(${CLI_TARGET} PRIVATE "$<$<CONFIG:Release>:/Zi>")
+target_link_options(${CLI_TARGET} PRIVATE "$<$<CONFIG:Release>:/DEBUG>")
+target_link_options(${CLI_TARGET} PRIVATE "$<$<CONFIG:Release>:/OPT:REF>")
+target_link_options(${CLI_TARGET} PRIVATE "$<$<CONFIG:Release>:/OPT:ICF>")

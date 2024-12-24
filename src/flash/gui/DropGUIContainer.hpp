@@ -3,7 +3,7 @@
 
 class DropGUIContainer :public GUIContainer {
 public:
-    DropGUIContainer(char* fileName, char* exportName) :GUIContainer(fileName, exportName) {
+    DropGUIContainer(const char* fileName, const char* exportName) :GUIContainer(fileName, exportName) {
         putLocalizedTIDsToTextFields(getMovieClip());
     }
 

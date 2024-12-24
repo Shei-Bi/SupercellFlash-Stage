@@ -7,6 +7,7 @@
 #include "TextFieldOriginal.h"
 #include "SWFTexture.h"
 #include "ScMatrixBank.hpp"
+#pragma optimize( "t", on )
 bool SupercellSWF::loadInternal(std::filesystem::path& path) {
     sc = fopen((char*)path.generic_string().c_str(), "rb");
     buffer = malloc(4);
@@ -185,6 +186,8 @@ void SupercellSWF::readMatrix2x3_2(Matrix2x3& out) {
     out.ty = readTwip();
 }
 void SupercellSWF::readColorTransform(ColorTransform& out) {
+    static_assert(sizeof(ColorTransform) == 7);
+    // readByteArray(sizeof(ColorTransform), &out.mulR);
     out.addR = readUnsignedChar();
     out.addG = readUnsignedChar();
     out.addB = readUnsignedChar();
@@ -208,3 +211,4 @@ bool SupercellSWF::hasExportName(char* name) {
     for (unsigned short i = 0;i < exportNameSize;i++) if (strcmp(exportNameStrings[i], name) == 0) return true;
     return false;
 }
+#pragma optimize( "t", off )

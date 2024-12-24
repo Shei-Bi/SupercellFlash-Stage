@@ -37,7 +37,7 @@ public:
         // getClipFromContainers("player_1_area")->stop();
     }
 
-    MovieClip* getClipFromContainers(char* name) {
+    MovieClip* getClipFromContainers(const char* name) {
         for (MovieClip* mc : screenContainers) {
             if (!mc) continue;
             MovieClip* result = mc->getMovieClipByName(name);

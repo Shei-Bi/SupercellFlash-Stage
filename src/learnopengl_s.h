@@ -60,7 +60,7 @@ public:
         glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
     }
 
-    void setUniformVector4(char* name, float x, float y, float z, float w) {
+    void setUniformVector4(const char* name, float x, float y, float z, float w) {
         glUniform4f(glGetUniformLocation(ID, name), x, y, z, w);
     }
 private:
