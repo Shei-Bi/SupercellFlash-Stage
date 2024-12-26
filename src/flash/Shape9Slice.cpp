@@ -11,21 +11,27 @@ Shape9Slice* Shape9Slice::createShape(ShapeOriginal* original, Rect* rect) {
     return shape9Slice;
 }
 bool Shape9Slice::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) {
-    // Rect* pos = new Rect(100000, 100000, -100000, -100000);
-    // for (ShapeDrawBitmapCommand& command : *commands) {
-    //     for (int i = 0;i < command.vertexSize;i++) {
-    //         Stage::updateBound(pos, command.vertexs[i].x, command.vertexs[i].y);
-    //     }
-    // }
-    // Rect* bounds = Rect::LTWH(scalingGrid->left - Matrix.tx, scalingGrid->top - Matrix.ty, scalingGrid->right - scalingGrid->left, scalingGrid->bottom - scalingGrid->top);
-    // Stage* Stage = Stage::getInstance();
-    // Matrix2x3* n = new Matrix2x3(Matrix);
-    // n->multiply(mat);
-    // ColorTransform* cT = new ColorTransform(colorTransform);
-    // cT->multiply(c);
-
-    // float newWidth = 1 / sqrtf(powf(n->a, 2) + powf(n->b, 2));
-    // float newHeight = 1 / sqrtf(powf(n->c, 2) + powf(n->d, 2));
+    Stage* Stage = Stage::getInstance();
+    Matrix2x3* n = new Matrix2x3(Matrix, *mat);
+    ColorTransform* cT = new ColorTransform(colorTransform, *c);
+    Rect* bounds = new Rect(20480, 20480, -20480, -20480);
+    for (unsigned short i = 0;i < commandSize;i++) {
+        auto& command = commands[i];
+        for (int i = 0;i < command.vertexSize;i++) {
+            Stage::updateBound(bounds, command.vertexs[i].x, command.vertexs[i].y);
+        }
+    }
+    Rect* grid = new Rect(scalingGrid);
+    grid->movePosition(-Matrix.tx, -Matrix.ty);
+    float newWidth = 1 / sqrtf(powf(n->a, 2) + powf(n->b, 2));
+    float newHeight = 1 / sqrtf(powf(n->c, 2) + powf(n->d, 2));
+    for (unsigned short i = 0;i < commandSize;i++) {
+        commands[i].render9Slice(n, cT, rc, grid, bounds, newWidth, newHeight);
+    }
+    delete n;
+    delete cT;
+    delete bounds;
+    delete grid;
 
     // Rect* displayObjectBounds = new Rect();
     // for (ShapeDrawBitmapCommand& command : *commands) {

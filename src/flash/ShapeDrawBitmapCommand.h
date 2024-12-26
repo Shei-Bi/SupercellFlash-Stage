@@ -4,6 +4,7 @@
 #include "GLImage.h"
 #include "Matrix2x3.h"
 #include "ColorTransform.h"
+#include "Rect.h"
 class SupercellSWF;
 class ShapeDrawBitmapCommand {
 public:
@@ -13,5 +14,6 @@ public:
     void load(SupercellSWF*, ShapeDrawBitmapCommandVertex*);
     unsigned short getVertexCount();
     bool render(Matrix2x3* mat, ColorTransform* c, int rc);
+    bool render9Slice(Matrix2x3* mat, ColorTransform* c, int rc, Rect*, Rect*, float, float);
 };
 #endif

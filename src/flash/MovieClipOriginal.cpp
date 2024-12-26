@@ -18,6 +18,7 @@ void MovieClipOriginal::load(SupercellSWF* sc) {
     }
     unsigned short loadedFrames = 0;
     int loadedElements = 0;
+    float left, top, width, height;
     while (true) {
         unsigned char tag = sc->readUnsignedChar();
         int l = sc->readInt();
@@ -33,7 +34,11 @@ void MovieClipOriginal::load(SupercellSWF* sc) {
             loadedFrames++;
             break;
         case 31:
-            scalingGrid = Rect::LTWH(sc->readTwip(), sc->readTwip(), sc->readTwip(), sc->readTwip());
+            left = sc->readTwip();
+            top = sc->readTwip();
+            width = sc->readTwip();
+            height = sc->readTwip();
+            scalingGrid = Rect::LTWH(left, top, width, height);
             break;
         case 41:
             matrixBankIndex = sc->readUnsignedChar();
