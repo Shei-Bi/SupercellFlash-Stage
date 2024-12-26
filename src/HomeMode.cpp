@@ -34,8 +34,8 @@ float HomeMode::getLoadingProgress() {
     return 0.5f + 0.5f * (1.0f / 7.0f - ((int)ResourceManager::resourceToLoad() / 7.0f / resourcesToLoad) + state / 7.0f);
 }
 void HomeMode::enter() {
-    ResourceManager::addFile("sc/effects.sc");
-    ResourceManager::addFile("sc/effects_brawler.sc");
+    // ResourceManager::addFile("sc/effects.sc");
+    // ResourceManager::addFile("sc/effects_brawler.sc");
     ResourceManager::addFile("sc/ui.sc");
     ResourceManager::addFile("sc/characters.sc");
     ResourceManager::addFile("sc/level.sc");

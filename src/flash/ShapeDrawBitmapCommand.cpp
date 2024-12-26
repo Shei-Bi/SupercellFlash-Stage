@@ -1,5 +1,6 @@
 #include "ShapeDrawBitmapCommand.h"
 #include  "SupercellSWF.h"
+#include "Stage.h"
 // #pragma optimize( "t", on )
 void ShapeDrawBitmapCommand::load(SupercellSWF* sc, ShapeDrawBitmapCommandVertex* sharedVertexArray) {
     glImage = sc->textures[sc->readUnsignedChar()].glImage;
@@ -17,7 +18,41 @@ void ShapeDrawBitmapCommand::load(SupercellSWF* sc, ShapeDrawBitmapCommandVertex
         // sc->readShortArray(1, &vertexs[i].v);
     }
 }
-// #pragma optimize( "t", off )
+bool ShapeDrawBitmapCommand::render(Matrix2x3* mat, ColorTransform* c, int rc) {
+    Rect* bounds = new Rect();
+    for (int i = 0;i < vertexSize;i++) {
+        auto& vertex = vertexs[i];
+        Stage::updateBound(bounds, mat->applyX(vertex.x, vertex.y), mat->applyY(vertex.x, vertex.y));
+    }
+    Stage* Stage = Stage::getInstance();
+    if (Stage->shapeStart(bounds->left, bounds->top, bounds->right, bounds->bottom, glImage, rc)) {
+        int triangleCount = vertexSize - 2;
+        std::vector<float>* v = &Stage->currentBucket->vertices;
+        int required = v->size() + vertexSize * 11;
+        if (required > 65535) {
+            printf("Stage vertex overflow, required:%d", required);
+            return true;
+        }
+        Stage->addTriangles(triangleCount);
+        if (v->capacity() < required) v->reserve(v->capacity() + 512 * 11 * 3);
+        for (int i = 0;i < vertexSize;i++) {
+            auto& vertex = vertexs[i];
+            v->push_back(mat->applyX(vertex.x, vertex.y));
+            v->push_back(mat->applyY(vertex.x, vertex.y));
+            v->push_back(vertex.u / 65536.0f);
+            v->push_back(vertex.v / 65536.0f);
+            v->push_back(c->mulR / 255.0f);
+            v->push_back(c->mulG / 255.0f);
+            v->push_back(c->mulB / 255.0f);
+            v->push_back(c->alpha / 255.0f);
+            v->push_back(c->addR / 255.0f);
+            v->push_back(c->addG / 255.0f);
+            v->push_back(c->addB / 255.0f);
+        }
+    }
+    delete bounds;
+    return true;
+}
 
 unsigned short ShapeDrawBitmapCommand::getVertexCount() {
     return vertexSize;

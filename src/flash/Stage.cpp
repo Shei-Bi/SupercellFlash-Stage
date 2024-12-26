@@ -17,40 +17,114 @@ void Stage::constructInstance()
     if (!Stage::sm_pInstance)
         Stage::sm_pInstance = new Stage();
 }
+
 void Stage::loadDefaultShader(int index) {
+    //     shader = new Shader(
+    //         R"(#ifdef GL_ES
+    // precision highp float;
+    // #else
+    // #define highp 
+    // #define mediump 
+    // #define lowp 
+    // #endif
+    // attribute vec2 a_position;
+    // attribute highp vec2 a_texCoord;
+    // attribute lowp vec4 a_color;
+    // attribute lowp vec3 a_color_2;
+    // uniform vec4 myPMVMatrix;
+    // varying highp vec2 v_texCoord;
+    // varying lowp vec4 v_color;
+    // varying lowp vec3 v_color_2;
+    // void main(void)
+    // {
+    // const vec4 constantList = vec4(-1.0, 1.0, 0.0, 0.0);
+    // gl_Position = myPMVMatrix * vec4(a_position,0.0,1.0) + constantList;
+    // v_texCoord = a_texCoord;
+    // // v_color = (a_color * constantList.yyyz + constantList.zzzy) * a_color.a;
+    // // v_color=a_color;
+    // v_color=vec4(1.0-a_color.r,1.0-a_color.g,1.0-a_color.b,1.0-a_color.a);
+    // v_color_2 = a_color_2 * (1.0-a_color.a);
+    // })",
+    // R"(#ifdef GL_ES
+    // precision lowp float;
+    // #else
+    // #define highp 
+    // #define mediump 
+    // #define lowp 
+    // #endif
+    // varying highp vec2 v_texCoord;
+    // varying lowp vec4 v_color;
+    // varying lowp vec3 v_color_2;
+    // uniform lowp sampler2D s_texture;
+    // void main (void)
+    // {
+    // vec4 tx = texture2D(s_texture, v_texCoord);
+    // // gl_FragColor = tx * v_color;
+    // gl_FragColor = tx * v_color + vec4(v_color_2,1.0) * tx.a;
+    // // gl_FragColor=tx;
+    // })");
     shader = new Shader(
         R"(#version 330 core
-        layout(location = 0) in vec2 aPos;
-    layout(location = 1) in vec2 aTexCoord;
+    layout (location = 0) in vec2 aPos;
+    layout (location = 1) in vec2 aTexCoord;
+    layout (location = 2) in vec4 aColorMul;
+    layout (location = 3) in vec3 aColorAdd;
     uniform vec4 myPMVMatrix;
 
-    out vec2 TexCoord;
+    out vec2 texCoord;
+    out vec4 colorMul;
+    out vec3 colorAdd;
 
     void main()
     {
         const vec4 constantList = vec4(-1.0, 1.0, 0.0, 0.0);
-        gl_Position = myPMVMatrix * vec4(aPos, 0.0, 1.0) + constantList;
-        TexCoord = vec2(aTexCoord.x, aTexCoord.y);
+        gl_Position = myPMVMatrix * vec4(aPos, 0.0, 1.0)+constantList;
+        texCoord = aTexCoord;
+        colorMul = aColorMul;
+        colorAdd = aColorAdd;
     })",
         R"(
         #version 330 core
-        out vec4 FragColor;
+        // out vec4 FragColor;
 
-    in vec2 TexCoord;
+    in vec2 texCoord;
+    in vec4 colorMul;
+    in vec3 colorAdd;
 
     // texture samplers
-    uniform sampler2D texture1;
+    uniform sampler2D TEX_SAMPLER;
 
     void main()
     {
-        // linearly interpolate between both textures (80% container, 20% awesomeface)
-        FragColor = texture(texture1, TexCoord);
+        vec4 sample = texture2D(TEX_SAMPLER, texCoord);
+        vec4 color = sample * colorMul;
+        color.rgb += colorAdd * color.a;
+        gl_FragColor = vec4(color.rgb * colorMul.a, color.a);
+        // FragColor = sample;
     })");
+    // R"(#version 330 core
+    // out vec4 FragColor;
+    // uniform sampler2D texture1;
+
+    // in vec2 texCoord;
+    // in vec4 colorMul;
+    // in vec3 colorAdd;
+
+    // void main()
+    // {
+    // FragColor = texture(texture1, texCoord);
+    // return;
+    //     // vec4 sample = texture2D(texture1, texCoord);
+    //     // vec4 color = sample * colorMul;
+    //     // color.rgb += colorAdd * color.a;
+    //     // gl_FragColor = vec4(color.rgb * colorMul.a, color.a);
+    //     // gl_FragColor = sample;
+    // })");
 }
 void Stage::firstTimeShaderInit(Shader* shader, glm::mat4 mat4) {
     shader->use();
     shader->setUniformVector4("myPMVMatrix", mat4[0][0], mat4[1][1], 1.0, 1.0);
-    glUniform1i(glGetUniformLocation(shader->ID, "texture1"), 0);
+    glUniform1i(glGetUniformLocation(shader->ID, "TEX_SAMPLER"), 0);
 }
 void Stage::increaseBucketCapacity(int c) {
     if (bucketCapacity < c) {
@@ -127,6 +201,7 @@ void Stage::addTriangles(int count) {
     }
     currentBucket->triangleCount += count;
     currentBucket->pointCount += count + 2;
+    delete[] indices;
 }
 
 void Stage::render(float deltaTime, bool clear) {
@@ -135,7 +210,10 @@ void Stage::render(float deltaTime, bool clear) {
     Matrix2x3* matrix = new Matrix2x3();
     matrix->a = pointSize;
     matrix->d = pointSize;
-    StageSprit->render(matrix, new ColorTransform(), 0, deltaTime);
+    ColorTransform* cT = new ColorTransform();
+    StageSprit->render(matrix, cT, 0, deltaTime);
+    delete matrix;
+    delete cT;
     renderBuckets();
 }
 void Stage::renderBuckets() {

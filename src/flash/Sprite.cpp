@@ -10,7 +10,7 @@ Sprite::Sprite(short initialCapacity) :DisplayObject() {
 void Sprite::allocateMemory(short newCapacity) {
     if (newCapacity > capacity) {
         DisplayObject** newArray = new DisplayObject * [newCapacity];
-        if (children) delete(children);
+        if (children) delete[] children;
         children = newArray;
         capacity = newCapacity;
     }
@@ -26,7 +26,7 @@ void Sprite::addChildAt(DisplayObject* child, short index) {
             for (int i = 0;i < size;i++) {
                 newArray[i] = children[i];
             }
-            delete(children);
+            delete[] children;
         }
         children = newArray;
         capacity = newCapacity;
@@ -60,6 +60,8 @@ bool Sprite::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) 
     ColorTransform* ct = new ColorTransform(colorTransform);
     ct->multiply(c);
     for (int i = 0;i < size;i++) if (children[i]->visible) children[i]->render(n, ct, renderConfig & 0x3FF | rc, deltaTime);
+    delete n;
+    delete ct;
     return true;
 }
 Sprite::Sprite(/* args */)

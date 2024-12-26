@@ -57,7 +57,9 @@ void MovieClip::setFrame(int index) {
         DisplayObject* child = timelineChildren[element[0]];
         if (child == nullptr) continue;
         if (element[1] != 65535) child->Matrix = matrixBank->matrixs[element[1]];
+        else child->Matrix.reset();
         if (element[2] != 65535) child->colorTransform = matrixBank->colorTransforms[element[2]];
+        else child->colorTransform.reset();
         addChildAt(child, childIndex++);
     }
     for (int i = size - 1;i >= childIndex;i--) Sprite::removeChildAt(i);

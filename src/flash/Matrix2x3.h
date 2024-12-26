@@ -42,5 +42,13 @@ public:
         ty = one.ty;
         multiply(&two);
     }
+    void reset() {
+        a = 1.0f;
+        b = 0.0f;
+        c = 0.0f;
+        d = 1.0f;
+        tx = 0.0f;
+        ty = 0.0f;
+    }
 };
 #endif

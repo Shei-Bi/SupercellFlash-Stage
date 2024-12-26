@@ -13,5 +13,33 @@ public:
         addG = fmin(addG + color->addG, 255.0f);
         addB = fmin(addB + color->addB, 255.0f);
     }
+    ColorTransform() {
+        mulR = 255;
+        mulG = 255;
+        mulB = 255;
+        alpha = 255;
+        addR = 0;
+        addG = 0;
+        addB = 0;
+    }
+    ColorTransform(ColorTransform& one, ColorTransform& two) {
+        mulR = one.mulR;
+        mulG = one.mulG;
+        mulB = one.mulB;
+        alpha = one.alpha;
+        addR = one.addR;
+        addG = one.addG;
+        addB = one.addB;
+        multiply(&two);
+    }
+    void reset() {
+        mulR = 255;
+        mulG = 255;
+        mulB = 255;
+        alpha = 255;
+        addR = 0;
+        addG = 0;
+        addB = 0;
+    }
 };
 #endif
