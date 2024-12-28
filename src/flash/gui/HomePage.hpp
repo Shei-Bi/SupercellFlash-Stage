@@ -3,14 +3,20 @@
 #include <vector>
 #include <flash/gui/PendingTeamItem.hpp>
 
+#pragma optimize("",off);
 class HomePage :public DropGUIContainer {
 public:
     std::vector<MovieClip*> screenContainers;
-    PendingTeamItem* panel_invite;
-    PendingTeamItem* panel_invite_2;
-    PendingTeamItem* panel_invite_3;
-    PendingTeamItem* panel_invite_4;
+    std::vector<GameButton*> buttons;
 
+    PendingTeamItem* panel_own_invite_2;
+    PendingTeamItem* panel_own_invite_4;
+    PendingTeamItem* panel_own_invite_3;
+    PendingTeamItem* panel_own_invite_5;
+    PendingTeamItem* panel_other_invite_2;
+    PendingTeamItem* panel_other_invite_4;
+    PendingTeamItem* panel_other_invite_3;
+    PendingTeamItem* panel_other_invite_5;
     HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
         getMovieClip()->initScreenContainers("mainscreen_", screenContainers);
 
@@ -20,21 +26,61 @@ public:
             if (scaled > 1.0)
                 header_bgr->setScaleX(header_bgr->getScaleX() * scaled);
         }
+        screenContainers[1]->gotoAndStop("3_players");
+        panel_own_invite_2 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_own_invite_2"));
+        screenContainers[1]->changeTimelineChild("panel_own_invite_2", panel_own_invite_2);
+        panel_other_invite_2 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_other_invite_2"));
+        screenContainers[1]->changeTimelineChild("panel_other_invite_2", panel_other_invite_2);
+        panel_own_invite_4 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_own_invite_4"));
+        screenContainers[1]->changeTimelineChild("panel_own_invite_4", panel_own_invite_4);
+        panel_other_invite_4 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_other_invite_4"));
+        screenContainers[1]->changeTimelineChild("panel_other_invite_4", panel_other_invite_4);
+        panel_own_invite_3 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_own_invite_3"));
+        screenContainers[1]->changeTimelineChild("panel_own_invite_3", panel_own_invite_3);
+        panel_other_invite_3 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_other_invite_3"));
+        screenContainers[1]->changeTimelineChild("panel_other_invite_3", panel_other_invite_3);
+        panel_own_invite_5 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_own_invite_5"));
+        screenContainers[1]->changeTimelineChild("panel_own_invite_5", panel_own_invite_5);
+        panel_other_invite_5 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_other_invite_5"));
+        screenContainers[1]->changeTimelineChild("panel_other_invite_5", panel_other_invite_5);
+        panel_own_invite_2->visible = false;
+        panel_own_invite_4->visible = false;
+        panel_own_invite_3->visible = false;
+        panel_own_invite_5->visible = false;
+        panel_other_invite_2->visible = false;
+        panel_other_invite_4->visible = false;
+        panel_other_invite_3->visible = false;
+        panel_other_invite_5->visible = false;
 
-        // panel_invite = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_invite"));
-        // panel_invite_2 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_invite_2"));
-        // panel_invite_3 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_invite_3"));
-        // panel_invite_4 = new PendingTeamItem(screenContainers[1]->getMovieClipRecursive("panel_invite_4"));
-        // screenContainers[1]->addChild(panel_invite);
-        // screenContainers[1]->addChild(panel_invite_2);
-        // screenContainers[1]->addChild(panel_invite_3);
-        // screenContainers[1]->addChild(panel_invite_4);
-        // panel_invite->visible = false;
-        // panel_invite_2->visible = false;
-        // panel_invite_3->visible = false;
-        // panel_invite_4->visible = false;
+        createButtons();
+        getButtonByName("button_navi_login_calendar")->visible = false;
+        // screenContainers[5]->moveThisToTopLayer();
+        // screenContainers[9]->moveThisToTopLayer();
+        // auto player_1_area = getClipFromContainers("player_1_area");
+        // player_1_area->stop();
+        // player_1_area->setChildVisible("bubble", false);
+        // player_1_area->setChildVisible("player_status", false);
+        // player_1_area->setChildVisible("star_power_ph", false);
+        // player_1_area->setChildVisible("item_ph", false);
+        getClipFromContainers("player_1_area")->visible = false;
+        getClipFromContainers("player_2_area")->visible = false;
+        getClipFromContainers("player_3_area")->visible = false;
+        getClipFromContainers("player_4_area")->visible = false;
+        getClipFromContainers("player_5_area")->visible = false;
 
-        // getClipFromContainers("player_1_area")->stop();
+        getButtonByName("button_random_reward")->visible = false;
+
+
+        screenContainers[6]->getMovieClipByName("hamburger_menu")->stop();
+
+
+        screenContainers[1]->setChildVisible("panel_player_online", false);
+        screenContainers[1]->setChildVisible("panel_player_online_ph_left", false);
+        screenContainers[1]->setChildVisible("panel_player_online_ph_right", false);
+        screenContainers[1]->setChildVisible("panel_player_online_ph_left_left", false);
+        screenContainers[1]->setChildVisible("panel_player_online_right_right", false);
+
+        refreshSelectedEvent();
     }
 
     MovieClip* getClipFromContainers(const char* name) {
@@ -59,10 +105,24 @@ public:
     }
 
     void refreshSelectedEvent() {
-        ;
+        getButtonByName("button_mode")->visible = false;
     }
 
     void updateVisibleItems() {
         ;
+    }
+
+    void createButtons() {
+        for (MovieClip* mc : screenContainers) {
+            if (!mc) continue;
+            mc->autoCreateButtons(buttons);
+        }
+    }
+
+    GameButton* getButtonByName(const char* name) {
+        for (GameButton* gameButton : buttons) {
+            if (strcmp(gameButton->name, name) == 0) return gameButton;
+        }
+        return nullptr;
     }
 };

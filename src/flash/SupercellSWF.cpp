@@ -7,6 +7,7 @@
 #include "TextFieldOriginal.h"
 #include "SWFTexture.h"
 #include "ScMatrixBank.hpp"
+#include <cstring>
 #pragma optimize( "t", on )
 bool SupercellSWF::loadInternal(std::filesystem::path& path) {
     sc = fopen((char*)path.generic_string().c_str(), "rb");

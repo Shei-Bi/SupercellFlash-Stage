@@ -19,6 +19,10 @@ void Sprite::addChild(DisplayObject* child) {
     addChildAt(child, size);
 }
 void Sprite::addChildAt(DisplayObject* child, short index) {
+    if (child->parent == this) return;
+    if (child->parent) {
+        child->parent->removeChildAt(child->indexInParent);
+    }
     if (size == capacity) {
         short newCapacity = capacity == 0 ? 1 : capacity * 2;
         DisplayObject** newArray = new DisplayObject * [newCapacity];
@@ -54,11 +58,12 @@ void Sprite::removeChildAt(short index) {
     }
     children[size] = nullptr;
 }
+void Sprite::removeChild(DisplayObject* child) {
+    if (child->parent == this && child->indexInParent != -1) removeChildAt(child->indexInParent);
+}
 bool Sprite::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) {
-    Matrix2x3* n = new Matrix2x3(Matrix);
-    n->multiply(mat);
-    ColorTransform* ct = new ColorTransform(colorTransform);
-    ct->multiply(c);
+    Matrix2x3* n = new Matrix2x3(Matrix, *mat);
+    ColorTransform* ct = new ColorTransform(colorTransform, *c);
     for (int i = 0;i < size;i++) if (children[i]->visible) children[i]->render(n, ct, renderConfig & 0x3FF | rc, deltaTime);
     delete n;
     delete ct;
@@ -71,4 +76,8 @@ Sprite::Sprite(/* args */)
 Sprite::~Sprite() {
     if (children) delete[] children;
     children = nullptr;
+}
+int Sprite::getChildIndex(DisplayObject* displayObject) {
+    if (displayObject->parent == this) return displayObject->indexInParent;
+    return -1;
 }

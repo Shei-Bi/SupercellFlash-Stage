@@ -8,6 +8,9 @@
 #include <flash/TextField.h>
 #include <ResourceManager.h>
 #include <flash/Stage.h>
+#include "flash/gui/GameButton.h"
+
+#pragma optimize("",off);
 
 int BLEND_MODE_MAP[] = { 0, 0, 0, 0x100, 0x180, 0, 0, 0, 0x80, 0, 0, 0, 0x200, 0, 0, 0x200 };
 MovieClip* MovieClip::createMovieClip(MovieClipOriginal* movieClipOriginal, SupercellSWF* swf) {
@@ -35,7 +38,7 @@ MovieClip* MovieClip::createMovieClip(MovieClipOriginal* movieClipOriginal, Supe
     }
     // printf("%d", movieClipOriginal->frames[0].frameElements[0]->colorTransform_index);
     movieClip->matrixBank = swf->matrixBanks[movieClipOriginal->matrixBankIndex];
-    movieClip->frames = &movieClipOriginal->frames;
+    movieClip->frames = movieClipOriginal->frames.data();
     movieClip->frameSize = movieClipOriginal->frameSize;
     // movieClip->instances = &movieClipOriginal->instances;
     movieClip->setFrame(0);
@@ -52,7 +55,7 @@ void MovieClip::setFrame(int index) {
     currentFrame = index;
     int childIndex = 0;
     if (frameSize < 1) return;
-    for (unsigned short* element = (*frames)[index].elements;element < (*frames)[index + 1].elements;element += 3) {
+    for (unsigned short* element = frames[index].elements;element < frames[index + 1].elements;element += 3) {
         // printf("%d\n", frames[index + 1].elements - element);
         DisplayObject* child = timelineChildren[element[0]];
         if (child == nullptr) continue;
@@ -109,7 +112,8 @@ TextField* MovieClip::getTextFieldByName(const char* name) {
     return nullptr;
 }
 void MovieClip::setChildVisible(const char* name, bool v) {
-    getMovieClipByName(name)->visible = v;
+    auto mc = getMovieClipByName(name);
+    if (mc) mc->visible = v;
 }
 int MovieClip::getTotalFrames() {
     return totalFrames;
@@ -178,6 +182,7 @@ MovieClip* MovieClip::createScreenContainer(const char* name, int index) {
         break;
     case 5:
         s = "hud_left";
+        x = 0.0f;
         y *= 0.5f;
         break;
     case 6:
@@ -186,14 +191,16 @@ MovieClip* MovieClip::createScreenContainer(const char* name, int index) {
         break;
     case 7:
         s = "hud_top_left";
+        x = 0.0f;
         y = 0.0f;
         break;
     case 8:
         s = "hud_top_right";
-        y *= 0.5f;
+        y = 0.0f;
         break;
     case 9:
         s = "hud_bottom_left";
+        x = 0.0f;
         break;
     }
     SupercellSWF* supercellSWF = ResourceManager::getSupercellSWF("sc/ui.sc", nullptr);
@@ -211,12 +218,12 @@ void MovieClip::initScreenContainers(const char* name, std::vector<MovieClip*>& 
         vector.push_back(createScreenContainer(name, i));
     }
 }
-MovieClip* MovieClip::getMovieClipRecursive(char* name) {
+MovieClip* MovieClip::getMovieClipRecursive(const char* name) {
     DisplayObject* e = nullptr;
     for (int i = 0;i < timelineChildrenCount;i++) {
         e = timelineChildren[i];
         if (e) {
-            if (strcmp(childrenNames[i], name) == 0) break;
+            if (childrenNames[i] && strcmp(childrenNames[i], name) == 0) break;
             if (e->isMovieClip()) {
                 e = ((MovieClip*)e)->getMovieClipRecursive(name);
                 if (e) break;
@@ -238,4 +245,77 @@ MovieClip::~MovieClip() {
 }
 MovieClip::MovieClip() :Sprite(-1) {
     ;
+}
+void MovieClip::gotoAndStop(const char* frameName) {
+    gotoAndStopFrameIndex(getFrameIndex(frameName));
+}
+int MovieClip::getFrameIndex(const char* name) {
+    if (!name) return -1;
+    if (frameSize < 1) return -1;
+    for (unsigned short i = 0;i < frameSize - 1;i++) {
+        if (strcmp(frames[i].name, name) == 0) return i;
+    }
+    abort();//should be
+}
+void MovieClip::autoCreateButtons(std::vector<GameButton*>& out) {
+    for (unsigned short i = 0;i < timelineChildrenCount;i++) {
+        DisplayObject* d = timelineChildren[i];
+        if (!d || !d->isMovieClip()) continue;
+        MovieClip* movieClip = (MovieClip*)d;
+        std::string name("");
+        if (childrenNames[i]) name = childrenNames[i];
+        // printf("%zd\n", name.find("button"));
+        if (name.find("button") == std::string::npos) {
+            movieClip->autoCreateButtons(out);
+            continue;
+        }
+        // printf("%s\n", name.c_str());
+        int index = getChildIndex(movieClip);
+        GameButton* gameButton = new GameButton();
+        gameButton->name = childrenNames[i];
+        out.push_back(gameButton);
+        changeTimelineChild(movieClip, gameButton);
+        gameButton->setMovieClip(movieClip, true);
+    }
+}
+void MovieClip::changeTimelineChild(DisplayObject* from, DisplayObject* to) {
+    for (unsigned short i = 0;i < timelineChildrenCount;i++) {
+        if (timelineChildren[i] != from) continue;
+        int index = from->indexInParent;
+        if (index == -1) {
+            if (to->parent) to->parent->removeChild(to);
+        }
+        else {
+            to->Matrix = from->Matrix;
+            to->colorTransform = from->colorTransform;
+            removeChildAt(index);
+            addChildAt(to, index);
+            timelineChildren[i] = to;
+        }
+    }
+}
+void MovieClip::changeTimelineChild(const char* fromName, DisplayObject* to) {
+    for (unsigned short i = 0;i < timelineChildrenCount;i++) {
+        if (strcmp(childrenNames[i], fromName) == 0) {
+            auto tlc = timelineChildren[i];
+            if (tlc) {
+                if (tlc != to) {
+                    changeTimelineChild(tlc, to);
+                    delete tlc;
+                }
+            }
+            else {
+                timelineChildren[i] = to;
+                if (frames[currentFrame].containsTimelineChild(i, frames[currentFrame + 1].elements - frames[currentFrame].elements)) {
+                    int t = currentFrame;
+                    currentFrame = -1;
+                    setFrame(t);
+                }
+            }
+            return;
+        }
+    }
+}
+void MovieClip::moveThisToTopLayer() {
+    if (parent) parent->addChildAt(this, parent->size);
 }

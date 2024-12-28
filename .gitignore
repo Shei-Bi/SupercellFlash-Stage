@@ -1,4 +1,5 @@
 build
+build_llvm_mingw
 android_build
 *.sln
 .*

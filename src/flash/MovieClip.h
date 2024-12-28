@@ -5,13 +5,14 @@ class MovieClipOriginal;
 #include "ScMatrixBank.hpp"
 #include <flash/TextField.h>
 #include <vector>
+#include "flash/gui/GameButton.h"
 class MovieClip :public Sprite
 {
 private:
     DisplayObject** timelineChildren;
     int timelineChildrenCount;
-    // MovieClipFrame* frames;
-    std::vector<MovieClipFrame>* frames;
+    MovieClipFrame* frames;
+    // std::vector<MovieClipFrame>* frames;
     unsigned short frameSize;
     unsigned short* childrenIds;
     unsigned char* childrenBlendModes;
@@ -42,10 +43,20 @@ public:
     void gotoAndPlayFrameIndex(int, int);
     void removeChildAt(short);
     void stop(void);
+    int getFrameIndex(const char*);
+    void gotoAndStop(const char*);
+    void changeTimelineChild(DisplayObject*, DisplayObject*);
+    void changeTimelineChild(const char*, DisplayObject*);
 
     void initScreenContainers(const char*, std::vector<MovieClip*>&);
     MovieClip* createScreenContainer(const char*, int);
-    MovieClip* getMovieClipRecursive(char*);
+    MovieClip* getMovieClipRecursive(const char*);
+
+    //MovieClipHelper
+    void autoCreateButtons(std::vector<GameButton*>&);
+
+    //Unknown
+    void moveThisToTopLayer();
 
     virtual bool isMovieClip() const;
 };

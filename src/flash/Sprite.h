@@ -17,5 +17,7 @@ public:
     void addChild(DisplayObject* child);
     void addChildAt(DisplayObject* child, short);
     virtual void removeChildAt(short);
+    void removeChild(DisplayObject* child);
     bool render(Matrix2x3*, ColorTransform* c, int, float);
+    int getChildIndex(DisplayObject*);
 };

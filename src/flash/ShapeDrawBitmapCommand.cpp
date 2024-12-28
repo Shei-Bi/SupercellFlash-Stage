@@ -60,10 +60,10 @@ bool ShapeDrawBitmapCommand::render9Slice(Matrix2x3* mat, ColorTransform* c, int
         auto& vertex = vertexs[i];
         float x = vertex.x;
         float y = vertex.y;
-        if (x < safeArea->left) x = fmin(safeArea->getMidX(), shapeBounds->left + (x - shapeBounds->left) * width);
-        else if (x > safeArea->right) x = fmax(safeArea->getMidX(), shapeBounds->right + (x - shapeBounds->right) * width);
-        if (y < safeArea->top) y = fmin(safeArea->getMidY(), shapeBounds->top + (y - shapeBounds->top) * height);
-        else if (y > safeArea->bottom) y = fmax(safeArea->getMidY(), shapeBounds->bottom + (y - shapeBounds->bottom) * height);
+        if (x <= safeArea->left) x = fmin(safeArea->getMidX(), shapeBounds->left + (x - shapeBounds->left) * width);
+        else if (x >= safeArea->right) x = fmax(safeArea->getMidX(), shapeBounds->right + (x - shapeBounds->right) * width);
+        if (y <= safeArea->top) y = fmin(safeArea->getMidY(), shapeBounds->top + (y - shapeBounds->top) * height);
+        else if (y >= safeArea->bottom) y = fmax(safeArea->getMidY(), shapeBounds->bottom + (y - shapeBounds->bottom) * height);
         Stage::updateBound(bounds, mat->applyX(x, y), mat->applyY(x, y));
     }
     Stage* Stage = Stage::getInstance();

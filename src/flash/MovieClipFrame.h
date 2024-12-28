@@ -7,5 +7,6 @@ public:
     // unsigned short elementSize;
     char* name;
     unsigned short load(SupercellSWF* sc);
+    bool containsTimelineChild(short childIndex, int length);
 };
 #endif

@@ -23,8 +23,8 @@ bool Shape9Slice::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaT
     }
     Rect* grid = new Rect(scalingGrid);
     grid->movePosition(-Matrix.tx, -Matrix.ty);
-    float newWidth = 1 / sqrtf(powf(n->a, 2) + powf(n->b, 2));
-    float newHeight = 1 / sqrtf(powf(n->c, 2) + powf(n->d, 2));
+    float newWidth = Stage->pointSize / sqrtf(powf(n->a, 2) + powf(n->b, 2));
+    float newHeight = Stage->pointSize / sqrtf(powf(n->c, 2) + powf(n->d, 2));
     for (unsigned short i = 0;i < commandSize;i++) {
         commands[i].render9Slice(n, cT, rc, grid, bounds, newWidth, newHeight);
     }

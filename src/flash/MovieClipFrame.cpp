@@ -6,3 +6,9 @@ unsigned short MovieClipFrame::load(SupercellSWF* sc) {
     name = sc->readAscii(&stack, NULL);
     return elementSize;
 }
+bool MovieClipFrame::containsTimelineChild(short childIndex, int length) {
+    for (int i = 0;i < length;i += 3) {
+        if (elements[i] == childIndex) return true;
+    }
+    return false;
+}
