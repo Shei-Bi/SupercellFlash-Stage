@@ -275,6 +275,7 @@ void MovieClip::autoCreateButtons(std::vector<GameButton*>& out) {
         gameButton->name = childrenNames[i];
         out.push_back(gameButton);
         changeTimelineChild(movieClip, gameButton);
+        movieClip->Matrix.reset();
         gameButton->setMovieClip(movieClip, true);
     }
 }
@@ -292,6 +293,7 @@ void MovieClip::changeTimelineChild(DisplayObject* from, DisplayObject* to) {
             addChildAt(to, index);
             timelineChildren[i] = to;
         }
+        break;
     }
 }
 void MovieClip::changeTimelineChild(const char* fromName, DisplayObject* to) {

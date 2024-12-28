@@ -19,7 +19,7 @@ public:
     PendingTeamItem* panel_other_invite_5;
     HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
         getMovieClip()->initScreenContainers("mainscreen_", screenContainers);
-
+        // return;
         MovieClip* header_bgr = getClipFromContainers("header_bgr");
         if (header_bgr) {
             float scaled = Stage::getInstance()->matrixX / header_bgr->getWidth();
