@@ -18,13 +18,14 @@ void ShapeDrawBitmapCommand::load(SupercellSWF* sc, ShapeDrawBitmapCommandVertex
     }
 }
 bool ShapeDrawBitmapCommand::render(Matrix2x3* mat, ColorTransform* c, int rc) {
-    Rect* bounds = new Rect();
+    Rect* bounds = new Rect(20480, 20480, -20480, -20480);
     for (int i = 0;i < vertexSize;i++) {
         auto& vertex = vertexs[i];
         Stage::updateBound(bounds, mat->applyX(vertex.x, vertex.y), mat->applyY(vertex.x, vertex.y));
     }
     Stage* Stage = Stage::getInstance();
-    if (Stage->shapeStart(bounds->left, bounds->top, bounds->right, bounds->bottom, glImage, rc)) {
+    bool result;
+    if (Stage->shapeStart(bounds->left, bounds->top, bounds->right, bounds->bottom, glImage, rc, &result)) {
         int triangleCount = vertexSize - 2;
         std::vector<float>* v = &Stage->currentBucket->vertices;
         int required = v->size() + vertexSize * 11;
@@ -50,7 +51,7 @@ bool ShapeDrawBitmapCommand::render(Matrix2x3* mat, ColorTransform* c, int rc) {
         }
     }
     delete bounds;
-    return true;
+    return result;
 }
 // #pragma optimize( "", off )
 bool ShapeDrawBitmapCommand::render9Slice(Matrix2x3* mat, ColorTransform* c, int rc, Rect* safeArea, Rect* shapeBounds, float width, float height) {
@@ -66,8 +67,9 @@ bool ShapeDrawBitmapCommand::render9Slice(Matrix2x3* mat, ColorTransform* c, int
         else if (y >= safeArea->bottom) y = fmax(safeArea->getMidY(), shapeBounds->bottom + (y - shapeBounds->bottom) * height);
         Stage::updateBound(bounds, mat->applyX(x, y), mat->applyY(x, y));
     }
+    bool result;
     Stage* Stage = Stage::getInstance();
-    if (Stage->shapeStart(bounds->left, bounds->top, bounds->right, bounds->bottom, glImage, rc)) {
+    if (Stage->shapeStart(bounds->left, bounds->top, bounds->right, bounds->bottom, glImage, rc, &result)) {
         int triangleCount = vertexSize - 2;
         std::vector<float>* v = &Stage->currentBucket->vertices;
         int required = v->size() + vertexSize * 11;
@@ -99,7 +101,7 @@ bool ShapeDrawBitmapCommand::render9Slice(Matrix2x3* mat, ColorTransform* c, int
         }
     }
     delete bounds;
-    return true;
+    return result;
 }
 unsigned short ShapeDrawBitmapCommand::getVertexCount() {
     return vertexSize;

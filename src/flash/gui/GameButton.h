@@ -4,7 +4,7 @@
 class MovieClip;
 class GameButton :public Sprite {
 public:
-
+    GameButton();
     DisplayObject* displayObject;
     MovieClip* timelineMovieClip;
     const char* name;
@@ -13,5 +13,7 @@ public:
     void setDisplayObject(DisplayObject*, bool);
     void destructClips();
     void setTimelineMovieClip(MovieClip*);
+
+    bool touchPressed(Touch&);
 };
 #endif

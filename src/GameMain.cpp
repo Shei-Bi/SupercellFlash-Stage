@@ -21,15 +21,20 @@ void GameMain::init() {
     ServerConnection::constructInstance();
     GameStateManager::getInstance()->pendingStateId = GameStateManager::Init;
     screenSprite = new Sprite(1);
+    screenSprite->interactable = true;
     Stage::getInstance()->addChild(screenSprite);
     loadingScreenSprite = new Sprite(1);
+    loadingScreenSprite->interactable = true;
     Stage::getInstance()->addChild(loadingScreenSprite);
     Stage::getInstance()->setBackgroundColor(0);
+    inputSystem = new InputSystem();
+    inputSystem->listeners.push_back(Stage::getInstance());
 }
 void GameMain::update(float sinceStart, float deltaTime) {
     this->deltaTime = deltaTime;
     GameStateManager::getInstance()->update(sinceStart, deltaTime);
     ServerConnection::getInstance()->update(deltaTime);
+    inputSystem->update();
 }
 void GameMain::draw(float e) {
     Stage::getInstance()->render(deltaTime, true);

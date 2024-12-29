@@ -1,7 +1,9 @@
 #pragma once
 #include <flash/Sprite.h>
+#include "flash/Stage.h"
 
 Sprite::Sprite(short initialCapacity) :DisplayObject() {
+    interactable = false;
     children = nullptr;
     size = 0;
     capacity = 0;
@@ -69,8 +71,8 @@ bool Sprite::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) 
     delete ct;
     return true;
 }
-Sprite::Sprite(/* args */)
-{
+Sprite::Sprite(/* args */) {
+    Sprite::Sprite(4);
 }
 
 Sprite::~Sprite() {
@@ -80,4 +82,21 @@ Sprite::~Sprite() {
 int Sprite::getChildIndex(DisplayObject* displayObject) {
     if (displayObject->parent == this) return displayObject->indexInParent;
     return -1;
+}
+bool Sprite::collisionRender(Matrix2x3* mat) {
+    if (!interactable) return false;
+    auto& sprites = Stage::getInstance()->objectsUnderPoint;
+    sprites.push_back(this);
+    Matrix2x3* n = new Matrix2x3(Matrix, *mat);
+    bool result = false;
+    for (int i = 0;i < size;i++) if (children[i]->visible) result |= children[i]->collisionRender(n);
+    delete n;
+    if (!result) sprites.pop_back();
+    return result;
+}
+void Sprite::setInteractiveRecursive(bool b) {
+    interactable = b;
+    for (int i = 0;i < size;i++) {
+        children[i]->setInteractiveRecursive(b);
+    }
 }

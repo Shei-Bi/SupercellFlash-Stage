@@ -30,6 +30,8 @@ public:
     float getScaleX();
     float getScaleY();
     virtual bool render(Matrix2x3*, ColorTransform*, int, float);
+    virtual bool collisionRender(Matrix2x3*);
+    virtual void setInteractiveRecursive(bool);
     void setBlendMode(int);
     void setAlpha(float);
     float getWidth();

@@ -4,8 +4,9 @@
 #include <flash/DisplayObject.h>
 #include <learnopengl_s.h>
 #include <glm/glm.hpp>
+#include "IInputListener.h"
 
-class Stage
+class Stage :public IInputListener
 {
 private:
     /* data */
@@ -22,7 +23,7 @@ public:
     void render(float deltaTime, bool clear);
     void renderBuckets();
     void resetRenderVariables();
-    bool shapeStart(float, float, float, float, GLImage* texture, int renderConfig);
+    bool shapeStart(float, float, float, float, GLImage* texture, int renderConfig, bool*);
     void addTriangles(int count);
     void addChild(DisplayObject* child);
     int left;
@@ -44,6 +45,14 @@ public:
     void setBackgroundColor(int);
     bool isCalculatingBounds;
     Rect* currentBounds;
+    float currentTouchX;
+    float currentTouchY;
     void calculateDisplayObjectBounds(DisplayObject*, const Sprite*, Rect*);
     static void updateBound(Rect* r, float x, float y);
+    std::vector<Sprite*>& getObjectsUnderPoint(float, float);
+    std::vector<Sprite*> objectsUnderPoint;
+    bool isRectVisibleInTouch(float, float, float, float);
+    bool touchPressed(Touch&);
+    // bool touchMoved(Touch&);
+    // bool touchReleased(Touch&);
 };

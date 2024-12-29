@@ -35,6 +35,7 @@ public:
     ~MovieClip();
     void setFrame(int);
     bool render(Matrix2x3*, ColorTransform* c, int, float);
+    void setInteractiveRecursive(bool);
     MovieClip* getMovieClipByName(const char*);
     TextField* getTextFieldByName(const char*);
     void setChildVisible(const char*, bool);

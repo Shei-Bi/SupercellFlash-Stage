@@ -13,4 +13,5 @@ public:
 public:
     static Shape* createShape(ShapeOriginal* original);
     bool render(Matrix2x3* mat, ColorTransform* c, int, float);
+    bool collisionRender(Matrix2x3* mat);
 };

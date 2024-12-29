@@ -143,6 +143,7 @@ Stage::Stage() {
     bucketsUsed = 0;
     increaseBucketCapacity(150);
     StageSprit = new StageSprite(10);
+    StageSprit->interactable = true;
     top = 0;
     left = 0;
     right = 800;
@@ -164,15 +165,22 @@ void updateBound(Rect* r, float x, float y) {
     if (r->top > y) r->top = y;
     else if (r->bottom < y) r->bottom = y;
 }
-bool Stage::shapeStart(float left, float top, float right, float bottom, GLImage* texture, int renderConfig) {
+bool Stage::isRectVisibleInTouch(float left, float top, float right, float bottom) {
+    return left <= currentTouchX && right >= currentTouchX && top <= currentTouchY && bottom >= currentTouchY;
+}
+bool Stage::shapeStart(float left, float top, float right, float bottom, GLImage* texture, int renderConfig, bool* touchResultOut) {
     if (isCalculatingBounds) {
         if (currentBounds) {
             updateBound(currentBounds, left, top);
             updateBound(currentBounds, right, bottom);
+            *touchResultOut = false;
+        }
+        else {
+            *touchResultOut = isRectVisibleInTouch(left, top, right, bottom);
         }
         return false;
     }
-
+    *touchResultOut = true;
     // if (currentBucket->texture == texture) return true;
     for (int i = 0;i < bucketsUsed;i++) {
         if (buckets[i]->texture == texture && buckets[i]->renderConfig == renderConfig && buckets[i]->vertices.size() < 64000) {
@@ -322,4 +330,26 @@ void Stage::updateBound(Rect* r, float x, float y) {
     else if (r->right < x) r->right = x;
     if (r->top > y) r->top = y;
     else if (r->bottom < y) r->bottom = y;
+}
+bool Stage::touchPressed(Touch& touch) {
+    touch.x /= pointSize;
+    touch.y /= pointSize;
+    std::vector<Sprite*> e = getObjectsUnderPoint(touch.x, touch.y);
+    for (auto s : e) {
+        if (s->touchPressed(touch)) break;
+    }
+    return true;
+}
+std::vector<Sprite*>& Stage::getObjectsUnderPoint(float x, float y) {
+    isCalculatingBounds = true;
+    currentTouchX = x;
+    currentTouchY = y;
+    objectsUnderPoint.resize(0);
+    auto m = new Matrix2x3();
+    StageSprit->collisionRender(m);
+    currentTouchX = 0.0f;
+    currentTouchY = 0.0f;
+    isCalculatingBounds = false;
+    delete m;
+    return objectsUnderPoint;
 }

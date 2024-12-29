@@ -7,6 +7,7 @@ class GUIContainer :public Sprite {
 public:
     MovieClip* movieClip;
     GUIContainer(const char* fileName, const  char* exportName) :Sprite(1) {
+        interactable = true;
         movieClip = nullptr;
         setMovieClip(ResourceManager::getMovieClip(fileName, exportName));
     }
@@ -18,6 +19,7 @@ public:
     virtual void setMovieClip(MovieClip* movieClip) {
         if (this->movieClip && this->movieClip != movieClip) delete this->movieClip;
         this->movieClip = movieClip;
+        movieClip->interactable = true;
         addChild(movieClip);
     }
     MovieClip* getMovieClip() {

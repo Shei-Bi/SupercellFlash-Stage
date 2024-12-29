@@ -210,6 +210,7 @@ MovieClip* MovieClip::createScreenContainer(const char* name, int index) {
         c = ResourceManager::getMovieClip("sc/ui.sc", (char*)(std::string(name) + s).c_str());
         addChild(c);
         c->setPixelSnappedXY(x, y);
+        c->setInteractiveRecursive(true);
     }
     return c;
 }
@@ -320,4 +321,8 @@ void MovieClip::changeTimelineChild(const char* fromName, DisplayObject* to) {
 }
 void MovieClip::moveThisToTopLayer() {
     if (parent) parent->addChildAt(this, parent->size);
+}
+void MovieClip::setInteractiveRecursive(bool b) {
+    Sprite::setInteractiveRecursive(b);
+    for (int i = 0;i < timelineChildrenCount;i++) if (timelineChildren[i]) timelineChildren[i]->setInteractiveRecursive(b);
 }

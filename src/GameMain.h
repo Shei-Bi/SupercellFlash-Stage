@@ -1,6 +1,6 @@
 #pragma once
 #include <flash/Sprite.h>
-
+#include "InputSystem.hpp"
 class GameMain
 {
 public:
@@ -14,4 +14,6 @@ public:
     float deltaTime;
     Sprite* screenSprite;
     Sprite* loadingScreenSprite;
+
+    InputSystem* inputSystem;
 };

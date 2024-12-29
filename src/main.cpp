@@ -72,6 +72,8 @@ int main(int argc, char* argv[])
 	ResourceManager::addFile("sc/background_toystory.sc");
 	ResourceManager::loadNextResource();
 
+	// glfwSetWindowOpacity(window, 0.5f);
+
 	glfwMaximizeWindow(window);
 	int width;
 	int height;
@@ -93,7 +95,7 @@ int main(int argc, char* argv[])
 		programPrevTime = now;
 		GameMain->update(dTSS, dT);
 		GameMain->draw(1.0f);
-		printf("fps: %f\n", 1.0f / dT);
+		// printf("fps: %f\n", 1.0f / dT);
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);

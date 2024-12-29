@@ -1,11 +1,13 @@
 #pragma once
 #include <flash/DisplayObject.h>
+#include "IInputListener.h"
 
-class Sprite :public DisplayObject
+class Sprite :public DisplayObject, public IInputListener
 {
 private:
     /* data */
 public:
+    bool interactable;
     DisplayObject** children;
     short capacity;
     short size;
@@ -20,4 +22,6 @@ public:
     void removeChild(DisplayObject* child);
     bool render(Matrix2x3*, ColorTransform* c, int, float);
     int getChildIndex(DisplayObject*);
+    bool collisionRender(Matrix2x3*);
+    void setInteractiveRecursive(bool);
 };

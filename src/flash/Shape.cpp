@@ -23,3 +23,16 @@ bool Shape::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) {
     delete cT;
     return true;
 }
+bool Shape::collisionRender(Matrix2x3* mat) {
+    Matrix2x3* n = new Matrix2x3(Matrix, *mat);
+    for (unsigned short i = 0;i < commandSize;i++) {
+        if (commands[i].render(n, &colorTransform, 0)) {
+            goto success;
+        }
+    }
+    delete n;
+    return false;
+success:
+    delete n;
+    return true;
+}

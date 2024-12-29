@@ -1,6 +1,13 @@
 #include "GameButton.h"
 #include "stdlib.h"
 #include "flash/MovieClip.h"
+
+GameButton::GameButton() :Sprite(1) {
+    name = "No name";
+    displayObject = nullptr;
+    timelineMovieClip = nullptr;
+    interactable = true;
+}
 void GameButton::setMovieClip(MovieClip* movieClip, bool timeline) {
     setDisplayObject(movieClip, timeline);
 }
@@ -33,4 +40,8 @@ void GameButton::setTimelineMovieClip(MovieClip* movieClip) {
     movieClip->changeTimelineChild(child, displayObject);
     if (child) delete child;
     timelineMovieClip = movieClip;
+}
+bool GameButton::touchPressed(Touch& touch) {
+    printf("%s pressed\n", name);
+    return true;
 }

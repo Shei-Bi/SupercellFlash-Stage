@@ -17,6 +17,12 @@ DisplayObject::~DisplayObject() {
 bool DisplayObject::render(Matrix2x3* mat, ColorTransform* c, int, float deltaTime) {
     return true;
 }
+bool DisplayObject::collisionRender(Matrix2x3* mat) {
+    return false;
+}
+void DisplayObject::setInteractiveRecursive(bool b) {
+    ;
+}
 void DisplayObject::setX(float x) {
     Matrix.tx = x;
 }
