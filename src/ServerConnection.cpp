@@ -4,7 +4,7 @@
 #include <network/LoginMessage.h>
 #include <LogicLong.hpp>
 #include <GameStateManager.h>
-#include <LogicDataTables.h>
+#include <data/LogicDataTables.h>
 #include <MessageManager.h>
 #include <LogicVersion.h>
 #include <network/OwnHomeDataMessage.hpp>

@@ -36,6 +36,7 @@ public:
     void setFrame(int);
     bool render(Matrix2x3*, ColorTransform* c, int, float);
     void setInteractiveRecursive(bool);
+    DisplayObject* getChildByName(const char*);
     MovieClip* getMovieClipByName(const char*);
     TextField* getTextFieldByName(const char*);
     void setChildVisible(const char*, bool);

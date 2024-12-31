@@ -33,4 +33,8 @@ public:
         homePage = new HomePage();
         screenSprite->addChild(homePage);
     }
+
+    void update(float deltaTime) {
+        homePage->update(deltaTime);
+    }
 };

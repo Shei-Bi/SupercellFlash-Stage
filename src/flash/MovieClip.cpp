@@ -99,6 +99,12 @@ bool MovieClip::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTim
 skip:
     return Sprite::render(mat, c, rc, deltaTime);
 }
+DisplayObject* MovieClip::getChildByName(const char* name) {
+    for (int i = 0;i < timelineChildrenCount;i++) {
+        if (childrenNames[i] && strcmp(childrenNames[i], name) == 0) return timelineChildren[i];
+    }
+    return nullptr;
+}
 MovieClip* MovieClip::getMovieClipByName(const char* name) {
     for (int i = 0;i < timelineChildrenCount;i++) {
         if (childrenNames[i] && strcmp(childrenNames[i], name) == 0) return (MovieClip*)timelineChildren[i];
@@ -114,6 +120,7 @@ TextField* MovieClip::getTextFieldByName(const char* name) {
 void MovieClip::setChildVisible(const char* name, bool v) {
     auto mc = getMovieClipByName(name);
     if (mc) mc->visible = v;
+    else assert(false);
 }
 int MovieClip::getTotalFrames() {
     return totalFrames;

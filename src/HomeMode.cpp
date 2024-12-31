@@ -7,7 +7,7 @@ bool HomeMode::isLoaded() {
     return state == 7;
 }
 void HomeMode::update(float sinceStart, float deltaTime) {
-    ;
+    homeScreen->update(deltaTime);
 }
 void HomeMode::updateLoading(float deltaTime) {
     switch (state) {

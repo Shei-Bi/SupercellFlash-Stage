@@ -17,6 +17,10 @@ public:
     PendingTeamItem* panel_other_invite_4;
     PendingTeamItem* panel_other_invite_3;
     PendingTeamItem* panel_other_invite_5;
+
+    MovieClip* brawl_container;//696
+    GameButton* button_play_club_league;//528
+
     HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
         getMovieClip()->initScreenContainers("mainscreen_", screenContainers);
         // return;
@@ -62,11 +66,14 @@ public:
         // player_1_area->setChildVisible("player_status", false);
         // player_1_area->setChildVisible("star_power_ph", false);
         // player_1_area->setChildVisible("item_ph", false);
+        button_play_club_league = getButtonByName("button_play_club_league");
         getClipFromContainers("player_1_area")->visible = false;
         getClipFromContainers("player_2_area")->visible = false;
         getClipFromContainers("player_3_area")->visible = false;
         getClipFromContainers("player_4_area")->visible = false;
         getClipFromContainers("player_5_area")->visible = false;
+        brawl_container = screenContainers[4]->getMovieClipByName("brawl_container");
+        brawl_container->visible = false;
 
         getButtonByName("button_random_reward")->visible = false;
 
@@ -105,7 +112,21 @@ public:
     }
 
     void refreshSelectedEvent() {
-        getButtonByName("button_mode")->visible = false;
+        auto button_mode_clip = getButtonByName("button_mode")->timelineMovieClip;
+
+        brawl_container->getMovieClipByName("party_mode_container")->visible = false;
+        getClipFromContainers("raid_boss_container")->visible = false;
+
+        button_play_club_league->visible = false;
+        brawl_container->visible = false;
+
+        getButtonByName("button_spectate")->visible = false;
+        auto event_container = getClipFromContainers("event_container");
+        // for (int i = 0;i < event_container->timelineChildrenCount;i++) {
+        //     printf("%s\n", event_container->childrenNames[i]);
+        // }
+        event_container->setChildVisible("mutant_ph", false);
+        event_container->getMovieClipByName("recommended_brawlers_anim")->stop();
     }
 
     void updateVisibleItems() {
@@ -124,5 +145,11 @@ public:
             if (strcmp(gameButton->name, name) == 0) return gameButton;
         }
         return nullptr;
+    }
+
+    void update(float deltaTime) {
+        auto event_container = getClipFromContainers("event_container");
+        event_container->getChildByName("vfx_overcharge")->visible = false;
+        event_container->getChildByName("vfx_overcharge_front")->visible = false;
     }
 };
