@@ -55,4 +55,6 @@ public:
     bool touchPressed(Touch&);
     // bool touchMoved(Touch&);
     // bool touchReleased(Touch&);
+
+    bool forceNewBucket;
 };

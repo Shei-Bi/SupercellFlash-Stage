@@ -12,3 +12,9 @@ void LogicDataTables::initDataTable(CSVNode* csvNode, int index) {
 bool LogicDataTables::isLoaded() {
     return sm_loaded;
 }
+void LogicDataTables::createReferences() {
+    for (int i = 0;i < 61;i++) {
+        if (TABLES[i]) TABLES[i]->createReferences();
+    }
+    sm_loaded = true;
+}

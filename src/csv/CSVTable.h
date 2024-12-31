@@ -22,6 +22,7 @@ public:
     int getColumnRowCount();
     void addAndConvertValue(std::string_view& element, int index);
     int getRowCount();
+    std::string const& getValue(const char* name, int row);
     std::string const& getValueAt(int column, int row);
     int getIntegerValueAt(int column, int row);
     bool getBooleanValueAt(int column, int row);

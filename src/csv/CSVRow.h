@@ -10,4 +10,6 @@ public:
     CSVRow(CSVTable* table);
     const std::string& getName();
     int getIntegerValueAt(int);
+    const std::string& getValue(const char*, int);
+    const std::string& getValueAt(int);
 };

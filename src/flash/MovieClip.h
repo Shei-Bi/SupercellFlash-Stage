@@ -24,6 +24,7 @@ private:
     int state;
     int loopFrame;
     int totalFrames;
+
 public:
     enum AnimateState {
         PLAYING,
@@ -43,6 +44,7 @@ public:
     int getTotalFrames();
     void gotoAndStopFrameIndex(int);
     void gotoAndPlayFrameIndex(int, int);
+    void playOnce();
     void removeChildAt(short);
     void stop(void);
     int getFrameIndex(const char*);
@@ -59,6 +61,9 @@ public:
 
     //Unknown
     void moveThisToTopLayer();
+
+    void debugPrintChildNames();
+    bool debugForceNewBucket;
 
     virtual bool isMovieClip() const;
 };

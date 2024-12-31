@@ -20,7 +20,9 @@ void InitState::updateLoading(float deltaTime) {
 void InitState::initDataTables() {
     if (!LogicDataTables::isLoaded()) {
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/location_themes.csv"), LocationTheme);
-        LogicLocationThemeData::resetStatics(TABLES[LocationTheme]->csvTable);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/locations.csv"), Location);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/game_mode_variations.csv"), GameModeVariation);
+        LogicDataTables::createReferences();
     }
 }
 bool InitState::isLoaded() {

@@ -51,11 +51,15 @@ public:
                 break;
             case 1:
                 int type;
-                if (element == "string") type = 0;
-                else if (element == "int") type = 1;
-                else if (element == "boolean") type = 2;
+                something_on_stack = element;
+                std::transform(something_on_stack.begin(), something_on_stack.end(), something_on_stack.begin(), [](unsigned char c) {
+                    return std::tolower(c);
+                    });
+                if (something_on_stack == "string") type = 0;
+                else if (something_on_stack == "int") type = 1;
+                else if (something_on_stack == "boolean") type = 2;
                 else {
-                    printf("Invalid column type '%s', column name %s, file %s. Expecting: int/string/boolean\n", std::string(element).c_str(), "idk", "idk");
+                    printf("Invalid column type '%s', column name %s, file %s. Expecting: int/string/boolean\n", something_on_stack.c_str(), "idk", "idk");
                     abort();
                 }
                 table->addColumnType(type);

@@ -47,6 +47,8 @@ MovieClip* MovieClip::createMovieClip(MovieClipOriginal* movieClipOriginal, Supe
     movieClip->totalFrames = movieClipOriginal->frameSize;
     movieClip->childrenNames = movieClipOriginal->childrenNames;
     movieClip->childrenIds = movieClipOriginal->childrenIds;
+
+    movieClip->debugForceNewBucket = false;
     return movieClip;
 }
 void MovieClip::setFrame(int index) {
@@ -63,7 +65,8 @@ void MovieClip::setFrame(int index) {
         else child->Matrix.reset();
         if (element[2] != 65535) child->colorTransform = matrixBank->colorTransforms[element[2]];
         else child->colorTransform.reset();
-        addChildAt(child, childIndex++);
+        if (child->parent != this || child->indexInParent != childIndex) addChildAt(child, childIndex);
+        childIndex++;
     }
     for (int i = size - 1;i >= childIndex;i--) Sprite::removeChildAt(i);
 }
@@ -97,6 +100,7 @@ bool MovieClip::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTim
     }
     if (state != STOPPED) frameTime += deltaTime;
 skip:
+    if (debugForceNewBucket) Stage::getInstance()->forceNewBucket = true;
     return Sprite::render(mat, c, rc, deltaTime);
 }
 DisplayObject* MovieClip::getChildByName(const char* name) {
@@ -332,4 +336,12 @@ void MovieClip::moveThisToTopLayer() {
 void MovieClip::setInteractiveRecursive(bool b) {
     Sprite::setInteractiveRecursive(b);
     for (int i = 0;i < timelineChildrenCount;i++) if (timelineChildren[i]) timelineChildren[i]->setInteractiveRecursive(b);
+}
+void MovieClip::debugPrintChildNames() {
+    for (int i = 0;i < timelineChildrenCount;i++) {
+        printf("%s\n", childrenNames[i]);
+    }
+}
+void MovieClip::playOnce() {
+    gotoAndPlayFrameIndex(0, totalFrames - 1);
 }

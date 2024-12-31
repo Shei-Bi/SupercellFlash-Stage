@@ -68,6 +68,9 @@ std::string const& CSVTable::getValueAt(int column, int row) {
     if (column < 0) return EMPTY_STRING;
     return columns[column]->getStringValue(row);
 }
+std::string const& CSVTable::getValue(const char* name, int row) {
+    return getValueAt(getColumnIndexByName(name), row);
+}
 int CSVTable::getIntegerValueAt(int column, int row) {
     if (column < 0) return 0;
     return columns[column]->getIntValue(row);

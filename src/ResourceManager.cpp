@@ -24,7 +24,9 @@ void ResourceManager::init() {
     // rootPath = fs::path(filename).parent_path();
     cachePath = fs::path("cache");
 }
-
+MovieClip* ResourceManager::getMovieClip(const std::string& file, const std::string& name) {
+    return getMovieClip(file.c_str(), name.c_str());
+}
 MovieClip* ResourceManager::getMovieClip(const char* file, const char* name) {
     // printf("getting %s", name);
     SupercellSWF* swf = getSupercellSWF(file, name);

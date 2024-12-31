@@ -21,7 +21,30 @@ void Sprite::addChild(DisplayObject* child) {
     addChildAt(child, size);
 }
 void Sprite::addChildAt(DisplayObject* child, short index) {
-    if (child->parent == this) return;
+    if (child->parent == this) {
+        int oldIndex = child->indexInParent;
+        int newIndex;
+        if (index >= size) {
+            newIndex = size - 1;
+        }
+        else newIndex = index - oldIndex < index;
+        if (newIndex == oldIndex) return;
+        if (oldIndex < newIndex) {
+            for (int i = oldIndex;i < newIndex;i++) {
+                children[i] = children[i + 1];
+                children[i]->indexInParent = i;
+            }
+        }
+        else {
+            for (int i = oldIndex;i > newIndex;i--) {
+                children[i] = children[i - 1];
+                children[i]->indexInParent = i;
+            }
+        }
+        children[newIndex] = child;
+        child->indexInParent = newIndex;
+        return;
+    }
     if (child->parent) {
         child->parent->removeChildAt(child->indexInParent);
     }
@@ -71,8 +94,8 @@ bool Sprite::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) 
     delete ct;
     return true;
 }
-Sprite::Sprite(/* args */) {
-    Sprite::Sprite(4);
+Sprite::Sprite() :Sprite(4) {
+    ;
 }
 
 Sprite::~Sprite() {

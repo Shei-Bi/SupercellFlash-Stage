@@ -2,8 +2,10 @@
 #include <flash/gui/DropGUIContainer.hpp>
 #include <vector>
 #include <flash/gui/PendingTeamItem.hpp>
+#include "flash/gui/DataIcon.hpp"
+#include "data/LogicDataTables.h"
 
-#pragma optimize("",off);
+#pragma optimize("",off)
 class HomePage :public DropGUIContainer {
 public:
     std::vector<MovieClip*> screenContainers;
@@ -20,7 +22,7 @@ public:
 
     MovieClip* brawl_container;//696
     GameButton* button_play_club_league;//528
-
+    DataIcon* gamemode_icon;//872
     HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
         getMovieClip()->initScreenContainers("mainscreen_", screenContainers);
         // return;
@@ -113,6 +115,9 @@ public:
 
     void refreshSelectedEvent() {
         auto button_mode_clip = getButtonByName("button_mode")->timelineMovieClip;
+        // button_mode_clip->debugPrintChildNames();
+        // button_mode_clip->getMovieClipByName("gamemode")->setAlpha(0.5f);
+        auto info = button_mode_clip->getMovieClipByName("info");
 
         brawl_container->getMovieClipByName("party_mode_container")->visible = false;
         getClipFromContainers("raid_boss_container")->visible = false;
@@ -121,12 +126,44 @@ public:
         brawl_container->visible = false;
 
         getButtonByName("button_spectate")->visible = false;
+
+        // button_mode_clip->setChildVisible("notification", false);
+
+        button_mode_clip->gotoAndStop("idle");
         auto event_container = getClipFromContainers("event_container");
+
+        event_container->getMovieClipByName("recommended_brawlers_anim")->stop();
+
+        info->setChildVisible("icon_brawler", false);
+
+        gamemode_icon = new DataIcon(nullptr);
+        gamemode_icon->setIconClip(std::string("sc/ui.sc"), LogicDataTables::getGameModeVariationData(6)->getGameModeIconName());
+        gamemode_icon->replaceInstanceWithIcon(info->getMovieClipByName("gamemode_icon"), "icon", 1, 1);
+        info->getMovieClipByName("gamemode_icon")->setChildVisible("icon", false);
+        info->debugForceNewBucket = true;
+        // gamemode_icon->setScale(10.0f);
+        // info->moveThisToTopLayer();
+        // info->moveThisToTopLayer();
+
+
         // for (int i = 0;i < event_container->timelineChildrenCount;i++) {
         //     printf("%s\n", event_container->childrenNames[i]);
         // }
         event_container->setChildVisible("mutant_ph", false);
-        event_container->getMovieClipByName("recommended_brawlers_anim")->stop();
+
+        info->playOnce();
+        button_mode_clip->setChildVisible("pro_league", false);
+        refreshSelectedEventChampionshipChallenge();
+        refreshSelectedEventSeasonal();
+
+    }
+
+    void refreshSelectedEventSeasonal() {
+        getButtonByName("button_mode")->timelineMovieClip->setChildVisible("halloween", false);
+    }
+
+    void refreshSelectedEventChampionshipChallenge() {
+        // getButtonByName("button_mode")->timelineMovieClip->setChildVisible("championship_challenge", false);
     }
 
     void updateVisibleItems() {
@@ -151,5 +188,11 @@ public:
         auto event_container = getClipFromContainers("event_container");
         event_container->getChildByName("vfx_overcharge")->visible = false;
         event_container->getChildByName("vfx_overcharge_front")->visible = false;
+
+        //dead buttons club
+        getButtonByName("button_pro_league")->visible = false;
+        getButtonByName("button_ranked")->visible = false;
+
+        getButtonByName("button_championship_challenge")->visible = false;
     }
 };

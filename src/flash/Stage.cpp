@@ -138,6 +138,7 @@ void Stage::increaseBucketCapacity(int c) {
     }
 }
 Stage::Stage() {
+    forceNewBucket = false;
     buckets = nullptr;
     bucketCapacity = 0;
     bucketsUsed = 0;
@@ -182,12 +183,17 @@ bool Stage::shapeStart(float left, float top, float right, float bottom, GLImage
     }
     *touchResultOut = true;
     // if (currentBucket->texture == texture) return true;
+    if (forceNewBucket) {
+        forceNewBucket = false;
+        goto newBucket;
+    }
     for (int i = 0;i < bucketsUsed;i++) {
         if (buckets[i]->texture == texture && buckets[i]->renderConfig == renderConfig && buckets[i]->vertices.size() < 64000) {
             currentBucket = buckets[i];
             return true;
         }
     }
+newBucket:
     if (bucketsUsed == bucketCapacity) increaseBucketCapacity(bucketsUsed * 5 / 4);
     currentBucket = buckets[bucketsUsed++];
     currentBucket->initForUse(texture, renderConfig);

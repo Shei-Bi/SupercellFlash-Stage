@@ -1,6 +1,8 @@
 #include "csv/CSVNode.hpp"
 #include "LogicData.h"
 #include "LogicLocationThemeData.h"
+#include "LogicLocationData.h"
+#include "LogicGameModeVariationData.h"
 
 class LogicDataTable {
 public:
@@ -30,12 +32,22 @@ public:
         {
         case 47:
             return new LogicLocationThemeData(csvRow, this);
+        case 15:
+            return new LogicLocationData(csvRow, this);
+        case 48:
+            return new LogicGameModeVariationData(csvRow, this);
         default:
             abort();
         }
     }
-    LogicData* getDataByName(char* name, LogicData* neededBy) {
+    LogicData* getDataByName(const std::string& name, LogicData* neededBy) {
+        return getDataByName(name.c_str(), neededBy);
+    }
+    LogicData* getDataByName(const char* name, LogicData* neededBy) {
         for (LogicData* data : datas) if (data->getName() == name) return data;
         abort();
+    }
+    void createReferences() {
+        for (LogicData* data : datas) data->createReferences();
     }
 };
