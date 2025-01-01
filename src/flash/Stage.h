@@ -15,7 +15,17 @@ public:
     static Stage* sm_pInstance;
     static Stage* getInstance();
     StageSprite* StageSprit;
-    StageDrawBucket* currentBucket;
+    std::vector<unsigned int> indicesBucket;
+    std::vector<float> verticesBucket;
+    int triangleCount;
+    int pointCount;
+    //IndicesBucket 252
+    //IndicesBucketCapacity 260
+    //IndicesBucketSize 256
+    //VertexBucket 264
+    //VertexBucketCapacity 268
+    //VertexBucketSize 272
+    StageDrawBucket* currentBucket;//276
     StageDrawBucket** buckets;
     int bucketCapacity;
     int bucketsUsed;
@@ -35,6 +45,7 @@ public:
     void firstTimeShaderInit(Shader*, glm::mat4);
     void loadDefaultShader(int);
     Shader* shader;
+    void increaseVertexBucketCapacity(int);
     void increaseBucketCapacity(int);
     bool abort;
     void setPointSize(float);

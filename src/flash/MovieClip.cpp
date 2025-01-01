@@ -48,7 +48,7 @@ MovieClip* MovieClip::createMovieClip(MovieClipOriginal* movieClipOriginal, Supe
     movieClip->childrenNames = movieClipOriginal->childrenNames;
     movieClip->childrenIds = movieClipOriginal->childrenIds;
 
-    movieClip->debugForceNewBucket = false;
+    // movieClip->debugForceNewBucket = true;
     return movieClip;
 }
 void MovieClip::setFrame(int index) {
@@ -100,7 +100,7 @@ bool MovieClip::render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTim
     }
     if (state != STOPPED) frameTime += deltaTime;
 skip:
-    if (debugForceNewBucket) Stage::getInstance()->forceNewBucket = true;
+    // if (debugForceNewBucket) Stage::getInstance()->forceNewBucket = true;
     return Sprite::render(mat, c, rc, deltaTime);
 }
 DisplayObject* MovieClip::getChildByName(const char* name) {

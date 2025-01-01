@@ -27,14 +27,8 @@ bool ShapeDrawBitmapCommand::render(Matrix2x3* mat, ColorTransform* c, int rc) {
     bool result;
     if (Stage->shapeStart(bounds->left, bounds->top, bounds->right, bounds->bottom, glImage, rc, &result)) {
         int triangleCount = vertexSize - 2;
-        std::vector<float>* v = &Stage->currentBucket->vertices;
-        int required = v->size() + vertexSize * 11;
-        if (required > 65535) {
-            printf("Stage vertex overflow, required:%d", required);
-            return true;
-        }
         Stage->addTriangles(triangleCount);
-        if (v->capacity() < required) v->reserve(v->capacity() + 512 * 11 * 3);
+        auto v = &Stage->verticesBucket;
         for (int i = 0;i < vertexSize;i++) {
             auto& vertex = vertexs[i];
             v->push_back(mat->applyX(vertex.x, vertex.y));
@@ -71,14 +65,8 @@ bool ShapeDrawBitmapCommand::render9Slice(Matrix2x3* mat, ColorTransform* c, int
     Stage* Stage = Stage::getInstance();
     if (Stage->shapeStart(bounds->left, bounds->top, bounds->right, bounds->bottom, glImage, rc, &result)) {
         int triangleCount = vertexSize - 2;
-        std::vector<float>* v = &Stage->currentBucket->vertices;
-        int required = v->size() + vertexSize * 11;
-        if (required > 65535) {
-            printf("Stage vertex overflow, required:%d", required);
-            return true;
-        }
         Stage->addTriangles(triangleCount);
-        if (v->capacity() < required) v->reserve(v->capacity() + 512 * 11 * 3);
+        auto v = &Stage->verticesBucket;
         for (int i = 0;i < vertexSize;i++) {
             auto& vertex = vertexs[i];
             float x = vertex.x;
@@ -102,6 +90,7 @@ bool ShapeDrawBitmapCommand::render9Slice(Matrix2x3* mat, ColorTransform* c, int
     }
     delete bounds;
     return result;
+    return false;
 }
 unsigned short ShapeDrawBitmapCommand::getVertexCount() {
     return vertexSize;

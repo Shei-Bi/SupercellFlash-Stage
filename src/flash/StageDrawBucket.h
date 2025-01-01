@@ -8,8 +8,7 @@ class StageDrawBucket
 private:
     /* data */
 public:
-    std::vector <float> vertices;
-    std::vector<unsigned int> indices;
+    int indicesIndex;
     int triangleCount;
     int pointCount;
     GLImage* texture;
@@ -18,13 +17,15 @@ public:
     // void StageDrawBucket() {
     //     ;
     // }
-    void initForUse(GLImage* g, int rc) {
+    void initForUse(GLImage* g, int rc, int indicesIndex) {
         texture = g;
         renderConfig = rc;
+        this->indicesIndex = indicesIndex;
+        triangleCount = 0;
+        pointCount = 0;
     }
     void reset() {
-        vertices.clear();
-        indices.clear();
+        indicesIndex = 0;
         triangleCount = 0;
         pointCount = 0;
     }

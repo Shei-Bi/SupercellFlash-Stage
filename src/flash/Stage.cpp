@@ -137,6 +137,9 @@ void Stage::increaseBucketCapacity(int c) {
         bucketCapacity = c;
     }
 }
+void Stage::increaseVertexBucketCapacity(int c) {
+    verticesBucket.reserve(c);
+}
 Stage::Stage() {
     forceNewBucket = false;
     buckets = nullptr;
@@ -145,6 +148,7 @@ Stage::Stage() {
     increaseBucketCapacity(150);
     StageSprit = new StageSprite(10);
     StageSprit->interactable = true;
+    increaseVertexBucketCapacity(32768);
     top = 0;
     left = 0;
     right = 800;
@@ -183,39 +187,47 @@ bool Stage::shapeStart(float left, float top, float right, float bottom, GLImage
     }
     *touchResultOut = true;
     // if (currentBucket->texture == texture) return true;
-    if (forceNewBucket) {
-        forceNewBucket = false;
-        goto newBucket;
-    }
-    for (int i = 0;i < bucketsUsed;i++) {
-        if (buckets[i]->texture == texture && buckets[i]->renderConfig == renderConfig && buckets[i]->vertices.size() < 64000) {
-            currentBucket = buckets[i];
-            return true;
-        }
-    }
+    // if (forceNewBucket) {
+    //     forceNewBucket = false;
+    //     goto newBucket;
+    // }
+    if (bucketsUsed > 0 && currentBucket->texture == texture && currentBucket->renderConfig == renderConfig) return true;
+    // for (int i = 0;i < bucketsUsed;i++) {
+    //     if (buckets[i]->texture == texture && buckets[i]->renderConfig == renderConfig) {
+    //         currentBucket = buckets[i];
+    //         return true;
+    //     }
+    // }
 newBucket:
     if (bucketsUsed == bucketCapacity) increaseBucketCapacity(bucketsUsed * 5 / 4);
     currentBucket = buckets[bucketsUsed++];
-    currentBucket->initForUse(texture, renderConfig);
+    currentBucket->initForUse(texture, renderConfig, indicesBucket.size());
     return true;
 }
 void Stage::addTriangles(int count) {
-    int required = currentBucket->triangleCount * 3 + count * 3;
+    int required = triangleCount * 3 + count * 3;
     // printf("Stage::addTriangles capacity %i, required %i\n", currentBucket->indices.capacity(), required);
-    if (currentBucket->indices.capacity() < required) currentBucket->indices.reserve(currentBucket->indices.capacity() + 512 * 3);
-    unsigned int* indices = new unsigned int[count * 3];
+    if (indicesBucket.capacity() < required) indicesBucket.reserve(indicesBucket.capacity() * 5 / 4);
+    // if (currentBucket->indices.capacity() < required) currentBucket->indices.reserve(currentBucket->indices.capacity() + 512 * 3);
+    // auto indices = indicesBucket.end();
     for (int i = 0; i < count; i++) {
-        indices[i * 3] = 0;
-        indices[i * 3 + 1] = i + 1;
-        indices[i * 3 + 2] = i + 2;
+        // indices[i * 3] = triangleCount;
+        // indices[i * 3 + 1] = triangleCount + i + 1;
+        // indices[i * 3 + 2] = triangleCount + i + 2;
+        indicesBucket.push_back(pointCount);
+        indicesBucket.push_back(pointCount + i + 1);
+        indicesBucket.push_back(pointCount + i + 2);
     }
-    for (int i = 0;i < count * 3;i++) {
-        // printf("%i", currentBucket->triangleCount * 3 + i);
-        currentBucket->indices.emplace(currentBucket->indices.begin() + currentBucket->triangleCount * 3 + i, indices[i] + currentBucket->pointCount);
-    }
+    // for (int i = 0;i < count * 3;i++) {
+    //     // printf("%i", currentBucket->triangleCount * 3 + i);
+    //     currentBucket->indices.emplace(currentBucket->indices.begin() + currentBucket->triangleCount * 3 + i, indices[i] + currentBucket->pointCount);
+    // }
+    if (verticesBucket.size() + (2 + count) * 11 > verticesBucket.capacity())
+        increaseVertexBucketCapacity(verticesBucket.size() * 5 / 4 + (2 + count) * 11);
+    triangleCount += count;
+    pointCount += count + 2;
     currentBucket->triangleCount += count;
     currentBucket->pointCount += count + 2;
-    delete[] indices;
 }
 
 void Stage::render(float deltaTime, bool clear) {
@@ -232,52 +244,51 @@ void Stage::render(float deltaTime, bool clear) {
 }
 void Stage::renderBuckets() {
     shader->use();
+    unsigned int VBO, VAO, EBO;
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    // for (int i = 0;i < currentBucket->vertices.size();i++) {
+    //     printf("vertices[%i]: %f\n", i, currentBucket->vertices[i]);
+    // }
+    // for (int i = 0;i < currentBucket->indices.size();i++) {
+    //     printf("indices[%i]: %i\n", i, currentBucket->indices[i]);
+    // }
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, pointCount * 11 * sizeof(float), verticesBucket.data(), GL_STREAM_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, triangleCount * 3 * sizeof(unsigned int), indicesBucket.data(), GL_STREAM_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // texture coord attribute
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(4 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
+    glEnableVertexAttribArray(3);
+    glBindVertexArray(VAO);
+
+
     for (int i = 0;i < bucketsUsed;i++) {
         StageDrawBucket* currentBucket = buckets[i];
         if (currentBucket->texture) currentBucket->texture->bind();
-        unsigned int VBO, VAO, EBO;
-
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-        glGenBuffers(1, &EBO);
-
-        glBindVertexArray(VAO);
-
-        // for (int i = 0;i < currentBucket->vertices.size();i++) {
-        //     printf("vertices[%i]: %f\n", i, currentBucket->vertices[i]);
-        // }
-        // for (int i = 0;i < currentBucket->indices.size();i++) {
-        //     printf("indices[%i]: %i\n", i, currentBucket->indices[i]);
-        // }
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, currentBucket->pointCount * 11 * sizeof(float), currentBucket->vertices.data(), GL_STREAM_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, currentBucket->triangleCount * 3 * sizeof(unsigned int), currentBucket->indices.data(), GL_STREAM_DRAW);
-
-        // position attribute
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-        // color attribute
-        // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        // glEnableVertexAttribArray(1);
-        // texture coord attribute
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(2 * sizeof(float)));
-        glEnableVertexAttribArray(1);
-
-        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(4 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-
-        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
-        glEnableVertexAttribArray(3);
         bindBlendMode(currentBucket->renderConfig & 0x380);
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, currentBucket->triangleCount * 3, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, currentBucket->triangleCount * 3, GL_UNSIGNED_INT, (const void*)(currentBucket->indicesIndex * sizeof(unsigned int)));
 
-        glDeleteVertexArrays(1, &VAO);
-        glDeleteBuffers(1, &VBO);
-        glDeleteBuffers(1, &EBO);
     }
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
     resetRenderVariables();
 }
 bool Stage::bindBlendMode(int b) {
@@ -297,6 +308,10 @@ bool Stage::bindBlendMode(int b) {
 }
 void Stage::resetRenderVariables() {
     for (int i = 0;i < bucketsUsed;i++) buckets[i]->reset();
+    verticesBucket.clear();
+    indicesBucket.clear();
+    triangleCount = 0;
+    pointCount = 0;
     bucketsUsed = 0;
 }
 void Stage::addChild(DisplayObject* child) {

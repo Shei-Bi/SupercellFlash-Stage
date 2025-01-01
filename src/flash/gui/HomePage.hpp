@@ -140,7 +140,7 @@ public:
         gamemode_icon->setIconClip(std::string("sc/ui.sc"), LogicDataTables::getGameModeVariationData(6)->getGameModeIconName());
         gamemode_icon->replaceInstanceWithIcon(info->getMovieClipByName("gamemode_icon"), "icon", 1, 1);
         info->getMovieClipByName("gamemode_icon")->setChildVisible("icon", false);
-        info->debugForceNewBucket = true;
+        // info->debugForceNewBucket = true;
         // gamemode_icon->setScale(10.0f);
         // info->moveThisToTopLayer();
         // info->moveThisToTopLayer();
