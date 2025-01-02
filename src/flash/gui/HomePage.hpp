@@ -5,7 +5,7 @@
 #include "flash/gui/DataIcon.hpp"
 #include "data/LogicDataTables.h"
 
-#pragma optimize("",off)
+// #pragma optimize("",off)
 class HomePage :public DropGUIContainer {
 public:
     std::vector<MovieClip*> screenContainers;

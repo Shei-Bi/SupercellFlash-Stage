@@ -8,7 +8,7 @@
 #include "SWFTexture.h"
 #include "ScMatrixBank.hpp"
 #include <cstring>
-#pragma optimize( "t", on )
+// #pragma optimize( "t", on )
 bool SupercellSWF::loadInternal(std::filesystem::path& path) {
     sc = fopen((char*)path.generic_string().c_str(), "rb");
     buffer = malloc(4);
@@ -212,4 +212,4 @@ bool SupercellSWF::hasExportName(char* name) {
     for (unsigned short i = 0;i < exportNameSize;i++) if (strcmp(exportNameStrings[i], name) == 0) return true;
     return false;
 }
-#pragma optimize( "t", off )
+// #pragma optimize( "t", off )

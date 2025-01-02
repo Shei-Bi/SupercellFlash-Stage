@@ -133,14 +133,27 @@ void Stage::increaseBucketCapacity(int c) {
             newArray[i] = buckets[i];
         }
         for (int i = bucketCapacity;i < c;i++) newArray[i] = new StageDrawBucket();
+        if (buckets) delete buckets;
         buckets = newArray;
         bucketCapacity = c;
     }
 }
 void Stage::increaseVertexBucketCapacity(int c) {
-    verticesBucket.reserve(c);
+    if (verticesBucketCapacity < c) {
+        float* newArray = new float[c];
+        for (int i = 0;i < verticesBucketSize;i++) {
+            newArray[i] = verticesBucket[i];
+        }
+        if (verticesBucket) delete verticesBucket;
+        verticesBucket = newArray;
+        verticesBucketCapacity = c;
+    }
 }
 Stage::Stage() {
+    verticesBucket = nullptr;
+    verticesBucketCapacity = 0;
+    verticesBucketSize = 0;
+    currentBucket = nullptr;
     forceNewBucket = false;
     buckets = nullptr;
     bucketCapacity = 0;
@@ -191,7 +204,7 @@ bool Stage::shapeStart(float left, float top, float right, float bottom, GLImage
     //     forceNewBucket = false;
     //     goto newBucket;
     // }
-    if (bucketsUsed > 0 && currentBucket->texture == texture && currentBucket->renderConfig == renderConfig) return true;
+    if (currentBucket && currentBucket->texture == texture && currentBucket->renderConfig == renderConfig) return true;
     // for (int i = 0;i < bucketsUsed;i++) {
     //     if (buckets[i]->texture == texture && buckets[i]->renderConfig == renderConfig) {
     //         currentBucket = buckets[i];
@@ -218,12 +231,8 @@ void Stage::addTriangles(int count) {
         indicesBucket.push_back(pointCount + i + 1);
         indicesBucket.push_back(pointCount + i + 2);
     }
-    // for (int i = 0;i < count * 3;i++) {
-    //     // printf("%i", currentBucket->triangleCount * 3 + i);
-    //     currentBucket->indices.emplace(currentBucket->indices.begin() + currentBucket->triangleCount * 3 + i, indices[i] + currentBucket->pointCount);
-    // }
-    if (verticesBucket.size() + (2 + count) * 11 > verticesBucket.capacity())
-        increaseVertexBucketCapacity(verticesBucket.size() * 5 / 4 + (2 + count) * 11);
+    if (verticesBucketSize + (2 + count) * 11 > verticesBucketCapacity)
+        increaseVertexBucketCapacity(verticesBucketSize * 5 / 4 + (2 + count) * 11);
     triangleCount += count;
     pointCount += count + 2;
     currentBucket->triangleCount += count;
@@ -259,7 +268,7 @@ void Stage::renderBuckets() {
     //     printf("indices[%i]: %i\n", i, currentBucket->indices[i]);
     // }
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, pointCount * 11 * sizeof(float), verticesBucket.data(), GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, pointCount * 11 * sizeof(float), verticesBucket, GL_STREAM_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, triangleCount * 3 * sizeof(unsigned int), indicesBucket.data(), GL_STREAM_DRAW);
@@ -307,12 +316,15 @@ bool Stage::bindBlendMode(int b) {
     return true;
 }
 void Stage::resetRenderVariables() {
-    for (int i = 0;i < bucketsUsed;i++) buckets[i]->reset();
-    verticesBucket.clear();
+    currentBucket = nullptr;
+    for (int i = 0;i < bucketsUsed;i++) {
+        // delete buckets[i];
+    }
+    bucketsUsed = 0;
+    verticesBucketSize = 0;
     indicesBucket.clear();
     triangleCount = 0;
     pointCount = 0;
-    bucketsUsed = 0;
 }
 void Stage::addChild(DisplayObject* child) {
     StageSprit->addChild(child);

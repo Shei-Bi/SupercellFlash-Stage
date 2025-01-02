@@ -16,7 +16,10 @@ public:
     static Stage* getInstance();
     StageSprite* StageSprit;
     std::vector<unsigned int> indicesBucket;
-    std::vector<float> verticesBucket;
+    float* verticesBucket;
+    int verticesBucketCapacity;
+    int verticesBucketSize;
+    // std::vector<float> verticesBucket;
     int triangleCount;
     int pointCount;
     //IndicesBucket 252

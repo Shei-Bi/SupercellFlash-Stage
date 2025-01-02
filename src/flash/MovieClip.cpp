@@ -10,7 +10,7 @@
 #include <flash/Stage.h>
 #include "flash/gui/GameButton.h"
 
-#pragma optimize("",off);
+// #pragma optimize("",off)
 
 int BLEND_MODE_MAP[] = { 0, 0, 0, 0x100, 0x180, 0, 0, 0, 0x80, 0, 0, 0, 0x200, 0, 0, 0x200 };
 MovieClip* MovieClip::createMovieClip(MovieClipOriginal* movieClipOriginal, SupercellSWF* swf) {

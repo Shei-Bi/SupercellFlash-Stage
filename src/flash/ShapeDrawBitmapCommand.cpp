@@ -28,20 +28,21 @@ bool ShapeDrawBitmapCommand::render(Matrix2x3* mat, ColorTransform* c, int rc) {
     if (Stage->shapeStart(bounds->left, bounds->top, bounds->right, bounds->bottom, glImage, rc, &result)) {
         int triangleCount = vertexSize - 2;
         Stage->addTriangles(triangleCount);
-        auto v = &Stage->verticesBucket;
         for (int i = 0;i < vertexSize;i++) {
             auto& vertex = vertexs[i];
-            v->push_back(mat->applyX(vertex.x, vertex.y));
-            v->push_back(mat->applyY(vertex.x, vertex.y));
-            v->push_back(vertex.u / 65536.0f);
-            v->push_back(vertex.v / 65536.0f);
-            v->push_back(c->mulR / 255.0f);
-            v->push_back(c->mulG / 255.0f);
-            v->push_back(c->mulB / 255.0f);
-            v->push_back(c->alpha / 255.0f);
-            v->push_back(c->addR / 255.0f);
-            v->push_back(c->addG / 255.0f);
-            v->push_back(c->addB / 255.0f);
+            auto v = &Stage->verticesBucket[Stage->verticesBucketSize];
+            v[0] = mat->applyX(vertex.x, vertex.y);
+            v[1] = mat->applyY(vertex.x, vertex.y);
+            v[2] = vertex.u / 65536.0f;
+            v[3] = vertex.v / 65536.0f;
+            v[4] = c->mulR / 255.0f;
+            v[5] = c->mulG / 255.0f;
+            v[6] = c->mulB / 255.0f;
+            v[7] = c->alpha / 255.0f;
+            v[8] = c->addR / 255.0f;
+            v[9] = c->addG / 255.0f;
+            v[10] = c->addB / 255.0f;
+            Stage->verticesBucketSize += 11;
         }
     }
     delete bounds;
@@ -75,17 +76,19 @@ bool ShapeDrawBitmapCommand::render9Slice(Matrix2x3* mat, ColorTransform* c, int
             else if (x >= safeArea->right) x = fmax(safeArea->getMidX(), shapeBounds->right + (x - shapeBounds->right) * width);
             if (y <= safeArea->top) y = fmin(safeArea->getMidY(), shapeBounds->top + (y - shapeBounds->top) * height);
             else if (y >= safeArea->bottom) y = fmax(safeArea->getMidY(), shapeBounds->bottom + (y - shapeBounds->bottom) * height);
-            v->push_back(mat->applyX(x, y));
-            v->push_back(mat->applyY(x, y));
-            v->push_back(vertex.u / 65536.0f);
-            v->push_back(vertex.v / 65536.0f);
-            v->push_back(c->mulR / 255.0f);
-            v->push_back(c->mulG / 255.0f);
-            v->push_back(c->mulB / 255.0f);
-            v->push_back(c->alpha / 255.0f);
-            v->push_back(c->addR / 255.0f);
-            v->push_back(c->addG / 255.0f);
-            v->push_back(c->addB / 255.0f);
+            auto v = &Stage->verticesBucket[Stage->verticesBucketSize];
+            v[0] = mat->applyX(x, y);
+            v[1] = mat->applyY(x, y);
+            v[2] = vertex.u / 65536.0f;
+            v[3] = vertex.v / 65536.0f;
+            v[4] = c->mulR / 255.0f;
+            v[5] = c->mulG / 255.0f;
+            v[6] = c->mulB / 255.0f;
+            v[7] = c->alpha / 255.0f;
+            v[8] = c->addR / 255.0f;
+            v[9] = c->addG / 255.0f;
+            v[10] = c->addB / 255.0f;
+            Stage->verticesBucketSize += 11;
         }
     }
     delete bounds;
