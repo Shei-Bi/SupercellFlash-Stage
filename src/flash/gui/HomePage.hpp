@@ -4,6 +4,7 @@
 #include <flash/gui/PendingTeamItem.hpp>
 #include "flash/gui/DataIcon.hpp"
 #include "data/LogicDataTables.h"
+#include "logic/EventData.hpp"
 
 // #pragma optimize("",off)
 class HomePage :public DropGUIContainer {
@@ -118,6 +119,7 @@ public:
         // button_mode_clip->debugPrintChildNames();
         // button_mode_clip->getMovieClipByName("gamemode")->setAlpha(0.5f);
         auto info = button_mode_clip->getMovieClipByName("info");
+        // info->setAlpha(0.1f);
 
         brawl_container->getMovieClipByName("party_mode_container")->visible = false;
         getClipFromContainers("raid_boss_container")->visible = false;
@@ -152,12 +154,21 @@ public:
         event_container->setChildVisible("mutant_ph", false);
 
         info->playOnce();
+
+        refreshRankedElement();
+        getButtonByName("button_quest_icon")->visible = false;
         button_mode_clip->setChildVisible("pro_league", false);
         refreshSelectedEventChampionshipChallenge();
         refreshSelectedEventSeasonal();
 
     }
 
+    void refreshRankedElement() {
+        setUpRankedModeElementForEvent((MovieClip*)getClipFromContainers("rank_mode_label")->parent, nullptr);
+    }
+    static void setUpRankedModeElementForEvent(MovieClip* movieClip, EventData*) {
+        movieClip->setChildVisible("rank_mode_label", false);
+    }
     void refreshSelectedEventSeasonal() {
         getButtonByName("button_mode")->timelineMovieClip->setChildVisible("halloween", false);
     }

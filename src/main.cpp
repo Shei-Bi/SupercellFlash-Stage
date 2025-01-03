@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 		programPrevTime = now;
 		GameMain->update(dTSS, dT);
 		GameMain->draw(1.0f);
-		printf("fps: %f\n", 1.0f / dT);
+		// printf("fps: %f\n", 1.0f / dT);
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
