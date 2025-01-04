@@ -25,7 +25,7 @@ void LoadingScreen::enter() {
 
     Stage* Stage = Stage::getInstance();
     loading_screen->setPixelSnappedXY(Stage->matrixX / 2, Stage->matrixY / 2);
-    GameMain::getInstance()->loadingScreenSprite->addChild(loading_screen);
+    GameMain::getInstance()->screen4->addChild(loading_screen);
 
     loading_bar->setY(loading_bar->getY() + (Stage->matrixY - 576.0f) * 0.4);
 }

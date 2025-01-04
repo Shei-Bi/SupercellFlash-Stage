@@ -24,4 +24,6 @@ public:
     int getChildIndex(DisplayObject*);
     bool collisionRender(Matrix2x3*);
     void setInteractiveRecursive(bool);
+
+    int whyUninteractable();
 };

@@ -12,8 +12,10 @@ public:
     void update(float, float);
     void draw(float);
     float deltaTime;
-    Sprite* screenSprite;
-    Sprite* loadingScreenSprite;
+    Sprite* screen1;
+    Sprite* screen2;
+    Sprite* screen3;
+    Sprite* screen4;
 
     InputSystem* inputSystem;
 };

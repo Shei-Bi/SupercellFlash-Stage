@@ -5,12 +5,14 @@
 #include "flash/gui/DataIcon.hpp"
 #include "data/LogicDataTables.h"
 #include "logic/EventData.hpp"
+#include "GUI.h"
+#include "SelectLocationPopup.hpp"
 
 // #pragma optimize("",off)
 class HomePage :public DropGUIContainer {
 public:
     std::vector<MovieClip*> screenContainers;
-    std::vector<GameButton*> buttons;
+    // std::vector<GameButton*> buttons;
 
     PendingTeamItem* panel_own_invite_2;
     PendingTeamItem* panel_own_invite_4;
@@ -115,7 +117,7 @@ public:
     }
 
     void refreshSelectedEvent() {
-        auto button_mode_clip = getButtonByName("button_mode")->timelineMovieClip;
+        auto button_mode_clip = getButtonByName("button_mode")->timelineClip;
         // button_mode_clip->debugPrintChildNames();
         // button_mode_clip->getMovieClipByName("gamemode")->setAlpha(0.5f);
         auto info = button_mode_clip->getMovieClipByName("info");
@@ -170,7 +172,7 @@ public:
         movieClip->setChildVisible("rank_mode_label", false);
     }
     void refreshSelectedEventSeasonal() {
-        getButtonByName("button_mode")->timelineMovieClip->setChildVisible("halloween", false);
+        getButtonByName("button_mode")->timelineClip->setChildVisible("halloween", false);
     }
 
     void refreshSelectedEventChampionshipChallenge() {
@@ -184,15 +186,8 @@ public:
     void createButtons() {
         for (MovieClip* mc : screenContainers) {
             if (!mc) continue;
-            mc->autoCreateButtons(buttons);
+            mc->autoCreateButtons(buttons, this);
         }
-    }
-
-    GameButton* getButtonByName(const char* name) {
-        for (GameButton* gameButton : buttons) {
-            if (strcmp(gameButton->name, name) == 0) return gameButton;
-        }
-        return nullptr;
     }
 
     void update(float deltaTime) {
@@ -205,5 +200,18 @@ public:
         getButtonByName("button_ranked")->visible = false;
 
         getButtonByName("button_championship_challenge")->visible = false;
+    }
+
+    void handleModeButtonPress() {
+        GUI::getInstance()->showPopup(new SelectLocationPopup());
+    }
+
+    void buttonClicked(GameButton* button) {
+        if (strcmp(button->name, "button_mode") == 0) {
+            handleModeButtonPress();
+        }
+        else if (false) {
+            ;
+        }
     }
 };

@@ -2,10 +2,12 @@
 #include <flash/Sprite.h>
 #include <ResourceManager.h>
 #include <flash/MovieClip.h>
+#include "IButtonListener.h"
 
-class GUIContainer :public Sprite {
+class GUIContainer :public Sprite, public IButtonListener {
 public:
     MovieClip* movieClip;
+    std::vector<GameButton*> buttons;
     GUIContainer(const char* fileName, const  char* exportName) :Sprite(1) {
         interactable = true;
         movieClip = nullptr;
@@ -24,5 +26,11 @@ public:
     }
     MovieClip* getMovieClip() {
         return movieClip;
+    }
+    GameButton* getButtonByName(const char* name) {
+        for (GameButton* gameButton : buttons) {
+            if (strcmp(gameButton->name, name) == 0) return gameButton;
+        }
+        return nullptr;
     }
 };

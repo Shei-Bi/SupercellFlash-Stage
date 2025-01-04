@@ -67,8 +67,8 @@ public:
     std::vector<Sprite*> objectsUnderPoint;
     bool isRectVisibleInTouch(float, float, float, float);
     bool touchPressed(Touch&);
-    // bool touchMoved(Touch&);
-    // bool touchReleased(Touch&);
+    bool touchMoved(Touch&);
+    bool touchReleased(Touch&);
 
     bool forceNewBucket;
 };

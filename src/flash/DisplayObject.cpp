@@ -68,6 +68,7 @@ void DisplayObject::setAlpha(float a) {
 float DisplayObject::getWidth() {
     Rect rect;
     bool visible = this->visible;
+    this->visible = true;
     Stage::getInstance()->calculateDisplayObjectBounds(this, nullptr, &rect);
     this->visible = visible;
     return rect.right - rect.left;
@@ -75,6 +76,7 @@ float DisplayObject::getWidth() {
 float DisplayObject::getHeight() {
     Rect rect;
     bool visible = this->visible;
+    this->visible = true;
     Stage::getInstance()->calculateDisplayObjectBounds(this, nullptr, &rect);
     this->visible = visible;
     return rect.bottom - rect.top;

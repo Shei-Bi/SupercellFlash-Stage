@@ -9,6 +9,7 @@
 #include <ResourceManager.h>
 #include <flash/Stage.h>
 #include "flash/gui/GameButton.h"
+#include "MovieClip.h"
 
 // #pragma optimize("",off)
 
@@ -125,6 +126,14 @@ void MovieClip::setChildVisible(const char* name, bool v) {
     auto mc = getMovieClipByName(name);
     if (mc) mc->visible = v;
     else assert(false);
+}
+void MovieClip::setChildVisibleDontCrashIfNotFound(const char* name, bool v) {
+#ifdef NDEBUG
+    setChildVisible(name, v);
+#else
+    auto mc = getMovieClipByName(name);
+    if (mc) mc->visible = v;
+#endif
 }
 int MovieClip::getTotalFrames() {
     return totalFrames;
@@ -265,11 +274,13 @@ int MovieClip::getFrameIndex(const char* name) {
     if (!name) return -1;
     if (frameSize < 1) return -1;
     for (unsigned short i = 0;i < frameSize - 1;i++) {
-        if (strcmp(frames[i].name, name) == 0) return i;
+        // printf("%s\n", frames[i].name);
+        if (frames[i].name && strcmp(frames[i].name, name) == 0) return i;
     }
-    abort();//should be
+    return -1;
+    // abort();//should be
 }
-void MovieClip::autoCreateButtons(std::vector<GameButton*>& out) {
+void MovieClip::autoCreateButtons(std::vector<GameButton*>& out, IButtonListener* ibl) {
     for (unsigned short i = 0;i < timelineChildrenCount;i++) {
         DisplayObject* d = timelineChildren[i];
         if (!d || !d->isMovieClip()) continue;
@@ -278,7 +289,7 @@ void MovieClip::autoCreateButtons(std::vector<GameButton*>& out) {
         if (childrenNames[i]) name = childrenNames[i];
         // printf("%zd\n", name.find("button"));
         if (name.find("button") == std::string::npos) {
-            movieClip->autoCreateButtons(out);
+            movieClip->autoCreateButtons(out, ibl);
             continue;
         }
         // printf("%s\n", name.c_str());
@@ -289,6 +300,8 @@ void MovieClip::autoCreateButtons(std::vector<GameButton*>& out) {
         changeTimelineChild(movieClip, gameButton);
         movieClip->Matrix.reset();
         gameButton->setMovieClip(movieClip, true);
+        gameButton->setButtonListener(ibl);
+        // movieClip->debugPrintChildNames();
     }
 }
 void MovieClip::changeTimelineChild(DisplayObject* from, DisplayObject* to) {
@@ -329,6 +342,9 @@ void MovieClip::changeTimelineChild(const char* fromName, DisplayObject* to) {
             return;
         }
     }
+}
+bool MovieClip::isStopped() {
+    return state == STOPPED;
 }
 void MovieClip::moveThisToTopLayer() {
     if (parent) parent->addChildAt(this, parent->size);

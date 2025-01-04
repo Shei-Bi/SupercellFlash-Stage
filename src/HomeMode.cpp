@@ -2,6 +2,7 @@
 #include <ResourceManager.h>
 #include <xTimer.h>
 #include <GameStateManager.h>
+#include "flash/gui/GUI.h"
 
 bool HomeMode::isLoaded() {
     return state == 7;
@@ -23,6 +24,8 @@ void HomeMode::updateLoading(float deltaTime) {
         }
         break;
     case 6:
+        GUI::constructInstance();
+        GameMain::getInstance()->screen2->addChild(GUI::getInstance());
         homeScreen = new HomeScreen();
         homeScreen->enter();
         state = 7;

@@ -6,6 +6,7 @@ class MovieClipOriginal;
 #include <flash/TextField.h>
 #include <vector>
 #include "flash/gui/GameButton.h"
+
 class MovieClip :public Sprite
 {
 private:
@@ -41,6 +42,7 @@ public:
     MovieClip* getMovieClipByName(const char*);
     TextField* getTextFieldByName(const char*);
     void setChildVisible(const char*, bool);
+    void setChildVisibleDontCrashIfNotFound(const char*, bool);
     int getTotalFrames();
     void gotoAndStopFrameIndex(int);
     void gotoAndPlayFrameIndex(int, int);
@@ -51,13 +53,14 @@ public:
     void gotoAndStop(const char*);
     void changeTimelineChild(DisplayObject*, DisplayObject*);
     void changeTimelineChild(const char*, DisplayObject*);
+    bool isStopped();
 
     void initScreenContainers(const char*, std::vector<MovieClip*>&);
     MovieClip* createScreenContainer(const char*, int);
     MovieClip* getMovieClipRecursive(const char*);
 
     //MovieClipHelper
-    void autoCreateButtons(std::vector<GameButton*>&);
+    void autoCreateButtons(std::vector<GameButton*>&, IButtonListener* i);
 
     //Unknown
     void moveThisToTopLayer();

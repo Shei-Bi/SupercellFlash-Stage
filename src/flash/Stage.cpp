@@ -368,8 +368,26 @@ bool Stage::touchPressed(Touch& touch) {
     touch.x /= pointSize;
     touch.y /= pointSize;
     std::vector<Sprite*> e = getObjectsUnderPoint(touch.x, touch.y);
-    for (auto s : e) {
-        if (s->touchPressed(touch)) break;
+    for (auto s = e.rbegin();s != e.rend();s++) {
+        if ((*s)->touchPressed(touch)) break;
+    }
+    return true;
+}
+bool Stage::touchMoved(Touch& touch) {
+    touch.x /= pointSize;
+    touch.y /= pointSize;
+    std::vector<Sprite*> e = getObjectsUnderPoint(touch.x, touch.y);
+    for (auto s = e.rbegin();s != e.rend();s++) {
+        if ((*s)->touchMoved(touch)) break;
+    }
+    return true;
+}
+bool Stage::touchReleased(Touch& touch) {
+    touch.x /= pointSize;
+    touch.y /= pointSize;
+    std::vector<Sprite*> e = getObjectsUnderPoint(touch.x, touch.y);
+    for (auto s = e.rbegin();s != e.rend();s++) {
+        if ((*s)->touchReleased(touch)) break;
     }
     return true;
 }

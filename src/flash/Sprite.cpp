@@ -1,6 +1,7 @@
 #pragma once
 #include <flash/Sprite.h>
 #include "flash/Stage.h"
+#include "Sprite.h"
 
 Sprite::Sprite(short initialCapacity) :DisplayObject() {
     interactable = false;
@@ -122,4 +123,14 @@ void Sprite::setInteractiveRecursive(bool b) {
     for (int i = 0;i < size;i++) {
         children[i]->setInteractiveRecursive(b);
     }
+}
+
+int Sprite::whyUninteractable() {
+    int i = 0;
+    auto p = this;
+    while (p && p->interactable) {
+        i++;
+        p = p->parent;
+    }
+    return i;
 }

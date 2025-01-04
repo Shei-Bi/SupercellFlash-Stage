@@ -14,13 +14,13 @@ public:
 
     void enter() {
         Stage* Stage = Stage::getInstance();
-        Sprite* screenSprite = GameMain::getInstance()->screenSprite;
+        Sprite* screen1 = GameMain::getInstance()->screen1;
         ResourceManager::addFile("sc/background_toystory.sc");
         ResourceManager::loadNextResource();
         background = ResourceManager::getMovieClip("sc/background_toystory.sc", "bgr_toystory");
         // printf("%d\n", ResourceManager::getSupercellSWF("sc/background_vp.sc", "bgr_vp")->textures[1].pixel_format());
 
-        screenSprite->addChild(background);
+        screen1->addChild(background);
 
         MovieClip* bg_colour = background->getMovieClipByName("bg_colour");
         // bg_colour->setAlpha(0.0f);
@@ -31,7 +31,7 @@ public:
         background->setXY(Stage->matrixX / 2, Stage->matrixY / 2);
 
         homePage = new HomePage();
-        screenSprite->addChild(homePage);
+        screen1->addChild(homePage);
     }
 
     void update(float deltaTime) {
