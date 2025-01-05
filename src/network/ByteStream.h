@@ -39,5 +39,6 @@ public:
     void writeVInt(int value);
     void writeBytes(char* buffer, int length);
     void writeString(std::string* str);
+    void writeString(const char* str);
     void writeDataReference();
 };

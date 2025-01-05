@@ -29,6 +29,9 @@ public:
     void handlePepperLoginResponse(PiranhaMessage*);
     PiranhaMessage* nextMessage();
 
+    const char* addr;
+    const char* port;
+
     bool connected;
     bool hasConnectFailed;
 

@@ -14,7 +14,12 @@
 // #define SODIUM_STATIC
 // #include <sodium.h>
 
+#ifdef false
 unsigned char Messaging::spk[] = { 200,  89, 187, 144,  73,  70, 114,  69,  67, 158, 24, 147, 235, 132, 147, 208, 175, 194, 73, 228,160, 195, 165,  48, 107, 194, 153, 142, 162,  49,170,  74 };
+#else
+//nt
+unsigned char Messaging::spk[] = { 0x38, 0xC0, 0x0A, 0x84, 0xC2, 0xF2, 0xBA, 0x46, 0x2D, 0x76, 0x3A, 0x5B, 0x2B, 0x98, 0xB9, 0x7A, 0x24, 0xCA, 0x4B, 0xB8, 0x88, 0x98, 0xC1, 0x86, 0x5D, 0x22, 0x17, 0xAA, 0x8A, 0x57, 0xF1, 0x29 };
+#endif
 // 56, 192, 10, 132, 194, 242, 186,  70,
 //   45, 118, 58,  91,  43, 152, 185, 122,
 //   36, 202, 75, 184, 136, 152, 193, 134,
@@ -112,7 +117,7 @@ void Messaging::connectToNextPort() {
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
-    if (getaddrinfo("game.brawlstars.cn", "9339", &hints, &result) != 0) goto fail;
+    if (getaddrinfo(addr, port, &hints, &result) != 0) goto fail;
 
     sock = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
     if (sock == -1) goto fail;
@@ -376,7 +381,9 @@ void Messaging::close() {
 void threadFunc(Messaging* m) {
     m->onStart();
 }
-void Messaging::connect(const char*, const char*) {
+void Messaging::connect(const char* addr, const char* port) {
+    this->addr = addr;
+    this->port = port;
     connecting = true;
     // connected = true;
     hasConnectFailed = false;

@@ -467,3 +467,18 @@ void ByteStream::writeString(std::string* str) {
     memcpy(this->buffer + offset, str->c_str(), str->length()); // copying all, except final '\0'
     this->offset += str->length();
 }
+
+void ByteStream::writeString(const char* str) {
+    this->bitOffset = 0;
+
+    if (str == NULL) {
+        this->writeInt(-1);
+        return;
+    }
+
+    this->writeInt(strlen(str));
+
+    this->ensureCapacity(strlen(str));
+    memcpy(this->buffer + offset, str, strlen(str)); // copying all, except final '\0'
+    this->offset += strlen(str);
+}

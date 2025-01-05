@@ -28,7 +28,12 @@ void ServerConnection::constructInstance()
 }
 void ServerConnection::connect() {
     state = Connecting;
+#ifdef false
     messaging->connect("game.brawlstars.cn", "9339");
+#else
+    messaging->connect("brawl.server.dnull.xyz", "9339");
+
+#endif
 }
 void ServerConnection::update(float deltaTime) {
     switch (state) {
@@ -44,6 +49,7 @@ void ServerConnection::update(float deltaTime) {
         if (messaging->connected) {
             state = Connected;
             ClientHelloMessage* c = new ClientHelloMessage();
+#ifdef false
             c->clientMajor = 57;
             c->clientMinor = 0;
             c->clientBuild = 402;
@@ -52,15 +58,34 @@ void ServerConnection::update(float deltaTime) {
             c->deviceType = 1;
             c->appStore = 1;
             c->fingerprintSha = new std::string("a29af60f08067d6f51585d4c722e455a290c7bb8");
+#else
+            c->clientMajor = 59;
+            c->clientMinor = 1;
+            c->clientBuild = 197;
+            c->protocol = 2;
+            c->keyVersion = 48;
+            c->deviceType = 1;
+            c->appStore = 1;
+            c->fingerprintSha = new std::string("a302a151f0492ac0418d1775ed7a036a1eac1365");
+#endif
             messaging->send(c);
 
             LoginMessage* l = new LoginMessage();
+#ifdef false
             l->clientMajor = 57;
             l->clientMinor = 1;
             l->clientBuild = 402;
             l->fingerprintSha = new std::string("a29af60f08067d6f51585d4c722e455a290c7bb8");
             l->accountId = LogicLong::toLong(103, 6665403);
             l->token = new std::string("adx49wypcz7r3mjahk7ejgsrrhpbwknzdwb9rtw4");
+#else
+            l->clientMajor = 59;
+            l->clientMinor = 1;
+            l->clientBuild = 197;
+            l->fingerprintSha = new std::string("a302a151f0492ac0418d1775ed7a036a1eac1365");
+            l->accountId = LogicLong::toLong(0, 216891029);
+            l->token = new std::string("HaVj/lDoyc3tPLCBczvr");
+#endif
             messaging->pendingLoginMessage = l;
         }
         break;
