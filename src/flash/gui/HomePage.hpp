@@ -7,6 +7,11 @@
 #include "logic/EventData.hpp"
 #include "GUI.h"
 #include "SelectLocationPopup.hpp"
+#include "MessageManager.h"
+#include "network/MatchmakeRequestMessage.hpp"
+#include "logic/EventData.hpp"
+#include "GameStateManager.h"
+#include "HomeMode.h"
 
 // #pragma optimize("",off)
 class HomePage :public DropGUIContainer {
@@ -26,6 +31,8 @@ public:
     MovieClip* brawl_container;//696
     GameButton* button_play_club_league;//528
     DataIcon* gamemode_icon;//872
+
+    EventData* selectedEvent;
     HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
         getMovieClip()->initScreenContainers("mainscreen_", screenContainers);
         // return;
@@ -78,7 +85,7 @@ public:
         getClipFromContainers("player_4_area")->visible = false;
         getClipFromContainers("player_5_area")->visible = false;
         brawl_container = screenContainers[4]->getMovieClipByName("brawl_container");
-        brawl_container->visible = false;
+        // brawl_container->visible = false;
 
         getButtonByName("button_random_reward")->visible = false;
 
@@ -117,6 +124,11 @@ public:
     }
 
     void refreshSelectedEvent() {
+        selectedEvent = nullptr;
+        int availableslot = 0;
+        while (selectedEvent == nullptr)
+            selectedEvent = GameStateManager::getInstance()->home->getActiveEventForSlot(availableslot++);
+        selectedEvent = GameStateManager::getInstance()->home->getFirstEventOfGMV(20);
         auto button_mode_clip = getButtonByName("button_mode")->timelineClip;
         // button_mode_clip->debugPrintChildNames();
         // button_mode_clip->getMovieClipByName("gamemode")->setAlpha(0.5f);
@@ -127,7 +139,7 @@ public:
         getClipFromContainers("raid_boss_container")->visible = false;
 
         button_play_club_league->visible = false;
-        brawl_container->visible = false;
+        // brawl_container->visible = false;//?????????//
 
         getButtonByName("button_spectate")->visible = false;
 
@@ -205,13 +217,16 @@ public:
     void handleModeButtonPress() {
         GUI::getInstance()->showPopup(new SelectLocationPopup());
     }
-
+    void openMatchMakingPopup() {
+        visible = false;
+    }
     void buttonClicked(GameButton* button) {
         if (strcmp(button->name, "button_mode") == 0) {
             handleModeButtonPress();
         }
-        else if (false) {
-            ;
+        else if (strcmp(button->name, "brawl_button") == 0) {
+            HomeMode::getInstance()->getHomeScreen()->openMatchMakingPopup();
+            MessageManager::getInstance()->messaging->send(new MatchmakeRequestMessage(selectedEvent->id, selectedEvent->slot));
         }
     }
 };

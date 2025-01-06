@@ -4,6 +4,7 @@
 #include <flash/MovieClip.h>
 #include <ResourceManager.h>
 #include <flash/gui/HomePage.hpp>
+#include "GUI.h"
 
 #include <stdio.h>
 
@@ -33,7 +34,9 @@ public:
         homePage = new HomePage();
         screen1->addChild(homePage);
     }
-
+    void openMatchMakingPopup() {
+        // GUI::getInstance()->showPopup
+    }
     void update(float deltaTime) {
         homePage->update(deltaTime);
     }

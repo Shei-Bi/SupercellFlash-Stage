@@ -16,4 +16,7 @@ public:
     void enter();
     bool loadNextResource();
     float getLoadingProgress();
+
+    static HomeMode* getInstance();
+    HomeScreen* getHomeScreen();
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "data/LogicDataTables.h"
 
 class ByteStream {
 private:
@@ -25,11 +26,14 @@ public:
     short readShort();
     int readInt();
     long long readLongLong();
+    long long readVLong();
     int readVInt();
     void readBytes(char* output, int length);
     char* readBytes(int length, int maxCapacity);
     std::string* readString();
     void readString(std::string* str);
+    const char* readString(int length);
+    LogicData* readDataReference();
 
     void writeByte(char value);
     void writeBoolean(bool value);

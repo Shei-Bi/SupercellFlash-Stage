@@ -43,6 +43,9 @@ void GameStateManager::setGameData(LogicClientHome* h, LogicClientAvatar* a) {
     avatar = a;
     gameDataLoaded = 1;
 }
+bool GameStateManager::isState(StateId id) {
+    return currentStateId == id;
+}
 void GameStateManager::update(float sinceStart, float deltaTime) {
     if (pendingStateId) {
         currentState = createState(pendingStateId);

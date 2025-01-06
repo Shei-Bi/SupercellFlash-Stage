@@ -3,12 +3,13 @@
 #include "LogicLocationThemeData.h"
 #include "LogicLocationData.h"
 #include "LogicGameModeVariationData.h"
+#include "GlobalID.h"
 
 class LogicDataTable {
-public:
     int tableIndex;
     CSVTable* csvTable;
     std::vector<LogicData*> datas;
+public:
     LogicDataTable(CSVTable* csvTable, int tableIndex) :csvTable(csvTable), tableIndex(tableIndex) {
         if (csvTable) {
             datas.reserve(csvTable->getRowCount());
@@ -49,5 +50,20 @@ public:
     }
     void createReferences() {
         for (LogicData* data : datas) data->createReferences();
+    }
+    LogicData* getItemById(int globalID) {
+        if (!globalID) return nullptr;
+        int instanceID = GlobalID::getInstanceID(globalID);
+        if (instanceID >= 0 && instanceID < getItemCount()) return getItemAt(instanceID);
+        abort();
+    }
+    int getItemCount() {
+        return datas.size();
+    }
+    LogicData* getItemAt(int index) {
+        return datas[index];
+    }
+    int getTableIndex() {
+        return tableIndex;
     }
 };

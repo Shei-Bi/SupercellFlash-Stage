@@ -4,9 +4,80 @@
 extern LogicDataTable* TABLES[61];
 #include "data/LogicGameModeVariationData.h"
 enum DataType {
+    texts_patch = 0,
+    Locale = 1,
+    BillingPackage = 2,
+    Global = 3,
+    Sound = 4,
+    Resource = 5,
+    Projectile = 6,
+    Effect = 7,
+    AllianceBadge = 8,
+    ClientGlobal = 9,
+    ParticleEmitter = 10,
+    HealthBar = 11,
+    Music = 12,
+    Credit = 13,
+    Region = 14,
     Location = 15,
+    Character = 16,
+    AreaEffect = 17,
+    Item = 18,
+    Map = 19,
+    Skill = 20,
+    Campaign = 21,
+    Boss = 22,
+    Card = 23,
+    Animation = 24,
+    AllianceRole = 25,
+    Tutorial = 26,
+    Tile = 27,
+    PlayerThumbnail = 28,
+    Skin = 29,
+    Hint = 36,
+    Milestone = 39,
+    Theme = 41,
+    NameColor = 43,
+    SkinConf = 44,
+    ShopItem = 45,
+    ColorGradient = 46,
     LocationTheme = 47,
-    GameModeVariation = 48
+    GameModeVariation = 48,
+    Challenge = 49,
+    Accessory = 50,
+    LocalNotification = 51,
+    Emote = 52,
+    EmoteBundle = 53,
+    PlayerMapEnvironment = 54,
+    MapTemplate = 55,
+    SeasonalSkinSection = 56,
+    RankedRank = 58,
+    RankedLocation = 59,
+    Carryable = 60,
+    GearLevel = 61,
+    GearBoost = 62,
+    AllianceLeagueMode = 63,
+    AllianceLeagueRank = 64,
+    BpPurchasePopup = 65,
+    LocationFeature = 66,
+    LoginCalendarItem = 67,
+    Spray = 68,
+    ShopPanelLayout = 69,
+    ShopStyleSet = 70,
+    FameTier = 72,
+    MasteryLevel = 73,
+    MasteryPoint = 75,
+    PlayerTitle = 76,
+    BattleFeat = 78,
+    RandomReward = 79,
+    RandomRewardContainers = 80,
+    PlayerFrame = 85,
+    SkinRarities = 86,
+    StatusEffect = 87,
+    ClassArchetype = 90,
+    night_market_bundles = 91,
+    night_market_items = 92,
+    availability_window = 100
 };
 class LogicDataTables {
 public:
@@ -18,8 +89,9 @@ public:
         return (LogicGameModeVariationData*)TABLES[GameModeVariation]->getDataByName(name, nullptr);
     }
     static LogicGameModeVariationData* getGameModeVariationData(int v) {
-        assert(v >= 0 && v < TABLES[GameModeVariation]->datas.size());
-        return (LogicGameModeVariationData*)TABLES[GameModeVariation]->datas[v];
+        assert(v >= 0 && v < TABLES[GameModeVariation]->getItemCount());
+        return (LogicGameModeVariationData*)TABLES[GameModeVariation]->getItemAt(v);
     }
+    static LogicData* getDataById(int globalID);
 };
 #endif

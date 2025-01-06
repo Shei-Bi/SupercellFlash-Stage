@@ -1,6 +1,7 @@
 #include "ByteStream.h"
 #include <string.h>
 #include <LogicLong.hpp>
+#include "GlobalID.h"
 
 ByteStream::ByteStream(int initialCapacity) {
     this->buffer = new char[initialCapacity];
@@ -113,6 +114,11 @@ int ByteStream::readInt() {
 long long ByteStream::readLongLong() {
     int high = readInt();
     return LogicLong::toLong(high, readInt());
+}
+
+long long ByteStream::readVLong() {
+    int high = readVInt();
+    return LogicLong::toLong(high, readVInt());
 }
 
 int ByteStream::readVInt() {
@@ -298,6 +304,46 @@ void ByteStream::readString(std::string* str) {
         str->assign(buffer + offset, length);
         this->offset += length;
     }
+}
+
+const char* ByteStream::readString(int maxLength) {
+    int length = this->readInt();
+
+    if (length > maxLength) abort();
+
+    if (offset + length - 1 > this->length) {
+        return nullptr;
+    }
+
+    if (length < 0 || length > 900000) {
+        return nullptr;
+    }
+
+    if (length == 0) {
+        const char* str = new char[1];
+        memcpy((void*)str, "", 1);
+        return str;
+    }
+    else {
+        const char* str = new char[length + 1];
+        memcpy((void*)str, buffer + offset, length);
+        ((char*)str)[length] = (char)0;
+        this->offset += length;
+        return str;
+    }
+}
+
+LogicData* ByteStream::readDataReference() {
+    int classID = readVInt();
+    if (classID == 0) return nullptr;
+    if (classID == 1) abort();
+#ifndef NDEBUG
+    if (TABLES[classID] == nullptr) {
+        printf("table #%d not initialized! (accessing %d)\n", classID, readVInt());
+        return nullptr;
+    }
+#endif
+    return LogicDataTables::getDataById(GlobalID::createGlobalID(classID, readVInt()));
 }
 
 

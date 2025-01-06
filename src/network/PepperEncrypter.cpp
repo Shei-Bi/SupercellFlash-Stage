@@ -1,13 +1,18 @@
 #include <network/PepperEncrypter.h>
 #include <tweetnacl.h>
 #include <memory.h>
+#include "PepperEncrypter.h"
 
-void box(unsigned char* in, int insize, unsigned char* out, unsigned char* nonce, unsigned char* key) {
+bool box(unsigned char* in, int insize, unsigned char* out, unsigned char* nonce, unsigned char* key) {
     unsigned char* gCryptoScratch = new unsigned char[insize + 32];
     memset(gCryptoScratch, 0, 32);
     memcpy(gCryptoScratch + 32, in, insize);
-    crypto_box_curve25519xsalsa20poly1305_tweet_afternm(gCryptoScratch, gCryptoScratch, insize + 32, nonce, key);
-    memcpy(out, gCryptoScratch + 16, insize + 16);
+    bool result = crypto_box_curve25519xsalsa20poly1305_tweet_afternm(gCryptoScratch, gCryptoScratch, insize + 32, nonce, key);
+    if (!result) {
+        memcpy(out, gCryptoScratch + 16, insize + 16);
+    }
+    delete[] gCryptoScratch;
+    return result;
 }
 bool box_open(unsigned char* in, int insize, unsigned char* out, unsigned char* nonce, unsigned char* key) {
     unsigned char* gCryptoScratch = new unsigned char[insize + 16];
@@ -17,6 +22,7 @@ bool box_open(unsigned char* in, int insize, unsigned char* out, unsigned char* 
     if (!result) {
         memcpy(out, gCryptoScratch + 32, insize - 16);
     }
+    delete[] gCryptoScratch;
     return result;
 }
 PepperEncrypter::PepperEncrypter(unsigned char* k, unsigned char* n) {
@@ -25,6 +31,15 @@ PepperEncrypter::PepperEncrypter(unsigned char* k, unsigned char* n) {
 }
 int PepperEncrypter::getEncryptionOverhead() {
     return 16;
+}
+bool PepperEncrypter::encrypt(char* input, char* output, int length) {
+    unsigned char add = 2;
+    for (int i = 0;i < 24;i++) {
+        int sum = nonce[i] + add;
+        nonce[i] = (unsigned char)sum;
+        add = (unsigned char)(sum / 256);
+    }
+    return box((unsigned char*)input, length, (unsigned char*)output, nonce, key);
 }
 bool PepperEncrypter::decrypt(char* in, char* out, int length) {
     unsigned char add = 2;

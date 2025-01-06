@@ -7,7 +7,7 @@ LogicData::LogicData() {
     abort();
 }
 LogicData::LogicData(CSVRow* csvRow, LogicDataTable* parentTable) :csvRow(csvRow), parentTable(parentTable) {
-    globalID = GlobalID::createGlobalID(parentTable->tableIndex, parentTable->datas.size());
+    globalID = GlobalID::createGlobalID(parentTable->getTableIndex(), parentTable->getItemCount());
 }
 void LogicData::setCSVRow(CSVRow* csvRow, int size) {
     this->csvRow = csvRow;

@@ -181,6 +181,7 @@ void Messaging::onStart() {
         lock.lock();
     }
     lock.unlock();
+    abort();
 }
 void Messaging::onConnect() {
     lock.lock();
@@ -212,13 +213,19 @@ void Messaging::onWakeup() {
         outgoingMessagesMutex.unlock();
         if (m->getEncodingLength() == 0) m->encode();
         int EncodingLength = m->getEncodingLength() + 7;
+        if (encrypter) EncodingLength += encrypter->getEncryptionOverhead();
         if (EncodingLength > bufferSize) {
             if (buffer) delete(buffer);
             buffer = new char[EncodingLength];
             bufferSize = EncodingLength;
         }
-        memcpy(buffer + 7, m->getByteStream()->getByteArray(), m->getEncodingLength());
-        writeHeader(m, buffer, m->getEncodingLength());
+        if (encrypter != nullptr) {
+            if (encrypter->encrypt(m->getByteStream()->getByteArray(), buffer + 7, m->getEncodingLength())) abort();
+        }
+        else {
+            memcpy(buffer + 7, m->getByteStream()->getByteArray(), m->getEncodingLength());
+        }
+        writeHeader(m, buffer, EncodingLength - 7);
         writeBlocking(buffer, EncodingLength);
         delete(m);
     }

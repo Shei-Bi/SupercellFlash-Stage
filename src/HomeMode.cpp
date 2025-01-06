@@ -36,6 +36,14 @@ float HomeMode::getLoadingProgress() {
     if (state == 7) return 1.0f;
     return 0.5f + 0.5f * (1.0f / 7.0f - ((int)ResourceManager::resourceToLoad() / 7.0f / resourcesToLoad) + state / 7.0f);
 }
+HomeMode* HomeMode::getInstance() {
+    auto i = GameStateManager::getInstance();
+    if (i->isState(GameStateManager::Home)) return (HomeMode*)i->currentState;
+    return nullptr;
+}
+HomeScreen* HomeMode::getHomeScreen() {
+    return homeScreen;
+}
 void HomeMode::enter() {
     // ResourceManager::addFile("sc/effects.sc");
     // ResourceManager::addFile("sc/effects_brawler.sc");
