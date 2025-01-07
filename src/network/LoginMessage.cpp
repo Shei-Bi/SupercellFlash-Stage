@@ -95,7 +95,7 @@ void LoginMessage::encode() {
     stream->writeString(fingerprintSha);
 
     stream->writeString("iPhone8,2");
-    stream->writeDataReference();
+    stream->writeDataReference(nullptr);
     stream->writeString("zh-Hans-CN");
     stream->writeString("15.8.3");
     stream->writeBoolean(false);

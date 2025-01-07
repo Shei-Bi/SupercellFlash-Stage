@@ -1,6 +1,6 @@
 #pragma once
 #include <GameState.h>
-#include <flash/gui/HomeScreen.hpp>
+class HomeScreen;
 
 class HomeMode :public GameState
 {

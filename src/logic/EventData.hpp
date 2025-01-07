@@ -2,6 +2,7 @@
 #include "network/ByteStream.h"
 #include "data/LogicLocationData.h"
 #include "ChronosTextEntry.hpp"
+#include <assert.h>
 
 #define skipIntArray for (int iterator = stream->readVInt();iterator > 0;iterator--) {\
             stream->readVInt();\

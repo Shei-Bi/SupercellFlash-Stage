@@ -1,8 +1,11 @@
 #ifndef LOGICDATATABLES_H
 #define LOGICDATATABLES_H
-#include "data/LogicDataTable.hpp"
+class CSVNode;
+class LogicDataTable;
+#include "LogicData.h"
+class LogicGameModeVariationData;
+class LogicLocationData;
 extern LogicDataTable* TABLES[61];
-#include "data/LogicGameModeVariationData.h"
 enum DataType {
     texts_patch = 0,
     Locale = 1,
@@ -85,13 +88,10 @@ public:
     static void initDataTable(CSVNode* csvNode, int index);
     static void createReferences();
     static bool isLoaded();
-    static LogicGameModeVariationData* getGameModeVariationByName(const std::string& name) {
-        return (LogicGameModeVariationData*)TABLES[GameModeVariation]->getDataByName(name, nullptr);
-    }
-    static LogicGameModeVariationData* getGameModeVariationData(int v) {
-        assert(v >= 0 && v < TABLES[GameModeVariation]->getItemCount());
-        return (LogicGameModeVariationData*)TABLES[GameModeVariation]->getItemAt(v);
-    }
+    static LogicLocationData* getLocationByName(const std::string& name);
+    static LogicLocationData* getTrainingGroundsData();
+    static LogicGameModeVariationData* getGameModeVariationByName(const std::string& name);
+    static LogicGameModeVariationData* getGameModeVariationData(int v);
     static LogicData* getDataById(int globalID);
 };
 #endif

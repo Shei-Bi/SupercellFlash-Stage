@@ -4,6 +4,9 @@
 #include "LogicLocationData.h"
 #include "LogicGameModeVariationData.h"
 #include "GlobalID.h"
+#include "LogicDataTables.h"
+#include "LogicCharacterData.h"
+#include "LogicSkinData.h"
 
 class LogicDataTable {
     int tableIndex;
@@ -31,11 +34,15 @@ public:
     LogicData* createItem(CSVRow* csvRow) {
         switch (tableIndex)
         {
-        case 47:
+        case Character:
+            return new LogicCharacterData(csvRow, this);
+        case Skin:
+            return new LogicSkinData(csvRow, this);
+        case LocationTheme:
             return new LogicLocationThemeData(csvRow, this);
-        case 15:
+        case Location:
             return new LogicLocationData(csvRow, this);
-        case 48:
+        case GameModeVariation:
             return new LogicGameModeVariationData(csvRow, this);
         default:
             abort();

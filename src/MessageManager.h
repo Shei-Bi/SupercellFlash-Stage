@@ -12,5 +12,7 @@ public:
 
     bool receiveMessage(PiranhaMessage*);
 
+    bool sendMessage(PiranhaMessage*);
+
     Messaging* messaging;
 };

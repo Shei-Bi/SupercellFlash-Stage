@@ -29,3 +29,13 @@ bool MessageManager::receiveMessage(PiranhaMessage* m) {
         return true;
     }
 }
+
+bool MessageManager::sendMessage(PiranhaMessage* m) {
+    if (messaging->cryptoState != 3) {
+        printf("sending message type %d when unauthenticated!\n", m->getMessageType());
+        delete m;
+        return false;
+    }
+    messaging->send(m);
+    return true;
+}

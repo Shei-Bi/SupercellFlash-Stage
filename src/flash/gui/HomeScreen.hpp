@@ -3,7 +3,7 @@
 #include <GameMain.h>
 #include <flash/MovieClip.h>
 #include <ResourceManager.h>
-#include <flash/gui/HomePage.hpp>
+#include "HomePage.h"
 #include "GUI.h"
 
 #include <stdio.h>

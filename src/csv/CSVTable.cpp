@@ -31,6 +31,7 @@ int CSVTable::getColumnRowCount() {
 }
 void CSVTable::addAndConvertValue(std::string_view& element, int index) {
     if (element.length() == 0) {
+        // if (columns.size() <= index) return;
         switch (columns[index]->type) {
         case 0:
             columns[index]->strings.emplace_back("");

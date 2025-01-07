@@ -1,4 +1,6 @@
 #include "network/ByteStream.h"
+#include <assert.h>
+
 class IntValueEntry {
     int shei;
     int bi;

@@ -355,8 +355,12 @@ void ByteStream::writeByte(char value) {
     this->buffer[this->offset++] = value;
 }
 
-void ByteStream::writeDataReference() {
-    writeVInt(0);
+void ByteStream::writeDataReference(LogicData* logicData) {
+    if (!logicData) writeVInt(0);
+    else {
+        writeVInt(GlobalID::getClassID(logicData->globalID));
+        writeVInt(GlobalID::getInstanceID(logicData->globalID));
+    }
 }
 
 void ByteStream::writeBoolean(bool value) {

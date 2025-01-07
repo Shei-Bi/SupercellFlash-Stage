@@ -2,6 +2,7 @@
 #include <GameStateManager.h>
 #include <ServerConnection.h>
 #include "data/LogicDataTables.h"
+#include "csv/CSVNode.hpp"
 
 void InitState::enter() {
     state = 1;
@@ -19,6 +20,8 @@ void InitState::updateLoading(float deltaTime) {
 }
 void InitState::initDataTables() {
     if (!LogicDataTables::isLoaded()) {
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/characters.csv"), Character);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/skins.csv"), Skin);
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/location_themes.csv"), LocationTheme);
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/locations.csv"), Location);
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/game_mode_variations.csv"), GameModeVariation);

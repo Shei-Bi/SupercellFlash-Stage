@@ -31,10 +31,12 @@ public:
         int elements_loaded = 0;
         std::string something_on_stack;
         while (element_start < line.length()) {
-            int element_end = line.find_first_of(',', element_start);
-            if (element_end == std::string_view::npos) element_end = line.length();
             int has_quote = 0;
             if (line[element_start] == '"') has_quote = 1;
+            int element_end = line.find_first_of(has_quote ? '"' : ',', element_start + (has_quote ? 1 : 0));
+            if (element_end != std::string_view::npos && has_quote)
+                element_end++;
+            if (element_end == std::string_view::npos) element_end = line.length();
             auto element = line.substr(element_start + has_quote, element_end - element_start - has_quote * 2);
             // std::cout << element << " start: " << element_start << "end: " << element_end << std::endl;
             element_start = element_end + 1;

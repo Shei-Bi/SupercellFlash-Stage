@@ -3,6 +3,7 @@
 #include <xTimer.h>
 #include <GameStateManager.h>
 #include "flash/gui/GUI.h"
+#include <flash/gui/HomeScreen.hpp>
 
 bool HomeMode::isLoaded() {
     return state == 7;

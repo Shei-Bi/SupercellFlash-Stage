@@ -1,6 +1,9 @@
 #include "data/LogicDataTables.h"
 #include "LogicDataTables.h"
 #include "GlobalID.h"
+#include "data/LogicDataTable.hpp"
+#include "LogicGameModeVariationData.h"
+#include "LogicLocationData.h"
 
 LogicDataTable* TABLES[61];
 void LogicDataTables::initDataTable(CSVNode* csvNode, int index) {
@@ -13,6 +16,19 @@ void LogicDataTables::initDataTable(CSVNode* csvNode, int index) {
 }
 bool LogicDataTables::isLoaded() {
     return sm_loaded;
+}
+LogicLocationData* LogicDataTables::getLocationByName(const std::string& name) {
+    return (LogicLocationData*)TABLES[Location]->getDataByName(name, nullptr);
+}
+LogicLocationData* LogicDataTables::getTrainingGroundsData() {
+    return getLocationByName(std::string("Training"));
+}
+LogicGameModeVariationData* LogicDataTables::getGameModeVariationByName(const std::string& name) {
+    return (LogicGameModeVariationData*)TABLES[GameModeVariation]->getDataByName(name, nullptr);
+}
+LogicGameModeVariationData* LogicDataTables::getGameModeVariationData(int v) {
+    assert(v >= 0 && v < TABLES[GameModeVariation]->getItemCount());
+    return (LogicGameModeVariationData*)TABLES[GameModeVariation]->getItemAt(v);
 }
 LogicData* LogicDataTables::getDataById(int globalID) {
     if (GlobalID::getClassID(globalID) >= 61) return nullptr;

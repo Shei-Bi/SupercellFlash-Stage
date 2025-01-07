@@ -5,6 +5,7 @@
 #include "CooldownEntry.hpp"
 #include "BrawlPassSeasonData.hpp"
 #include "EventData.hpp"
+#include <assert.h>
 
 #define log(x) (printf("%d\n",x))
 #define skipIntArray for (int iterator = stream->readVInt();iterator > 0;iterator--) {\
