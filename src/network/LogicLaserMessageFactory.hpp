@@ -3,6 +3,7 @@
 #include <network/ServerHelloMessage.h>
 #include <network/LoginOkMessage.h>
 #include <network/OwnHomeDataMessage.hpp>
+#include <network/UdpConnectionInfoMessage.h>
 
 class LogicLaserMessageFactory {
 public:
@@ -14,6 +15,8 @@ public:
             return new LoginOkMessage();
         case 24101:
             return new OwnHomeDataMessage();
+        case 24112:
+            return new UdpConnectionInfoMessage();
         }
         return nullptr;
     }

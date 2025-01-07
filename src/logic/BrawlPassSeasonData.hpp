@@ -1,5 +1,6 @@
 #include "network/ByteStream.h"
-#define log(x) (printf("%d\n",x))
+// #define log(x) (printf("%d\n",x))
+#define log(x) (x)
 class BrawlPassSeasonData {
     int season;
     int tokensGained;

@@ -5,6 +5,7 @@
 #include <ServerConnection.h>
 #include <GameStateManager.h>
 #include <network/OwnHomeDataMessage.hpp>
+#include "network/UdpConnectionInfoMessage.h"
 
 MessageManager* MessageManager::sm_pInstance = nullptr;
 MessageManager* MessageManager::getInstance() {
@@ -26,6 +27,14 @@ bool MessageManager::receiveMessage(PiranhaMessage* m) {
         return true;
     case 24101:
         GameStateManager::getInstance()->setGameData(((OwnHomeDataMessage*)m)->home, ((OwnHomeDataMessage*)m)->avatar);
+        return true;
+    case 24112:
+        auto msg = ((UdpConnectionInfoMessage*)m);
+        printf("UdpSocket::connect %s : %d\nSessionId { ", msg->addr, msg->port);
+        for (int i = 0;i < msg->sessionIdLength;i++) printf("%d, ", msg->sessionId[i]);
+        printf(" }\nNonce { ");
+        for (int i = 0;i < msg->nonceLength;i++) printf("%d, ", msg->nonce[i]);
+        printf(" }\n");
         return true;
     }
 }
