@@ -4,6 +4,8 @@
 #include <network/LoginOkMessage.h>
 #include <network/OwnHomeDataMessage.hpp>
 #include <network/UdpConnectionInfoMessage.h>
+#include <network/StartLoadingMessage.h>
+#include <network/VisionUpdateMessage.h>
 
 class LogicLaserMessageFactory {
 public:
@@ -17,6 +19,10 @@ public:
             return new OwnHomeDataMessage();
         case 24112:
             return new UdpConnectionInfoMessage();
+        case 20559:
+            return new StartLoadingMessage();
+        case 24109:
+            return new VisionUpdateMessage();
         }
         return nullptr;
     }

@@ -1,6 +1,7 @@
 #pragma once
 #include <Messaging.h>
 #include <network/PiranhaMessage.h>
+class UdpLaserSocket;
 
 class MessageManager
 {
@@ -14,5 +15,9 @@ public:
 
     bool sendMessage(PiranhaMessage*);
 
+    void update(float deltaTime);
+
     Messaging* messaging;
+    UdpLaserSocket* udpSocket;
+    bool isUdpConnectionInfoMessageReceived;
 };

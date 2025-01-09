@@ -40,4 +40,8 @@ public:
     void update(float deltaTime) {
         homePage->update(deltaTime);
     }
+    void exit() {
+        if (background) delete background;
+        if (homePage) delete homePage;
+    }
 };

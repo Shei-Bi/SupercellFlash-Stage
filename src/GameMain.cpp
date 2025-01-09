@@ -19,7 +19,7 @@ void GameMain::init() {
     Stage::constructInstance();
     GameStateManager::constructInstance();
     ServerConnection::constructInstance();
-    GameStateManager::getInstance()->pendingStateId = GameStateManager::Init;
+    GameStateManager::getInstance()->changeState(GameStateManager::Init);
     screen1 = new Sprite(1);
     screen1->interactable = true;
     Stage::getInstance()->addChild(screen1);

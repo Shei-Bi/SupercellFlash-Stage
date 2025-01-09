@@ -14,6 +14,14 @@ public:
         setMovieClip(ResourceManager::getMovieClip(fileName, exportName));
     }
 
+    ~GUIContainer() {
+        // for (GameButton* b : buttons) {
+        //     delete b;
+        //     b = nullptr;
+        // }
+        buttons.~vector();
+        if (movieClip) delete movieClip;
+    }
     GUIContainer() :Sprite(1) {
         movieClip = nullptr;
     }

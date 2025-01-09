@@ -70,6 +70,25 @@ HomePage::HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
     refreshSelectedEvent();
 }
 
+HomePage::~HomePage() {
+    deleteAllPages();
+    if (panel_own_invite_2) delete panel_own_invite_2;
+    if (panel_other_invite_3) delete panel_other_invite_3;
+    if (panel_own_invite_4) delete panel_own_invite_4;
+    if (panel_other_invite_5) delete panel_other_invite_5;
+    if (panel_own_invite_3) delete panel_own_invite_3;
+    if (panel_own_invite_5) delete panel_own_invite_5;
+    if (panel_other_invite_2) delete panel_other_invite_2;
+    if (panel_other_invite_4) delete panel_other_invite_4;
+    if (gamemode_icon) delete gamemode_icon;
+    for (MovieClip* mc : screenContainers) {
+        if (!mc) continue;
+        delete mc;
+        mc = nullptr;
+    }
+    screenContainers.~vector();
+}
+
 MovieClip* HomePage::getClipFromContainers(const char* name) {
     for (MovieClip* mc : screenContainers) {
         if (!mc) continue;

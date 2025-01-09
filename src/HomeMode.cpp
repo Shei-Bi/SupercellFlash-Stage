@@ -5,6 +5,14 @@
 #include "flash/gui/GUI.h"
 #include <flash/gui/HomeScreen.hpp>
 
+HomeMode::~HomeMode() {
+    if (homeScreen) {
+        homeScreen->exit();
+        delete homeScreen;
+    }
+    GUI::destructInstance();
+}
+
 bool HomeMode::isLoaded() {
     return state == 7;
 }
@@ -52,6 +60,9 @@ void HomeMode::enter() {
     ResourceManager::addFile("sc/characters.sc");
     ResourceManager::addFile("sc/level.sc");
     resourcesToLoad = ResourceManager::ResourcesToLoad.size();
+}
+void HomeMode::exit() {
+    ;
 }
 bool HomeMode::loadNextResource() {
     unsigned long long NativeTime = xTimer::getNativeTime();

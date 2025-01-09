@@ -17,7 +17,7 @@ public:
 
 public:
     DisplayObject(/* args */);
-    ~DisplayObject();
+    virtual ~DisplayObject();
     void setX(float);
     void setY(float);
     float getX();

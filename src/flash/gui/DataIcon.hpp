@@ -13,6 +13,9 @@ public:
         data = nullptr;
         setData(data);
     }
+    ~DataIcon() {
+        if (iconClip) delete iconClip;
+    }
     void setData(LogicData* data) {
         if (iconClip) {
             delete iconClip;

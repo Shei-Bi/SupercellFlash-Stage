@@ -3,7 +3,7 @@
 class GameState
 {
 public:
-    // GameState();
+    virtual ~GameState();
     virtual float getLoadingProgress();
     virtual void enter();
     virtual void exit();

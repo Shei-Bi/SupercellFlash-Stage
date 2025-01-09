@@ -3,6 +3,7 @@
 #include <InitState.h>
 #include <LoadingScreen.h>
 #include <HomeMode.h>
+#include "BattleMode.h"
 
 GameStateManager* GameStateManager::sm_pInstance = nullptr;
 GameStateManager* GameStateManager::getInstance() {
@@ -35,6 +36,8 @@ GameState* GameStateManager::createState(StateId id) {
         return new LoadingScreen();
     case Home:
         return new HomeMode();
+    case Battle:
+        return new BattleMode();
     }
     return nullptr;
 }
@@ -46,12 +49,25 @@ void GameStateManager::setGameData(LogicClientHome* h, LogicClientAvatar* a) {
 bool GameStateManager::isState(StateId id) {
     return currentStateId == id;
 }
+void GameStateManager::changeState(StateId id) {
+    pendingStateId = id;
+}
+void GameStateManager::changeToState() {
+    exitAndDestroyState();
+    currentState = createState(pendingStateId);
+    currentState->enter();
+    currentStateId = pendingStateId;
+    pendingStateId = Null;
+}
+void GameStateManager::exitAndDestroyState() {
+    if (!currentState) return;
+    currentState->exit();
+    delete currentState;
+    currentState = nullptr;
+}
 void GameStateManager::update(float sinceStart, float deltaTime) {
     if (pendingStateId) {
-        currentState = createState(pendingStateId);
-        currentState->enter();
-        currentStateId = pendingStateId;
-        pendingStateId = Null;
+        changeToState();
         deltaTime = 0.0f;
     }
     if (currentState) {

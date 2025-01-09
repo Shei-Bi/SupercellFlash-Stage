@@ -38,7 +38,7 @@ public:
     std::vector<EventData*> upcomingEvents;
 
     EventData* getFirstEventOfGMV(int variadtion) {
-        for (EventData* e : events) if (e->location->getGameModeVariation() == variadtion) return e;
+        for (EventData* e : events) if (e->location && e->location->getGameModeVariation() == variadtion) return e;
         return nullptr;
     }
 

@@ -98,6 +98,7 @@ void ServerConnection::update(float deltaTime) {
                 if (MessageManager::getInstance()->receiveMessage(m)) delete m;
             }
         }
+        MessageManager::getInstance()->update(deltaTime);
         break;
     }
 }

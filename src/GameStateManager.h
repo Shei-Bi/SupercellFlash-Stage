@@ -27,6 +27,9 @@ public:
     bool hasGameData();
     void setGameData(LogicClientHome*, LogicClientAvatar*);
     bool isState(StateId);
+    void changeState(StateId);
+    void changeToState();
+    void exitAndDestroyState();
 
     // void createState(StateId);
     GameState* loadingScreen;

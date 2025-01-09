@@ -10,6 +10,14 @@ ByteStream::ByteStream(int initialCapacity) {
     this->bitOffset = 0;
 }
 
+ByteStream::ByteStream(unsigned char* buffer, int length) {
+    this->buffer = new char[length];
+    this->length = length;
+    this->offset = 0;
+    this->bitOffset = 0;
+    memcpy(this->buffer, buffer, length);
+}
+
 ByteStream::~ByteStream() {
     delete[] this->buffer;
 }
@@ -496,6 +504,16 @@ void ByteStream::writeBytes(char* buffer, int length) {
     this->bitOffset = 0;
 
     this->writeInt(length);
+    if (length <= 0 || length > 900000) return;
+
+    this->ensureCapacity(length);
+    memcpy(this->buffer + offset, buffer, length);
+    this->offset += length;
+}
+
+void ByteStream::writeBytesWithoutLength(unsigned char* buffer, int length) {
+    this->bitOffset = 0;
+
     if (length <= 0 || length > 900000) return;
 
     this->ensureCapacity(length);

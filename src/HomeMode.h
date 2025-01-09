@@ -9,13 +9,14 @@ private:
     int resourcesToLoad;
     HomeScreen* homeScreen;
 public:
-    // HomeMode();
+    ~HomeMode();
     bool isLoaded();
     void update(float, float);
     void updateLoading(float);
     void enter();
     bool loadNextResource();
     float getLoadingProgress();
+    void exit();
 
     static HomeMode* getInstance();
     HomeScreen* getHomeScreen();

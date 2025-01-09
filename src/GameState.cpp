@@ -1,5 +1,9 @@
 #include <GameState.h>
 
+GameState::~GameState() {
+    ;
+}
+
 float GameState::getLoadingProgress() {
     return 1.0f;
 }

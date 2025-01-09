@@ -10,6 +10,7 @@ private:
     int bitOffset;
 public:
     ByteStream(int initialCapacity);
+    ByteStream(unsigned char* buffer, int length);
     ~ByteStream();
     char* getByteArray();
     void setByteArray(char* buffer, int length);
@@ -42,6 +43,7 @@ public:
     void writeLongLong(long long);
     void writeVInt(int value);
     void writeBytes(char* buffer, int length);
+    void writeBytesWithoutLength(unsigned char* buffer, int length);
     void writeString(std::string* str);
     void writeString(const char* str);
     void writeDataReference(LogicData* logicData);

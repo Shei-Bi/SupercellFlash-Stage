@@ -38,7 +38,9 @@ public:
     DataIcon* gamemode_icon;//872
 
     EventData* selectedEvent;
+
     HomePage();
+    ~HomePage();
 
     MovieClip* getClipFromContainers(const char* name);
     void onInitialized();

@@ -15,10 +15,18 @@ GUI::GUI() :Sprite(7) {
         addChild(layers[i]);
     }
 }
-void GUI::constructInstance()
-{
+GUI::~GUI() {
+    for (int i = 0;i < 7;i++) {
+        delete layers[i];
+    }
+}
+void GUI::constructInstance() {
     if (!GUI::sm_pInstance)
         GUI::sm_pInstance = new GUI();
+}
+void GUI::destructInstance() {
+    if (GUI::sm_pInstance) delete GUI::sm_pInstance;
+    GUI::sm_pInstance = nullptr;
 }
 void GUI::showPopup(PopupBase* popup) {
     layers[2]->addChild(popup);

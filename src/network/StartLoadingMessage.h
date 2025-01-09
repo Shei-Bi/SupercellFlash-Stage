@@ -1,7 +1,7 @@
 #pragma once
 #include <network/PiranhaMessage.h>
 
-class UdpConnectionInfoMessage : public PiranhaMessage {
+class StartLoadingMessage : public PiranhaMessage {
 public:
     int port;
     const char* addr;
@@ -10,12 +10,12 @@ public:
     unsigned char* nonce;
     int nonceLength;
 
-    UdpConnectionInfoMessage() {
+    StartLoadingMessage() {
         addr = nullptr;
         sessionId = nullptr;
         nonce = nullptr;
     }
-    ~UdpConnectionInfoMessage() {
+    ~StartLoadingMessage() {
         ;
     }
     void decode() override {
@@ -27,6 +27,6 @@ public:
         nonce = (unsigned char*)stream->readBytes(nonceLength, 900000);
     }
     short getMessageType() override {
-        return 24112;
+        return 20559;
     }
 };

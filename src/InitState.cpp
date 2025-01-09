@@ -8,7 +8,7 @@ void InitState::enter() {
     state = 1;
 }
 void InitState::update(float sinceStart, float deltaTime) {
-    if (isLoaded()) GameStateManager::getInstance()->pendingStateId = GameStateManager::Home;
+    if (isLoaded()) GameStateManager::getInstance()->changeState(GameStateManager::Home);
 }
 void InitState::updateLoading(float deltaTime) {
     switch (state) {
