@@ -17,7 +17,7 @@ public:
         visionBitStream = nullptr;
     }
     ~VisionUpdateMessage() {
-        ;
+        if (visionBitStream) delete visionBitStream;
     }
     void decode() override {
         assert(false);

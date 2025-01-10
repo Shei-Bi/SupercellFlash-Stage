@@ -11,6 +11,7 @@
 #include "BattleMode.h"
 #include "battle/LogicBattleModeClient.h"
 #include "network/ClientInfoMessage.h"
+#include "battle/ClientInputManager.h"
 
 MessageManager* MessageManager::sm_pInstance = nullptr;
 MessageManager* MessageManager::getInstance() {
@@ -48,18 +49,27 @@ bool MessageManager::receiveMessage(PiranhaMessage* m) {
         BattleMode->battleClient->startLoadingReceived = true;
         return true;
     case 24112:
-        auto msg = ((UdpConnectionInfoMessage*)m);
         udpSocket = new UdpLaserSocket();
         isUdpConnectionInfoMessageReceived = true;
-        if (!udpSocket->connect(msg->addr, msg->port, msg->sessionId, msg->nonce)) {
+        if (!udpSocket->connect(((UdpConnectionInfoMessage*)m)->addr, ((UdpConnectionInfoMessage*)m)->port, ((UdpConnectionInfoMessage*)m)->sessionId, ((UdpConnectionInfoMessage*)m)->nonce)) {
             printf("Failed to open UDP socket\n");
             delete udpSocket;
             udpSocket = nullptr;
         }
-        delete[] msg->addr;
-        if (msg->sessionId) delete[] msg->sessionId;
-        if (msg->nonce) delete[] msg->nonce;
+        delete[]((UdpConnectionInfoMessage*)m)->addr;
+        if (((UdpConnectionInfoMessage*)m)->sessionId) delete[]((UdpConnectionInfoMessage*)m)->sessionId;
+        if (((UdpConnectionInfoMessage*)m)->nonce) delete[]((UdpConnectionInfoMessage*)m)->nonce;
         return true;
+    case 24109:
+        // srand(time(0));
+        if (rand() % 10 == 0) return true;
+        BattleMode = BattleMode::getInstance();
+        if (BattleMode == nullptr) return true;
+        if (BattleMode->battleClient->addVisionUpdate((VisionUpdateMessage*)m)) {
+            BattleMode->inputManager->handleVisionUpdate((VisionUpdateMessage*)m);
+            return false;
+        }
+        else return true;
     }
 }
 

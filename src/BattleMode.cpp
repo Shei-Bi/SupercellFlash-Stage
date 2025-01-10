@@ -27,6 +27,9 @@ BattleMode::~BattleMode() {
 bool BattleMode::isLoaded() {
     return state == 7;
 }
+bool BattleMode::isInited() {
+    return battleClient && battleClient->canProceedToBattle();
+}
 void BattleMode::update(float sinceStart, float deltaTime) {
     battleClient->update(sinceStart, deltaTime);
     inputManager->update(sinceStart, deltaTime);

@@ -7,7 +7,7 @@ protected:
     ByteStream* stream;
 public:
     PiranhaMessage();
-    ~PiranhaMessage();
+    virtual ~PiranhaMessage();
     virtual void encode();
     virtual void decode();
     virtual short getMessageType();

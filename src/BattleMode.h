@@ -17,6 +17,7 @@ public:
     BattleMode();
     ~BattleMode();
     bool isLoaded();
+    bool isInited();
     void update(float, float);
     void updateLoading(float);
     void enter();
