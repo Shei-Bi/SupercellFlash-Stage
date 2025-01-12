@@ -6,7 +6,7 @@
 class CSVColumn {
 public:
     std::vector<std::string> strings;
-    std::vector<bool> booleans;
+    std::vector<unsigned char> booleans;
     std::vector<int> integers;
     int type;
     CSVColumn(int type, int rowSize) {
@@ -44,6 +44,25 @@ public:
         return integers[row];
     }
     bool getBooleanValue(int row) {
-        return booleans[row];
+        return booleans[row] == 1;
+    }
+
+    int getArraySize(int start, int end) {
+        end--;
+        switch (type)
+        {
+        case 0:
+            while (end > start && strings[end].size() == 0) end--;
+            break;
+        case 1:
+            while (end > start && integers[end] == 0x7FFFFFFF) end--;
+            break;
+        case 2:
+            while (end > start && booleans[end] == 2) end--;
+            break;
+        default:
+            abort();
+        }
+        return end - start + 1;
     }
 };

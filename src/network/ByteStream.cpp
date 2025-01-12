@@ -119,6 +119,10 @@ int ByteStream::readInt() {
     return retval;
 }
 
+int ByteStream::readInt8() {
+    return (int)readByte();
+}
+
 long long ByteStream::readLongLong() {
     int high = readInt();
     return LogicLong::toLong(high, readInt());

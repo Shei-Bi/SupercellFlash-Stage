@@ -3,8 +3,9 @@
 #include <algorithm>
 #include "CSVColumn.hpp"
 #include "CSVRow.h"
+#include "CSVTable.h"
 
-std::string EMPTY_STRING = "";
+std::string EMPTY_STRING = std::string();
 CSVTable::CSVTable(int columnSize, int rowSize) :rowSize(rowSize) {
     if (columnSize <= 0) columnSize = 4;
     columnNames.reserve(columnSize);
@@ -34,13 +35,13 @@ void CSVTable::addAndConvertValue(std::string_view& element, int index) {
         // if (columns.size() <= index) return;
         switch (columns[index]->type) {
         case 0:
-            columns[index]->strings.emplace_back("");
+            columns[index]->strings.emplace_back(EMPTY_STRING);
             break;
         case 1:
             columns[index]->integers.push_back(0x7FFFFFFF);
             break;
         case 2:
-            columns[index]->booleans.push_back(false);
+            columns[index]->booleans.push_back(2);
             break;
         }
     }
@@ -85,4 +86,11 @@ int CSVTable::getColumnIndexByName(const char* name) {
         if (string == name) return i;
     }
     return -1;
+}
+int CSVTable::getArraySizeAt(CSVRow* row, int index) {
+    for (int i = 0;i < getRowCount();i++) {
+        if (rows[i] == row) {
+            return columns[index]->getArraySize(row->rowIndex, (i + 1 >= getRowCount()) ? columns[index]->getSize() : rows[i + 1]->rowIndex);
+        }
+    }
 }

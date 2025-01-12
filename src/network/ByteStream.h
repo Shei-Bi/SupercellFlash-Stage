@@ -26,6 +26,7 @@ public:
     bool readBoolean();
     short readShort();
     int readInt();
+    int readInt8();
     long long readLongLong();
     long long readVLong();
     int readVInt();

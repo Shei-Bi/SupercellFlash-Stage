@@ -46,6 +46,13 @@ bool MessageManager::receiveMessage(PiranhaMessage* m) {
 
         sendMessage(new ClientInfoMessage());
         BattleMode = BattleMode::getInstance();
+        BattleMode->battleClient->ownPlayerIndex = ((StartLoadingMessage*)m)->ownPlayerIndex;
+        BattleMode->battleClient->ownTeamIndex = ((StartLoadingMessage*)m)->ownTeamIndex;
+        BattleMode->battleClient->setGameModeVariationData(((StartLoadingMessage*)m)->gameModeVariation);
+        BattleMode->battleClient->setLocation(((StartLoadingMessage*)m)->location);
+        BattleMode->battleClient->setPlayerCount(((StartLoadingMessage*)m)->players.size());
+        for (auto i : ((StartLoadingMessage*)m)->players) BattleMode->battleClient->addPlayer(i->clone());
+        BattleMode->battleClient->generateTileMap();
         BattleMode->battleClient->startLoadingReceived = true;
         return true;
     case 24112:
@@ -62,7 +69,7 @@ bool MessageManager::receiveMessage(PiranhaMessage* m) {
         return true;
     case 24109:
         // srand(time(0));
-        if (rand() % 10 == 0) return true;
+        // if (rand() % 10 == 0) return true;
         BattleMode = BattleMode::getInstance();
         if (BattleMode == nullptr) return true;
         if (BattleMode->battleClient->addVisionUpdate((VisionUpdateMessage*)m)) {

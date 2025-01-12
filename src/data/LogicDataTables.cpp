@@ -34,9 +34,13 @@ LogicData* LogicDataTables::getDataById(int globalID) {
     if (GlobalID::getClassID(globalID) >= 61) return nullptr;
     return TABLES[GlobalID::getClassID(globalID)]->getItemById(globalID);
 }
+LogicTileData* LogicDataTables::getOpenTileData() {
+    return sm_pOpenTileData;
+}
 void LogicDataTables::createReferences() {
     for (int i = 0;i < 61;i++) {
         if (TABLES[i]) TABLES[i]->createReferences();
     }
+    sm_pOpenTileData = (LogicTileData*)TABLES[Tile]->getDataByName("Open", nullptr);
     sm_loaded = true;
 }

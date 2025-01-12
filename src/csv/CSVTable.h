@@ -27,5 +27,7 @@ public:
     int getIntegerValueAt(int column, int row);
     bool getBooleanValueAt(int column, int row);
     int getColumnIndexByName(const char* name);
+
+    int getArraySizeAt(CSVRow* row, int index);
 };
 #endif

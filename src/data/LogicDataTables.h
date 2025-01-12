@@ -5,6 +5,7 @@ class LogicDataTable;
 #include "LogicData.h"
 class LogicGameModeVariationData;
 class LogicLocationData;
+class LogicTileData;
 extern LogicDataTable* TABLES[61];
 enum DataType {
     texts_patch = 0,
@@ -83,8 +84,9 @@ enum DataType {
     availability_window = 100
 };
 class LogicDataTables {
-public:
     static inline bool sm_loaded = false;
+    static inline LogicTileData* sm_pOpenTileData = nullptr;
+public:
     static void initDataTable(CSVNode* csvNode, int index);
     static void createReferences();
     static bool isLoaded();
@@ -93,5 +95,6 @@ public:
     static LogicGameModeVariationData* getGameModeVariationByName(const std::string& name);
     static LogicGameModeVariationData* getGameModeVariationData(int v);
     static LogicData* getDataById(int globalID);
+    static LogicTileData* getOpenTileData();
 };
 #endif

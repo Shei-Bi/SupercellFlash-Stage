@@ -25,6 +25,11 @@ void InitState::initDataTables() {
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/location_themes.csv"), LocationTheme);
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/locations.csv"), Location);
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/game_mode_variations.csv"), GameModeVariation);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/cards.csv"), Card);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/accessories.csv"), Accessory);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/gear_boosts.csv"), GearBoost);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/maps.csv"), Map);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/tiles.csv"), Tile);
         LogicDataTables::createReferences();
     }
 }

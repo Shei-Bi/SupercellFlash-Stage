@@ -86,7 +86,6 @@ HomePage::~HomePage() {
         delete mc;
         mc = nullptr;
     }
-    screenContainers.~vector();
 }
 
 MovieClip* HomePage::getClipFromContainers(const char* name) {

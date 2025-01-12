@@ -156,3 +156,254 @@ void BitStream::writePositiveIntMax268435455(int value) {
 void BitStream::writePositiveIntMax536870911(int value) {
     writePositiveInt(value, 29);
 }
+
+int BitStream::readPositiveInt(int bitLength) {
+    if (!bitLength) return 0;
+    int result = 0;
+    for (int bit = 0;bit < bitLength;bit++)
+    {
+        result |= ((buffer[offset] >> bitOffset) & 1) << bit;
+        bitOffset++;
+        if (bitOffset == 8) {
+            bitOffset = 0;
+            offset++;
+        }
+    }
+    return result;
+}
+
+bool BitStream::readBoolean() {
+    return readPositiveInt(1) == 1;
+}
+
+int BitStream::readPositiveIntMax1() {
+    return readPositiveInt(1);
+}
+
+int BitStream::readPositiveIntMax3() {
+    return readPositiveInt(2);
+}
+
+int BitStream::readPositiveIntMax7() {
+    return readPositiveInt(3);
+}
+
+int BitStream::readPositiveIntMax15() {
+    return readPositiveInt(4);
+}
+int BitStream::readPositiveIntMax31() {
+    return readPositiveInt(5);
+}
+int BitStream::readPositiveIntMax63() {
+    return readPositiveInt(6);
+}
+int BitStream::readPositiveIntMax127() {
+    return readPositiveInt(7);
+}
+int BitStream::readPositiveIntMax255() {
+    return readPositiveInt(8);
+}
+int BitStream::readPositiveIntMax511() {
+    return readPositiveInt(9);
+}
+int BitStream::readPositiveIntMax1023() {
+    return readPositiveInt(10);
+}
+int BitStream::readPositiveIntMax2047() {
+    return readPositiveInt(11);
+}
+int BitStream::readPositiveIntMax4095() {
+    return readPositiveInt(12);
+}
+int BitStream::readPositiveIntMax8191() {
+    return readPositiveInt(13);
+}
+int BitStream::readPositiveIntMax16383() {
+    return readPositiveInt(14);
+}
+int BitStream::readPositiveIntMax32767() {
+    return readPositiveInt(15);
+}
+int BitStream::readPositiveIntMax65535() {
+    return readPositiveInt(16);
+}
+int BitStream::readPositiveIntMax131071() {
+    return readPositiveInt(17);
+}
+int BitStream::readPositiveIntMax262143() {
+    return readPositiveInt(18);
+}
+int BitStream::readPositiveIntMax524287() {
+    return readPositiveInt(19);
+}
+int BitStream::readPositiveIntMax1048575() {
+    return readPositiveInt(20);
+}
+int BitStream::readPositiveIntMax2097151() {
+    return readPositiveInt(21);
+}
+int BitStream::readPositiveIntMax4194303() {
+    return readPositiveInt(22);
+}
+int BitStream::readPositiveIntMax8388607() {
+    return readPositiveInt(23);
+}
+int BitStream::readPositiveIntMax16777215() {
+    return readPositiveInt(24);
+}
+int BitStream::readPositiveIntMax33554431() {
+    return readPositiveInt(25);
+}
+int BitStream::readPositiveIntMax67108863() {
+    return readPositiveInt(26);
+}
+int BitStream::readPositiveIntMax134217727() {
+    return readPositiveInt(27);
+}
+int BitStream::readPositiveIntMax268435455() {
+    return readPositiveInt(28);
+}
+int BitStream::readPositiveIntMax536870911() {
+    return readPositiveInt(29);
+}
+
+int BitStream::readPositiveVInt(int bitLength) {
+    return readPositiveInt(readPositiveInt(bitLength));
+}
+
+int BitStream::readPositiveVIntOftenZero(int bitLength) {
+    if (readPositiveIntMax1() == 1) return 0;
+    return readPositiveInt(readPositiveInt(bitLength));
+}
+int BitStream::readPositiveVIntMax255() {
+    return readPositiveVInt(3);
+}
+int BitStream::readPositiveVIntMax255OftenZero() {
+    return readPositiveVIntOftenZero(3);
+}
+int BitStream::readPositiveVIntMax65535() {
+    return readPositiveVInt(4);
+}
+int BitStream::readPositiveVIntMax65535OftenZero() {
+    return readPositiveVIntOftenZero(4);
+}
+int BitStream::readPositiveVIntMax16777215() {
+    return readPositiveVInt(5);
+}
+int BitStream::readPositiveVIntMax16777215OftenZero() {
+    return readPositiveVIntOftenZero(5);
+}
+
+int BitStream::readInt(int bitLength) {
+    int sign = readPositiveIntMax1();
+    return (sign ? 1 : -1) * readPositiveInt(bitLength);
+}
+
+int BitStream::readIntMax1() {
+    return readInt(1);
+}
+
+int BitStream::readIntMax3() {
+    return readInt(2);
+}
+
+int BitStream::readIntMax7() {
+    return readInt(3);
+}
+
+int BitStream::readIntMax15() {
+    return readInt(4);
+}
+int BitStream::readIntMax31() {
+    return readInt(5);
+}
+int BitStream::readIntMax63() {
+    return readInt(6);
+}
+int BitStream::readIntMax127() {
+    return readInt(7);
+}
+int BitStream::readIntMax255() {
+    return readInt(8);
+}
+int BitStream::readIntMax511() {
+    return readInt(9);
+}
+int BitStream::readIntMax1023() {
+    return readInt(10);
+}
+int BitStream::readIntMax2047() {
+    return readInt(11);
+}
+int BitStream::readIntMax4095() {
+    return readInt(12);
+}
+int BitStream::readIntMax8191() {
+    return readInt(13);
+}
+int BitStream::readIntMax16383() {
+    return readInt(14);
+}
+int BitStream::readIntMax32767() {
+    return readInt(15);
+}
+int BitStream::readIntMax65535() {
+    return readInt(16);
+}
+int BitStream::readIntMax131071() {
+    return readInt(17);
+}
+int BitStream::readIntMax262143() {
+    return readInt(18);
+}
+int BitStream::readIntMax524287() {
+    return readInt(19);
+}
+int BitStream::readIntMax1048575() {
+    return readInt(20);
+}
+int BitStream::readIntMax2097151() {
+    return readInt(21);
+}
+int BitStream::readIntMax4194303() {
+    return readInt(22);
+}
+int BitStream::readIntMax8388607() {
+    return readInt(23);
+}
+int BitStream::readIntMax16777215() {
+    return readInt(24);
+}
+int BitStream::readIntMax33554431() {
+    return readInt(25);
+}
+int BitStream::readIntMax67108863() {
+    return readInt(26);
+}
+int BitStream::readIntMax134217727() {
+    return readInt(27);
+}
+int BitStream::readIntMax268435455() {
+    return readInt(28);
+}
+int BitStream::readIntMax536870911() {
+    return readInt(29);
+}
+
+void BitStream::rewind(int bitLength) {
+    while (bitLength) {
+        if (bitOffset == 0) {
+            offset--;
+            bitOffset = 8;
+        }
+        bitOffset--;
+        bitLength--;
+    }
+}
+
+int BitStream::debugGetZeroBitsLength() {
+    int result = 0;
+    while (readIntMax1() == 0) result++;
+    rewind(result + 1);
+    return result;
+}

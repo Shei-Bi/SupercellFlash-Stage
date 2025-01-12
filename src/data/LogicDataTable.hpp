@@ -7,6 +7,10 @@
 #include "LogicDataTables.h"
 #include "LogicCharacterData.h"
 #include "LogicSkinData.h"
+#include "LogicCardData.h"
+#include "LogicAccessoryData.h"
+#include "LogicGearBoostData.h"
+#include "LogicTileData.h"
 
 class LogicDataTable {
     int tableIndex;
@@ -44,6 +48,18 @@ public:
             return new LogicLocationData(csvRow, this);
         case GameModeVariation:
             return new LogicGameModeVariationData(csvRow, this);
+        case Card:
+            return new LogicCardData(csvRow, this);
+        case Accessory:
+            return new LogicAccessoryData(csvRow, this);
+        case GearBoost:
+            return new LogicGearBoostData(csvRow, this);
+        case Map:
+        case Credit:
+        case MapTemplate:
+            return new LogicData(csvRow, this);
+        case Tile:
+            return new LogicTileData(csvRow, this);
         default:
             abort();
         }

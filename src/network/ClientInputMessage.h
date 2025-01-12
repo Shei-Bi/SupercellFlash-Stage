@@ -13,7 +13,6 @@ public:
     int index;
     ~ClientInputMessage() {
         for (auto i : inputs) delete i;
-        inputs.~vector();
     }
     void encode() override {
         BitStream bitStream(58);

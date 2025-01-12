@@ -5,7 +5,7 @@
 #include <time.h>
 #include "csv/CSVTable.h"
 #include <string_view>
-
+#include "xTimer.h"
 
 static long size(FILE* f) {
     fseek(f, 0, SEEK_END);
@@ -33,10 +33,10 @@ public:
         while (element_start < line.length()) {
             int has_quote = 0;
             if (line[element_start] == '"') has_quote = 1;
-            int element_end = line.find_first_of(has_quote ? '"' : ',', element_start + (has_quote ? 1 : 0));
-            if (element_end != std::string_view::npos && has_quote)
-                element_end++;
+            int element_end = line.find(has_quote ? "\"," : ",", element_start + (has_quote ? 1 : 0));
             if (element_end == std::string_view::npos) element_end = line.length();
+            else if (has_quote)
+                element_end++;
             auto element = line.substr(element_start + has_quote, element_end - element_start - has_quote * 2);
             // std::cout << element << " start: " << element_start << "end: " << element_end << std::endl;
             element_start = element_end + 1;
@@ -83,7 +83,7 @@ public:
         else if (columnType == 1) columnType = 2;
     }
     static CSVNode* fromFile(const char* name) {
-        clock();
+        unsigned long long time1 = xTimer::getNativeTime();
         auto f = fopen(name, "rb");
         assert(f != NULL);
         if (f == NULL) return NULL;
@@ -108,6 +108,7 @@ public:
         auto csvNode = new CSVNode(&lines);
         // lines.clear();
         // delete[] data;
+        printf("Loading CSV %s took %d ms\n", name, (int)xTimer::getPassedTimeMs(time1, xTimer::getNativeTime()));
         return csvNode;
     }
 };
