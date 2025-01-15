@@ -30,6 +30,9 @@ LogicGameModeVariationData* LogicDataTables::getGameModeVariationData(int v) {
     assert(v >= 0 && v < TABLES[GameModeVariation]->getItemCount());
     return (LogicGameModeVariationData*)TABLES[GameModeVariation]->getItemAt(v);
 }
+LogicAccessoryData* LogicDataTables::getAccessoryByName(const std::string& name) {
+    return (LogicAccessoryData*)TABLES[Accessory]->getDataByName(name, nullptr);
+}
 LogicData* LogicDataTables::getDataById(int globalID) {
     if (GlobalID::getClassID(globalID) >= 61) return nullptr;
     return TABLES[GlobalID::getClassID(globalID)]->getItemById(globalID);

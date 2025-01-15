@@ -3,6 +3,7 @@
 #include "LogicHeroEntry.hpp"
 #include <vector>
 #include "PlayerDisplayData.hpp"
+#include "battle/LogicAccessory.h"
 
 class LogicPlayer {
 public:
@@ -15,8 +16,25 @@ public:
     int ultiCharge;
     int ocCharge;
     int heroIndex;
+    LogicAccessory* accessory;
+    int accessoryCharges;
+
     LogicPlayer() {
-        ;
+        accountId = 0;
+        playerIndex = 0;
+        teamIndex = 0;
+        displayData = nullptr;
+        ultiCharge = 0;
+        ocCharge = 0;
+        heroIndex = 0;
+        accessory = nullptr;
+        accessoryCharges = 0;
+    }
+    void setHeroIndex(int index) {
+        heroIndex = index;
+
+        if (accessory) delete accessory;
+        accessory = new LogicAccessory(heroes[heroIndex]->upgrades->gadget->getAccessory());
     }
     ~LogicPlayer() {
         for (auto i : heroes) delete i;
@@ -67,6 +85,8 @@ public:
         logicPlayer->heroes.reserve(heroes.size());
         for (auto i : heroes) logicPlayer->heroes.push_back(i->clone());
         logicPlayer->displayData = displayData->clone();
+
+        logicPlayer->setHeroIndex(0);
         return logicPlayer;
     }
 };

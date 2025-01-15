@@ -6,6 +6,7 @@ class LogicDataTable;
 class LogicGameModeVariationData;
 class LogicLocationData;
 class LogicTileData;
+class LogicAccessoryData;
 extern LogicDataTable* TABLES[61];
 enum DataType {
     texts_patch = 0,
@@ -94,6 +95,7 @@ public:
     static LogicLocationData* getTrainingGroundsData();
     static LogicGameModeVariationData* getGameModeVariationByName(const std::string& name);
     static LogicGameModeVariationData* getGameModeVariationData(int v);
+    static LogicAccessoryData* getAccessoryByName(const std::string& name);
     static LogicData* getDataById(int globalID);
     static LogicTileData* getOpenTileData();
 };

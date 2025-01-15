@@ -52,13 +52,25 @@ void LogicGameObjectManagerClient::decode(BitStream* stream, std::vector<LogicPl
             auto b = stream->readBoolean();
             auto c = stream->readBoolean();
             auto d = stream->readPositiveVIntMax255OftenZero();
-            //arcade stuff 43
+            //todo: modifier 43 special case
             if (stream->readBoolean()) {
                 stream->readPositiveIntMax3();
                 stream->readPositiveIntMax16383();
             }
-            i->heroIndex = stream->readPositiveIntMax15();
-            if (stream->readBoolean()) abort();//extra data reference
+        }
+        int newHeroIndex = stream->readPositiveIntMax15();
+        if (i->heroIndex != newHeroIndex)
+            i->setHeroIndex(newHeroIndex);
+        if (stream->readBoolean()) abort();//extra data reference
+        if (i->accessory != nullptr) {
+            i->accessory->decode(stream, i->playerIndex == battleClient->ownPlayerIndex, overwriteCurrentState);
+            //todo: modifier 41 special case
+            i->accessoryCharges = stream->readPositiveIntMax7();
+        }
+        stream->readBoolean();
+        stream->readBoolean();
+        if (stream->readBoolean()) {
+            stream->readIntMax15();
         }
     }
 }

@@ -12,7 +12,7 @@ class LogicHeroUpgrades {
 public:
     int level;
     LogicCardData* starpower;
-    LogicAccessoryData* gadget;
+    LogicCardData* gadget;
     LogicGearBoostData* gear1;
     LogicGearBoostData* gear2;
     LogicCardData* hypercharge;
@@ -24,7 +24,7 @@ public:
     LogicHeroUpgrades(ByteStream* stream) {
         level = stream->readVInt();
         starpower = (LogicCardData*)stream->readDataReference();
-        gadget = (LogicAccessoryData*)stream->readDataReference();
+        gadget = (LogicCardData*)stream->readDataReference();
         gear1 = (LogicGearBoostData*)stream->readDataReference();
         gear2 = (LogicGearBoostData*)stream->readDataReference();
         hypercharge = (LogicCardData*)stream->readDataReference();

@@ -268,12 +268,12 @@ int BitStream::readPositiveIntMax536870911() {
 }
 
 int BitStream::readPositiveVInt(int bitLength) {
-    return readPositiveInt(readPositiveInt(bitLength));
+    return readPositiveInt(readPositiveInt(bitLength) + 1);
 }
 
 int BitStream::readPositiveVIntOftenZero(int bitLength) {
     if (readPositiveIntMax1() == 1) return 0;
-    return readPositiveInt(readPositiveInt(bitLength));
+    return readPositiveInt(readPositiveInt(bitLength) + 1);
 }
 int BitStream::readPositiveVIntMax255() {
     return readPositiveVInt(3);
