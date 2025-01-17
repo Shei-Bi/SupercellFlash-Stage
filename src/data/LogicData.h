@@ -18,4 +18,9 @@ public:
     const std::string& getIconExportName();
     virtual void createReferences();
     int getInstanceID();
+
+    virtual bool isCharacter();
+    virtual bool isProjectile();
+    virtual bool isAreaEffect();
+    virtual bool isItem();
 };

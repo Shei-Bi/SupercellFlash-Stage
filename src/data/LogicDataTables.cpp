@@ -5,7 +5,7 @@
 #include "LogicGameModeVariationData.h"
 #include "LogicLocationData.h"
 
-LogicDataTable* TABLES[61];
+LogicDataTable* TABLES[101];
 void LogicDataTables::initDataTable(CSVNode* csvNode, int index) {
     if (TABLES[index]) {
         ;
@@ -33,15 +33,27 @@ LogicGameModeVariationData* LogicDataTables::getGameModeVariationData(int v) {
 LogicAccessoryData* LogicDataTables::getAccessoryByName(const std::string& name) {
     return (LogicAccessoryData*)TABLES[Accessory]->getDataByName(name, nullptr);
 }
+LogicAreaEffectData* LogicDataTables::getAreaEffectByName(const std::string& name) {
+    return (LogicAreaEffectData*)TABLES[AreaEffect]->getDataByName(name, nullptr);
+}
+LogicSkillData* LogicDataTables::getSkillByName(const std::string& name) {
+    return (LogicSkillData*)TABLES[Skill]->getDataByName(name, nullptr);
+}
+LogicProjectileData* LogicDataTables::getProjectileByName(const std::string& name) {
+    return (LogicProjectileData*)TABLES[Projectile]->getDataByName(name, nullptr);
+}
+LogicCharacterData* LogicDataTables::getCharacterByName(const std::string& name) {
+    return (LogicCharacterData*)TABLES[Character]->getDataByName(name, nullptr);
+}
 LogicData* LogicDataTables::getDataById(int globalID) {
-    if (GlobalID::getClassID(globalID) >= 61) return nullptr;
+    if (GlobalID::getClassID(globalID) >= 101) return nullptr;
     return TABLES[GlobalID::getClassID(globalID)]->getItemById(globalID);
 }
 LogicTileData* LogicDataTables::getOpenTileData() {
     return sm_pOpenTileData;
 }
 void LogicDataTables::createReferences() {
-    for (int i = 0;i < 61;i++) {
+    for (int i = 0;i < 101;i++) {
         if (TABLES[i]) TABLES[i]->createReferences();
     }
     sm_pOpenTileData = (LogicTileData*)TABLES[Tile]->getDataByName("Open", nullptr);

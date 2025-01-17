@@ -4,9 +4,11 @@
 #include "logic/LogicPlayer.hpp"
 #include <vector>
 class LogicBattleModeClient;
+class LogicGameObjectClient;
 
 class LogicGameObjectManagerClient {
 public:
+    std::vector<LogicGameObjectClient*> gameObjects;
     int ownObjectID;
     int willowObjectID;
     int gemGrabCountDown;

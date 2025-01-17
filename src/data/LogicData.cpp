@@ -30,3 +30,16 @@ void LogicData::createReferences() {
 int LogicData::getInstanceID() {
     return GlobalID::getInstanceID(globalID);
 }
+
+bool LogicData::isCharacter() {
+    return false;
+}
+bool LogicData::isProjectile() {
+    return false;
+}
+bool LogicData::isAreaEffect() {
+    return false;
+}
+bool LogicData::isItem() {
+    return false;
+}

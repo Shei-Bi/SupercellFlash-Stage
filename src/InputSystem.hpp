@@ -20,16 +20,16 @@ public:
         touch.x = xpos;
         touch.y = ypos;
         if (leftBtnState == GLFW_RELEASE && (state == GLFW_PRESS || state == GLFW_REPEAT)) {
-            printf("pressed %f   %f\n", touch.x, touch.y);
+            // printf("pressed %f   %f\n", touch.x, touch.y);
             for (IInputListener* i : listeners) if (i->touchPressed(touch)) break;
         }
         else if (leftBtnState == GLFW_PRESS || leftBtnState == GLFW_REPEAT) {
             if (state == GLFW_PRESS || state == GLFW_REPEAT) {
-                printf("moved %f   %f\n", touch.x, touch.y);
+                // printf("moved %f   %f\n", touch.x, touch.y);
                 for (IInputListener* i : listeners) if (i->touchMoved(touch)) break;
             }
             else if (state == GLFW_RELEASE) {
-                printf("released %f   %f\n", touch.x, touch.y);
+                // printf("released %f   %f\n", touch.x, touch.y);
                 for (IInputListener* i : listeners) if (i->touchReleased(touch)) break;
             }
         }

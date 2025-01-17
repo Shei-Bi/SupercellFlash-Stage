@@ -1,6 +1,7 @@
 #pragma once
+#include "IInputListener.h"
 
-class GameState
+class GameState :public IInputListener
 {
 public:
     virtual ~GameState();

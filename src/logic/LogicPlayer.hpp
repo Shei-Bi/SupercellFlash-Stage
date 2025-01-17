@@ -19,6 +19,8 @@ public:
     LogicAccessory* accessory;
     int accessoryCharges;
 
+    int objectGlobalID;
+
     LogicPlayer() {
         accountId = 0;
         playerIndex = 0;
@@ -29,12 +31,17 @@ public:
         heroIndex = 0;
         accessory = nullptr;
         accessoryCharges = 0;
+        objectGlobalID = 0;
     }
     void setHeroIndex(int index) {
         heroIndex = index;
 
         if (accessory) delete accessory;
         accessory = new LogicAccessory(heroes[heroIndex]->upgrades->gadget->getAccessory());
+    }
+    bool hasOverchargeData() {
+        auto upgrades = heroes[heroIndex]->upgrades;
+        return upgrades != nullptr && upgrades->hypercharge != nullptr;
     }
     ~LogicPlayer() {
         for (auto i : heroes) delete i;

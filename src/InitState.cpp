@@ -30,6 +30,10 @@ void InitState::initDataTables() {
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/gear_boosts.csv"), GearBoost);
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/maps.csv"), Map);
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/tiles.csv"), Tile);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/projectiles.csv"), Projectile);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/gear_boosts.csv"), GearBoost);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/area_effects.csv"), AreaEffect);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/skills.csv"), Skill);
         LogicDataTables::createReferences();
     }
 }

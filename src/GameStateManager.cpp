@@ -4,6 +4,7 @@
 #include <LoadingScreen.h>
 #include <HomeMode.h>
 #include "BattleMode.h"
+#include "GameMain.h"
 
 GameStateManager* GameStateManager::sm_pInstance = nullptr;
 GameStateManager* GameStateManager::getInstance() {
@@ -21,8 +22,10 @@ GameStateManager::GameStateManager() {
 }
 void GameStateManager::constructInstance()
 {
-    if (!GameStateManager::sm_pInstance)
+    if (!GameStateManager::sm_pInstance) {
         GameStateManager::sm_pInstance = new GameStateManager();
+        GameMain::getInstance()->inputSystem->listeners.push_back(GameStateManager::sm_pInstance);
+    }
 }
 bool GameStateManager::hasGameData() {
     return gameDataLoaded != -1;
@@ -64,6 +67,18 @@ void GameStateManager::exitAndDestroyState() {
     currentState->exit();
     delete currentState;
     currentState = nullptr;
+}
+bool GameStateManager::touchPressed(Touch& t) {
+    if (currentState) return currentState->touchPressed(t);
+    return false;
+}
+bool GameStateManager::touchMoved(Touch& t) {
+    if (currentState) return currentState->touchMoved(t);
+    return false;
+}
+bool GameStateManager::touchReleased(Touch& t) {
+    if (currentState) return currentState->touchReleased(t);
+    return false;
 }
 void GameStateManager::update(float sinceStart, float deltaTime) {
     if (pendingStateId) {

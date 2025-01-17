@@ -18,7 +18,12 @@ public:
     LogicCardData* hypercharge;
 
     LogicHeroUpgrades() {
-        ;
+        level = 0;
+        starpower = nullptr;
+        gadget = nullptr;
+        gear1 = nullptr;
+        gear2 = nullptr;
+        hypercharge = nullptr;
     }
 
     LogicHeroUpgrades(ByteStream* stream) {

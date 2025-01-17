@@ -11,6 +11,9 @@
 #include "LogicAccessoryData.h"
 #include "LogicGearBoostData.h"
 #include "LogicTileData.h"
+#include "LogicProjectileData.h"
+#include "LogicAreaEffectData.h"
+#include "LogicSkillData.h"
 
 class LogicDataTable {
     int tableIndex;
@@ -60,11 +63,18 @@ public:
             return new LogicData(csvRow, this);
         case Tile:
             return new LogicTileData(csvRow, this);
+        case Projectile:
+            return new LogicProjectileData(csvRow, this);
+        case AreaEffect:
+            return new LogicAreaEffectData(csvRow, this);
+        case Skill:
+            return new LogicSkillData(csvRow, this);
         default:
             abort();
         }
     }
     LogicData* getDataByName(const std::string& name, LogicData* neededBy) {
+        if (name.size() == 0) return nullptr;
         return getDataByName(name.c_str(), neededBy);
     }
     LogicData* getDataByName(const char* name, LogicData* neededBy) {

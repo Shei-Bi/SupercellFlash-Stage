@@ -17,6 +17,7 @@ void GameMain::constructInstance()
 void GameMain::init() {
     ResourceManager::init();
     Stage::constructInstance();
+    inputSystem = new InputSystem();
     GameStateManager::constructInstance();
     ServerConnection::constructInstance();
     GameStateManager::getInstance()->changeState(GameStateManager::Init);
@@ -33,7 +34,6 @@ void GameMain::init() {
     screen4->interactable = true;
     Stage::getInstance()->addChild(screen4);
     Stage::getInstance()->setBackgroundColor(0);
-    inputSystem = new InputSystem();
     inputSystem->listeners.push_back(Stage::getInstance());
 }
 void GameMain::update(float sinceStart, float deltaTime) {

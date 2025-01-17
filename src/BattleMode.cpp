@@ -73,6 +73,11 @@ BattleMode* BattleMode::getInstance() {
     if (i->isState(GameStateManager::Battle)) return (BattleMode*)i->currentState;
     return nullptr;
 }
+bool BattleMode::touchReleased(Touch& t) {
+    battleClient->objectManager->debugLog();
+    inputManager->addInput(new ClientInput(1));
+    return false;
+}
 void BattleMode::enter() {
     battleClient = new LogicBattleModeClient();
     // ResourceManager::addFile("sc/effects.sc");

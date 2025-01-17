@@ -24,7 +24,7 @@ public:
         bitStream.writePositiveIntMax1023(1);
         bitStream.writePositiveIntMax31(inputs.size());
         for (auto i : inputs)
-            ;
+            i->encode(&bitStream);
         stream->writeBytesWithoutLength(bitStream.getByteArray(), bitStream.getLength());
     }
     void addInput(ClientInput* input) {

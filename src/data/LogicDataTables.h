@@ -7,7 +7,12 @@ class LogicGameModeVariationData;
 class LogicLocationData;
 class LogicTileData;
 class LogicAccessoryData;
-extern LogicDataTable* TABLES[61];
+class LogicAreaEffectData;
+class LogicSkillData;
+class LogicProjectileData;
+class LogicCharacterData;
+
+extern LogicDataTable* TABLES[101];
 enum DataType {
     texts_patch = 0,
     Locale = 1,
@@ -58,7 +63,7 @@ enum DataType {
     SeasonalSkinSection = 56,
     RankedRank = 58,
     RankedLocation = 59,
-    Carryable = 60,
+    Carryab1e = 60,
     GearLevel = 61,
     GearBoost = 62,
     AllianceLeagueMode = 63,
@@ -96,6 +101,10 @@ public:
     static LogicGameModeVariationData* getGameModeVariationByName(const std::string& name);
     static LogicGameModeVariationData* getGameModeVariationData(int v);
     static LogicAccessoryData* getAccessoryByName(const std::string& name);
+    static LogicAreaEffectData* getAreaEffectByName(const std::string& name);
+    static LogicSkillData* getSkillByName(const std::string& name);
+    static LogicProjectileData* getProjectileByName(const std::string& name);
+    static LogicCharacterData* getCharacterByName(const std::string& name);
     static LogicData* getDataById(int globalID);
     static LogicTileData* getOpenTileData();
 };

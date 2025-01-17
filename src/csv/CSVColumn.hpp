@@ -41,7 +41,9 @@ public:
         return strings[row];
     }
     int getIntValue(int row) {
-        return integers[row];
+        int result = integers[row];
+        if (result == 0x7FFFFFFF) return 0;
+        return result;
     }
     bool getBooleanValue(int row) {
         return booleans[row] == 1;

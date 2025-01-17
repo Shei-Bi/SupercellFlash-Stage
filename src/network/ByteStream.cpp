@@ -348,7 +348,6 @@ const char* ByteStream::readString(int maxLength) {
 LogicData* ByteStream::readDataReference() {
     int classID = readVInt();
     if (classID == 0) return nullptr;
-    if (classID == 1) abort();
 #ifndef NDEBUG
     if (TABLES[classID] == nullptr) {
         printf("table #%d not initialized! (accessing %d)\n", classID, readVInt());

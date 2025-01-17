@@ -121,7 +121,12 @@ public:
     int readIntMax268435455();
     int readIntMax536870911();
 
+    LogicData* readDataReference();
+    int readObjectRunningId(int classID);
+
     void rewind(int bitLength);
 
     int debugGetZeroBitsLength();
+
+    bool isAtEnd();
 };

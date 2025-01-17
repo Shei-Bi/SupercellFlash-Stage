@@ -31,6 +31,7 @@ public:
             auto clientInputMessage = new ClientInputMessage();
             clientInputMessage->tickCounter = 0;
             clientInputMessage->index = ++inputPacketIndex;
+            for (auto i : outgoingInputs) clientInputMessage->addInput(new ClientInput(i));
             if (inputPacketIndex >= 8000) inputPacketIndex = 0;
             auto udpSocket = MessageManager::getInstance()->udpSocket;
             if (udpSocket) {

@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 	ResourceManager::addFile("sc/background_toystory.sc");
 	ResourceManager::loadNextResource();
 
-	// glfwSetWindowOpacity(window, 0.75f);
+	glfwSetWindowOpacity(window, 0.5f);
 
 	glfwMaximizeWindow(window);
 	int width;

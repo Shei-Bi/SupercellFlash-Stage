@@ -1,9 +1,11 @@
+#pragma once
 #include "network/VisionUpdateMessage.h"
 #include <vector>
 #include <algorithm>
 #include "LogicGameObjectManagerClient.h"
 #include "data/LogicLocationData.h"
 #include "LogicTileMap.h"
+#include "data/LogicGameModeVariationData.h"
 
 class LogicBattleModeClient {
 public:
@@ -18,6 +20,7 @@ public:
     LogicGameObjectManagerClient* objectManager;
     LogicTileMap* tileMap;
     int gameModeVariation;
+    LogicGameModeVariationData* gmvData;
     LogicLocationData* location;
     int ownPlayerIndex;
     int ownTeamIndex;
@@ -31,12 +34,14 @@ public:
         nextTickObjects = new LogicGameObjectManagerClient();
         thisTickObjects = new LogicGameObjectManagerClient();
         gameModeVariation = 0;
+        gmvData = nullptr;
         location = nullptr;
         tileMap = new LogicTileMap();
     }
 
     void setGameModeVariationData(int v) {
         gameModeVariation = v;
+        gmvData = LogicDataTables::getGameModeVariationData(v);
     }
     void setLocation(LogicLocationData* l) {
         location = l;

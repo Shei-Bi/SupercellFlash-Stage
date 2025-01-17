@@ -2,8 +2,9 @@
 #include <GameState.h>
 #include <logic/LogicClientHome.hpp>
 #include <logic/LogicClientAvatar.hpp>
+#include "IInputListener.h"
 
-class GameStateManager
+class GameStateManager :public IInputListener
 {
 public:
     enum StateId
@@ -40,4 +41,8 @@ public:
     LogicClientHome* home;
     LogicClientAvatar* avatar;
     int gameDataLoaded;
+
+    bool touchPressed(Touch&);
+    bool touchMoved(Touch&);
+    bool touchReleased(Touch&);
 };

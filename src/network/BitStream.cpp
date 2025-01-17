@@ -1,6 +1,7 @@
 #include "BitStream.h"
 #include <algorithm>
 #include "assert.h"
+#include "GlobalID.h"
 
 BitStream::BitStream(int initialCapacity) {
     this->buffer = new unsigned char[initialCapacity];
@@ -162,6 +163,7 @@ int BitStream::readPositiveInt(int bitLength) {
     int result = 0;
     for (int bit = 0;bit < bitLength;bit++)
     {
+        assert(offset < capacity);
         result |= ((buffer[offset] >> bitOffset) & 1) << bit;
         bitOffset++;
         if (bitOffset == 8) {
@@ -390,6 +392,22 @@ int BitStream::readIntMax536870911() {
     return readInt(29);
 }
 
+LogicData* BitStream::readDataReference() {
+    int classID = readPositiveIntMax31();
+    if (classID == 0) return nullptr;
+#ifndef NDEBUG
+    if (TABLES[classID] == nullptr) {
+        printf("table #%d not initialized! (accessing %d)\n", classID, readPositiveVIntMax65535());
+        return nullptr;
+    }
+#endif
+    return LogicDataTables::getDataById(GlobalID::createGlobalID(classID, readPositiveVIntMax65535()));
+}
+
+int BitStream::readObjectRunningId(int classID) {
+    return GlobalID::createGlobalID(classID, readPositiveVIntMax65535());
+}
+
 void BitStream::rewind(int bitLength) {
     while (bitLength) {
         if (bitOffset == 0) {
@@ -406,4 +424,8 @@ int BitStream::debugGetZeroBitsLength() {
     while (readIntMax1() == 0) result++;
     rewind(result + 1);
     return result;
+}
+
+bool BitStream::isAtEnd() {
+    return offset >= capacity - 1;
 }
