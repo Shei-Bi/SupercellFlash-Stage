@@ -348,12 +348,12 @@ const char* ByteStream::readString(int maxLength) {
 LogicData* ByteStream::readDataReference() {
     int classID = readVInt();
     if (classID == 0) return nullptr;
-#ifndef NDEBUG
+    // #ifndef NDEBUG
     if (TABLES[classID] == nullptr) {
         printf("table #%d not initialized! (accessing %d)\n", classID, readVInt());
         return nullptr;
     }
-#endif
+    // #endif
     return LogicDataTables::getDataById(GlobalID::createGlobalID(classID, readVInt()));
 }
 
