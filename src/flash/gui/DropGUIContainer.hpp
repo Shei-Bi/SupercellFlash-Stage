@@ -11,6 +11,11 @@ public:
         setMovieClip(movieClip);
         putLocalizedTIDsToTextFields(getMovieClip());
     }
+
+    DropGUIContainer() :GUIContainer() {
+        ;
+    }
+
     void setMovieClip(MovieClip* movieClip) {
         GUIContainer::setMovieClip(movieClip);
         putLocalizedTIDsToTextFields(movieClip);

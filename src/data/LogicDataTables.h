@@ -11,6 +11,8 @@ class LogicAreaEffectData;
 class LogicSkillData;
 class LogicProjectileData;
 class LogicCharacterData;
+class LogicSkinConfData;
+class LogicSkinData;
 
 extern LogicDataTable* TABLES[101];
 enum DataType {
@@ -105,6 +107,8 @@ public:
     static LogicSkillData* getSkillByName(const std::string& name);
     static LogicProjectileData* getProjectileByName(const std::string& name);
     static LogicCharacterData* getCharacterByName(const std::string& name);
+    static LogicSkinConfData* getSkinConfByName(const std::string& name);
+    static LogicSkinData* getSkinByName(const std::string& name);
     static LogicData* getDataById(int globalID);
     static LogicTileData* getOpenTileData();
 };

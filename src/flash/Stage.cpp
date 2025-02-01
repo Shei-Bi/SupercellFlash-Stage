@@ -7,6 +7,8 @@
 #include <learnopengl_s.h>
 #include <glm/glm.hpp>
 #include <ResourceManager.h>
+#include "Stage.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 Stage* Stage::sm_pInstance = nullptr;
 Stage* Stage::getInstance() {
@@ -102,28 +104,44 @@ void Stage::loadDefaultShader(int index) {
         gl_FragColor = vec4(color.rgb * colorMul.a, color.a);
         // FragColor = sample;
     })");
-    // R"(#version 330 core
-    // out vec4 FragColor;
-    // uniform sampler2D texture1;
+    uber_shader = new Shader(
+        R"(#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 a_normal;
+layout (location = 2) in vec2 a_uv0;
 
-    // in vec2 texCoord;
-    // in vec4 colorMul;
-    // in vec3 colorAdd;
+uniform mat4 view_matrix;
+uniform float a_texMul;
 
-    // void main()
-    // {
-    // FragColor = texture(texture1, texCoord);
-    // return;
-    //     // vec4 sample = texture2D(texture1, texCoord);
-    //     // vec4 color = sample * colorMul;
-    //     // color.rgb += colorAdd * color.a;
-    //     // gl_FragColor = vec4(color.rgb * colorMul.a, color.a);
-    //     // gl_FragColor = sample;
-    // })");
+out vec2 v_texCoord;
+out vec3 v_normal;
+
+void main(void)
+{
+	vec4 pos = view_matrix * vec4(aPos.x, aPos.y, aPos.z,1.0);
+
+	v_texCoord.xy = a_uv0 * a_texMul;
+	v_normal = normalize(vec3(view_matrix * vec4(a_normal, 0.0)));
+
+	gl_Position = pos;
+})", R"(#version 330 core
+in vec2 v_texCoord;
+in vec3 v_normal;
+
+uniform sampler2D diffuseTex;
+
+void main (void)
+{
+	vec4 color = vec4(1.0);
+	color = texture2D(diffuseTex, v_texCoord.xy);
+
+	gl_FragColor = color;
+}
+)");
 }
 void Stage::firstTimeShaderInit(Shader* shader, glm::mat4 mat4) {
     shader->use();
-    shader->setUniformVector4("myPMVMatrix", mat4[0][0], mat4[1][1], 1.0, 1.0);
+    shader->setVec4("myPMVMatrix", mat4[0][0], mat4[1][1], 1.0, 1.0);
     glUniform1i(glGetUniformLocation(shader->ID, "TEX_SAMPLER"), 0);
 }
 void Stage::increaseBucketCapacity(int c) {
@@ -166,6 +184,11 @@ Stage::Stage() {
     left = 0;
     right = 800;
     bottom = 600;
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
     loadDefaultShader(0);
     abort = false;
     isCalculatingBounds = false;
@@ -173,6 +196,11 @@ Stage::Stage() {
     glEnable(GL_BLEND);
     glBlendEquation(GL_FUNC_ADD);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+}
+Stage::~Stage() {
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
 }
 void Stage::setBackgroundColor(int col32) {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -217,6 +245,11 @@ newBucket:
     currentBucket->initForUse(texture, renderConfig, indicesBucket.size());
     return true;
 }
+
+void Stage::start3D() {
+    renderBuckets();
+}
+
 void Stage::addTriangles(int count) {
     int required = triangleCount * 3 + count * 3;
     // printf("Stage::addTriangles capacity %i, required %i\n", currentBucket->indices.capacity(), required);
@@ -253,20 +286,9 @@ void Stage::render(float deltaTime, bool clear) {
 }
 void Stage::renderBuckets() {
     shader->use();
-    unsigned int VBO, VAO, EBO;
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
 
-    // for (int i = 0;i < currentBucket->vertices.size();i++) {
-    //     printf("vertices[%i]: %f\n", i, currentBucket->vertices[i]);
-    // }
-    // for (int i = 0;i < currentBucket->indices.size();i++) {
-    //     printf("indices[%i]: %i\n", i, currentBucket->indices[i]);
-    // }
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, pointCount * 11 * sizeof(float), verticesBucket, GL_STREAM_DRAW);
 
@@ -285,8 +307,6 @@ void Stage::renderBuckets() {
 
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
     glEnableVertexAttribArray(3);
-    glBindVertexArray(VAO);
-
 
     for (int i = 0;i < bucketsUsed;i++) {
         StageDrawBucket* currentBucket = buckets[i];
@@ -295,9 +315,9 @@ void Stage::renderBuckets() {
         glDrawElements(GL_TRIANGLES, currentBucket->triangleCount * 3, GL_UNSIGNED_INT, (const void*)(currentBucket->indicesIndex * sizeof(unsigned int)));
 
     }
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     resetRenderVariables();
 }
 bool Stage::bindBlendMode(int b) {

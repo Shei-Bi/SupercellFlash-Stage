@@ -25,6 +25,7 @@ void LogicCharacterData::resetStatics(CSVTable* table) {
     sm_columnIndexCarryableType = table->getColumnIndexByName("CarryableType");
     sm_columnIndexPetAutoSpawnDelay = table->getColumnIndexByName("PetAutoSpawnDelay");
     sm_columnIndexPet = table->getColumnIndexByName("Pet");
+    sm_columnIndexDefaultSkin = table->getColumnIndexByName("DefaultSkin");
 }
 void LogicCharacterData::createReferences() {
     if (csvRow->rowIndex == 0) resetStatics(csvRow->table);
@@ -70,6 +71,7 @@ void LogicCharacterData::createReferences() {
     carryableType = csvRow->getValueAt(sm_columnIndexCarryableType).size() > 0;
     petAutoSpawnDelay = csvRow->getIntegerValueAt(sm_columnIndexPetAutoSpawnDelay);
     pet = LogicDataTables::getCharacterByName(csvRow->getValueAt(sm_columnIndexPet));
+    defaultSkin = LogicDataTables::getSkinByName(csvRow->getValueAt(sm_columnIndexDefaultSkin));
 }
 bool LogicCharacterData::isHero() {
     return type == Hero || type == Her0;

@@ -5,5 +5,6 @@ class MovieClipModifier :public DisplayObjectOriginal {
 public:
     int type;
     void load(SupercellSWF* sc, int type);
+    DisplayObject* clone(SupercellSWF*, Rect*);
 };
 #endif

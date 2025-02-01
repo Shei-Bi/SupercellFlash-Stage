@@ -45,6 +45,12 @@ LogicProjectileData* LogicDataTables::getProjectileByName(const std::string& nam
 LogicCharacterData* LogicDataTables::getCharacterByName(const std::string& name) {
     return (LogicCharacterData*)TABLES[Character]->getDataByName(name, nullptr);
 }
+LogicSkinConfData* LogicDataTables::getSkinConfByName(const std::string& name) {
+    return (LogicSkinConfData*)TABLES[SkinConf]->getDataByName(name, nullptr);
+}
+LogicSkinData* LogicDataTables::getSkinByName(const std::string& name) {
+    return (LogicSkinData*)TABLES[Skin]->getDataByName(name, nullptr);
+}
 LogicData* LogicDataTables::getDataById(int globalID) {
     if (GlobalID::getClassID(globalID) >= 101) return nullptr;
     return TABLES[GlobalID::getClassID(globalID)]->getItemById(globalID);

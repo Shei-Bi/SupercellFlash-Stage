@@ -14,6 +14,7 @@
 #include <HomeMode.h>
 #include "network/SinglePlayerMatchRequestMessage.h"
 
+class HomePageTeamMember;
 // #pragma optimize("",off)
 class HomePage :public DropGUIContainer {
 public:
@@ -39,6 +40,8 @@ public:
 
     EventData* selectedEvent;
 
+    HomePageTeamMember* player1;
+
     HomePage();
     ~HomePage();
 
@@ -46,6 +49,7 @@ public:
     void onInitialized();
     void displayEventList();
     void deleteAllPages();
+    void refreshSelectedCharacters(bool);
     void refreshSelectedEvent();
     void refreshRankedElement();
     static void setUpRankedModeElementForEvent(MovieClip* movieClip, EventData*);

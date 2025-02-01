@@ -11,10 +11,15 @@ void TextFieldOriginal::load(SupercellSWF* sc) {
     sc->readBool();
     sc->readUnsignedChar();
     sc->readUnsignedChar();
-    sc->readShort();
-    sc->readShort();
-    sc->readShort();
-    sc->readShort();
+    float left = (float)(short)sc->readShort();
+    float top = (float)(short)sc->readShort();
+    float right = (float)(short)sc->readShort();
+    float bottom = (float)(short)sc->readShort();
+    bounds = Rect(left, top, right, bottom);
     sc->readBool();
     delete[] sc->readAscii(&stack, NULL);
+}
+
+TextField* TextFieldOriginal::clone(SupercellSWF*, Rect*) {
+    return TextField::createTextField(this);
 }

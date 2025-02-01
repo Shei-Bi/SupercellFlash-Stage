@@ -12,6 +12,7 @@ private:
     /* data */
 public:
     Stage();
+    ~Stage();
     static Stage* sm_pInstance;
     static Stage* getInstance();
     StageSprite* StageSprit;
@@ -37,6 +38,8 @@ public:
     void renderBuckets();
     void resetRenderVariables();
     bool shapeStart(float, float, float, float, GLImage* texture, int renderConfig, bool*);
+    void start3D();
+    void end3D();
     void addTriangles(int count);
     void addChild(DisplayObject* child);
     int left;
@@ -48,6 +51,7 @@ public:
     void firstTimeShaderInit(Shader*, glm::mat4);
     void loadDefaultShader(int);
     Shader* shader;
+    Shader* uber_shader;
     void increaseVertexBucketCapacity(int);
     void increaseBucketCapacity(int);
     bool abort;
@@ -69,6 +73,8 @@ public:
     bool touchPressed(Touch&);
     bool touchMoved(Touch&);
     bool touchReleased(Touch&);
+
+    unsigned int VBO, VAO, EBO;
 
     bool forceNewBucket;
 };

@@ -14,6 +14,7 @@
 #include "LogicProjectileData.h"
 #include "LogicAreaEffectData.h"
 #include "LogicSkillData.h"
+#include "LogicSkinConfData.h"
 
 class LogicDataTable {
     int tableIndex;
@@ -69,6 +70,8 @@ public:
             return new LogicAreaEffectData(csvRow, this);
         case Skill:
             return new LogicSkillData(csvRow, this);
+        case SkinConf:
+            return new LogicSkinConfData(csvRow, this);
         default:
             abort();
         }

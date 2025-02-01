@@ -6,6 +6,6 @@ class DisplayObject;
 class DisplayObjectOriginal {
 public:
     unsigned short id;
-    virtual DisplayObject* clone(SupercellSWF*, Rect*);
+    virtual DisplayObject* clone(SupercellSWF*, Rect*) = 0;
 };
 #endif

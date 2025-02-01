@@ -2,6 +2,7 @@
 #include "LogicData.h"
 #include "LogicAreaEffectData.h"
 #include "LogicSkillData.h"
+#include "LogicSkinData.h"
 
 class CSVTable;
 enum CharacterType {
@@ -55,6 +56,7 @@ public:
     static inline int sm_columnIndexCarryableType = -1;
     static inline int sm_columnIndexPetAutoSpawnDelay = -1;
     static inline int sm_columnIndexPet = -1;
+    static inline int sm_columnIndexDefaultSkin = -1;
 
     LogicCharacterData(CSVRow* csvRow, LogicDataTable* parentTable);
     void createReferences();
@@ -72,6 +74,7 @@ public:
     bool carryableType;
     int petAutoSpawnDelay;
     LogicCharacterData* pet;
+    LogicSkinData* defaultSkin;
 
     bool isHero();
     bool hasAutoAttack();

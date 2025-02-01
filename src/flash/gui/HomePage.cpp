@@ -1,7 +1,10 @@
 #include "HomePage.h"
 #include "HomeScreen.hpp"
+#include "HomePageTeamMember.hpp"
 
 HomePage::HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
+    player1 = nullptr;
+
     getMovieClip()->initScreenContainers("mainscreen_", screenContainers);
     // return;
     MovieClip* header_bgr = getClipFromContainers("header_bgr");
@@ -47,7 +50,7 @@ HomePage::HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
     // player_1_area->setChildVisible("star_power_ph", false);
     // player_1_area->setChildVisible("item_ph", false);
     button_play_club_league = getButtonByName("button_play_club_league");
-    getClipFromContainers("player_1_area")->visible = false;
+    // getClipFromContainers("player_1_area")->visible = false;
     getClipFromContainers("player_2_area")->visible = false;
     getClipFromContainers("player_3_area")->visible = false;
     getClipFromContainers("player_4_area")->visible = false;
@@ -68,6 +71,7 @@ HomePage::HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
     screenContainers[1]->setChildVisible("panel_player_online_right_right", false);
 
     refreshSelectedEvent();
+    refreshSelectedCharacters(true);
 }
 
 HomePage::~HomePage() {
@@ -81,6 +85,7 @@ HomePage::~HomePage() {
     if (panel_other_invite_2) delete panel_other_invite_2;
     if (panel_other_invite_4) delete panel_other_invite_4;
     if (gamemode_icon) delete gamemode_icon;
+    if (player1) delete player1;
     for (MovieClip* mc : screenContainers) {
         if (!mc) continue;
         delete mc;
@@ -107,6 +112,15 @@ void HomePage::displayEventList() {
 
 void HomePage::deleteAllPages() {
     ;
+}
+
+void HomePage::refreshSelectedCharacters(bool initialize) {
+    if (player1) {
+
+    }
+    else {
+        player1 = new HomePageTeamMember(this, getClipFromContainers("player_1_area"));
+    }
 }
 
 void HomePage::refreshSelectedEvent() {
