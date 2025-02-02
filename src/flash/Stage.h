@@ -2,7 +2,7 @@
 #include <flash/StageDrawBucket.h>
 #include <flash/StageSprite.h>
 #include <flash/DisplayObject.h>
-#include <learnopengl_s.h>
+#include <Shader.h>
 #include <glm/glm.hpp>
 #include "IInputListener.h"
 

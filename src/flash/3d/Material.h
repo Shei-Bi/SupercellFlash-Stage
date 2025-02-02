@@ -1,5 +1,5 @@
 #pragma once
-#include "learnopengl_s.h"
+#include "Shader.h"
 #include "GLImage.h"
 
 class Material {

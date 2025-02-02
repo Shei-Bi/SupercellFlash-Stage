@@ -7,8 +7,8 @@ class SWFTexture;
 class GLImage
 {
 private:
-    unsigned int id;
 public:
+    unsigned int id;
     GLImage();
     void bind();
     void unbind();

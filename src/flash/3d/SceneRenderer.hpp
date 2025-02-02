@@ -3,6 +3,7 @@
 #include "data/LogicSkinData.h"
 #include "flash/Sprite.h"
 #include "glm/gtc/matrix_transform.hpp"
+#include "Impostor.h"
 
 class SceneRenderer :public Sprite {
 public:
@@ -12,6 +13,7 @@ public:
     glm::mat4 lookAt;
     glm::mat4 unknownScaling;
     glm::mat4 matrix;
+    Impostor* characterImpostor;
     void addCharacter(LogicCharacterData* character, LogicSkinData* skin) {
         if (!skin) skin = character->defaultSkin;
         this->character = new SceneCharacter(character, skin);

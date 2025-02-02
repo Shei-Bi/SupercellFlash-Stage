@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <flash/StageSprite.h>
 #include <Renderer.h>
-#include <learnopengl_s.h>
+#include <Shader.h>
 #include <glm/glm.hpp>
 #include <ResourceManager.h>
 #include "Stage.h"
