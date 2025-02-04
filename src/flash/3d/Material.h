@@ -4,7 +4,7 @@
 
 class Material {
 public:
-    void bind() {
+    virtual void bind(const glm::mat4& transform) {
         diffuseTexture->bind();
         shader->use();
     }

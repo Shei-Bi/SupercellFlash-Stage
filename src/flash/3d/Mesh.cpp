@@ -24,9 +24,8 @@ Mesh::~Mesh() {
 }
 
 void Mesh::render(const glm::mat4& transform) {
-    material->bind();
-    material->shader->setMat4("view_matrix", transform * matrix);
-    material->shader->setFloat("a_texMul", 1.0f);
+    material->bind(transform * matrix);
+
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indicesSize, indicesType, (void*)indicesOffset);
     glBindVertexArray(0);

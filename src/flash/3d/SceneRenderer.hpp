@@ -14,9 +14,12 @@ public:
     glm::mat4 unknownScaling;
     glm::mat4 matrix;
     Impostor* characterImpostor;
+    RenderTarget* renderTarget;
     void addCharacter(LogicCharacterData* character, LogicSkinData* skin) {
         if (!skin) skin = character->defaultSkin;
         this->character = new SceneCharacter(character, skin);
+        renderTarget = new RenderTarget(4);
+        characterImpostor = new Impostor(renderTarget);
     }
     bool render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) {
         Stage* Stage = Stage::getInstance();
@@ -43,8 +46,17 @@ public:
         // 0.6696727275848389
         // 0.016308657824993134
         // -0.5951389670372009
+        Stage->start3D();
 
+        renderTarget->reshape(Stage->right, Stage->bottom);
+        renderTarget->begin();
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
         character->sprite->render(/*glm::translate(glm::mat4(1.0f), glm::vec3(0.5f)) * glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)) **/ transformation * (lookAt * unknownScaling));
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        renderTarget->end();
+        characterImpostor->render();
         delete n;
         return false;
     }

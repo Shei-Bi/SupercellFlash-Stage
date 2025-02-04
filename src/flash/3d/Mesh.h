@@ -15,4 +15,5 @@ public:
     Mesh();
     ~Mesh();
     void render(const glm::mat4& transform);
+    // void setVertices(int )
 };

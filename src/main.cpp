@@ -44,6 +44,8 @@ int main(int argc, char* argv[])
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+	// glfwWindowHint(GLFW_SAMPLES, 4);
+
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
@@ -61,6 +63,7 @@ int main(int argc, char* argv[])
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
+	glEnable(GL_MULTISAMPLE);
 	unsigned long long programStartTime = xTimer::getNativeTime();
 	GameMain::constructInstance();
 	GameMain::getInstance()->init();
@@ -72,7 +75,7 @@ int main(int argc, char* argv[])
 	ResourceManager::addFile("sc/background_toystory.sc");
 	ResourceManager::loadNextResource();
 
-	glfwSetWindowOpacity(window, 0.5f);
+	// glfwSetWindowOpacity(window, 0.5f);
 
 	glfwMaximizeWindow(window);
 	int width;

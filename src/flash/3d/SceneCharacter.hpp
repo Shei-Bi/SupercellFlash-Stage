@@ -1,6 +1,7 @@
 #include "Sprite3D.h"
 #include "data/LogicCharacterData.h"
 #include "data/LogicSkinData.h"
+#include "CharacterMaterial.h"
 
 class SceneCharacter {
 public:
@@ -10,7 +11,7 @@ public:
         sprite = new Sprite3D();
         std::string e = skin->conf->getModel();
         sprite->createFromFile(e);
-        skinMaterial = new Material();
+        skinMaterial = new CharacterMaterial();
         skinMaterial->shader = Stage::getInstance()->uber_shader;
         skinMaterial->setDiffuseTex(ResourceManager::getImage(skin->diffuseTexture));
         overrideMaterials(skinMaterial);

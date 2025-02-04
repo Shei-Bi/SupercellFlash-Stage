@@ -1,16 +1,19 @@
 #pragma once
 #include "GLImage.h"
-#include "Rect.h"
+#include "flash/Rect.h"
 
 class RenderTarget {
 public:
     unsigned int frameBuffer;
+    unsigned int multisampledFrameBuffer;
     unsigned int depthBuffer;
     int width, height;
+    int samples;
+    GLImage multisampledTexture;
     GLImage texture;
     Rect previousViewport;
     unsigned int previousFrameBuffer;
-    RenderTarget();
+    RenderTarget(int samples);
     void init(int width, int height);
     void reshape(int width, int height);
     void begin();

@@ -138,6 +138,52 @@ void main (void)
 	gl_FragColor = color;
 }
 )");
+    impostor_outline_shader = new Shader(
+        R"(#version 330 core
+layout (location = 0) in vec2 a_pos;
+out vec2 v_texCoord;
+
+void main(void)
+{
+	gl_Position = vec4(a_pos, 0.0, 1.0);
+    v_texCoord = (a_pos + vec2(1, 1)) / 2.0f;
+}
+)",
+R"(#version 330 core
+in vec2 v_texCoord;
+
+uniform sampler2D diffuseTex;
+
+uniform vec4 u_outlineColor;
+uniform vec2 u_outlineScale;
+
+void main (void)
+{
+	vec4 diffuseSample = texture2D(diffuseTex, v_texCoord);
+
+	vec4 diffuseColor = diffuseSample;
+
+	if(diffuseSample.a == 1.0)
+	{
+		gl_FragColor = diffuseColor;
+	}
+	else
+	{
+		float a = texture2D(diffuseTex, v_texCoord + u_outlineScale * vec2(0.923880, 0.382683)).a;
+		a += texture2D(diffuseTex, v_texCoord + u_outlineScale * vec2(0.382683, 0.923880)).a;
+		a += texture2D(diffuseTex, v_texCoord + u_outlineScale * vec2(-0.382683, 0.923880)).a;
+		a += texture2D(diffuseTex, v_texCoord + u_outlineScale * vec2(-0.923880, 0.382683)).a;
+		a += texture2D(diffuseTex, v_texCoord + u_outlineScale * vec2(-0.923880, -0.382683)).a;
+		a += texture2D(diffuseTex, v_texCoord + u_outlineScale * vec2(-0.382683, -0.923880)).a;
+		a += texture2D(diffuseTex, v_texCoord + u_outlineScale * vec2(0.382683, -0.923880)).a;
+		a += texture2D(diffuseTex, v_texCoord + u_outlineScale * vec2(0.923880, -0.382683)).a;
+
+		vec3 color = u_outlineColor.rgb * (1.0 - diffuseSample.a) + diffuseColor.rgb;
+		float alpha = min(diffuseColor.a + u_outlineColor.a * min(a, 1.0), 1.0);
+		gl_FragColor = vec4(color * alpha, alpha);
+	}
+}
+)");
 }
 void Stage::firstTimeShaderInit(Shader* shader, glm::mat4 mat4) {
     shader->use();

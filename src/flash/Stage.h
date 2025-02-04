@@ -52,6 +52,7 @@ public:
     void loadDefaultShader(int);
     Shader* shader;
     Shader* uber_shader;
+    Shader* impostor_outline_shader;
     void increaseVertexBucketCapacity(int);
     void increaseBucketCapacity(int);
     bool abort;
