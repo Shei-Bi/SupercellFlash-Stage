@@ -23,7 +23,9 @@ public:
     }
     bool render(Matrix2x3* mat, ColorTransform* c, int rc, float deltaTime) {
         Stage* Stage = Stage::getInstance();
+        setScale(3.2512f);
         Matrix2x3* n = new Matrix2x3(Matrix, *mat);
+
         float top = n->applyY(bounds.left, bounds.top) - n->ty;
         float bottom = Stage->matrixY * Stage->pointSize - (mat->applyY(getX(), getY()) - mat->ty) - mat->ty;
         float mid = n->applyY(bounds.right, bounds.bottom) - n->ty;

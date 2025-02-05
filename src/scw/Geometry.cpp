@@ -60,7 +60,7 @@ void SourceArray::Decode(Conv3d::Reader* reader)
     this->SourceIndex = reader->ReadU8();
     this->Stride = reader->ReadU8();
 
-    this->Scale = reader->ReadFloatLittleEndian();
+    this->Scale = reader->ReadFloatLittleEndian() / 32512.0f;
     uint32_t count = reader->ReadU32LittleEndian();
 
     count *= (uint32_t)this->Stride;

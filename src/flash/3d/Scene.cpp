@@ -42,14 +42,14 @@ void Scene::createFromSCWFile(SCW::File* scwFile) {
                 int verticeIndex = geometry->Materials[0].IndexBuffer[i * 3 + 0];
                 int normalIndex = geometry->Materials[0].IndexBuffer[i * 3 + 1];
                 int texIndex = geometry->Materials[0].IndexBuffer[i * 3 + 2];
-                vertices.push_back(geometry->Vertices[0].Data[verticeIndex * 3 + 0] / 10000.0f);
-                vertices.push_back(geometry->Vertices[0].Data[verticeIndex * 3 + 1] / 10000.0f);
-                vertices.push_back(geometry->Vertices[0].Data[verticeIndex * 3 + 2] / 10000.0f);
+                vertices.push_back(geometry->Vertices[0].Data[verticeIndex * 3 + 0]);
+                vertices.push_back(geometry->Vertices[0].Data[verticeIndex * 3 + 1]);
+                vertices.push_back(geometry->Vertices[0].Data[verticeIndex * 3 + 2]);
                 vertices.push_back(geometry->Vertices[1].Data[normalIndex * 3 + 0]);
                 vertices.push_back(geometry->Vertices[1].Data[normalIndex * 3 + 1]);
                 vertices.push_back(geometry->Vertices[1].Data[normalIndex * 3 + 2]);
-                vertices.push_back(geometry->Vertices[2].Data[texIndex * 2 + 0] / 32767.0f);
-                vertices.push_back(geometry->Vertices[2].Data[texIndex * 2 + 1] / 32767.0f);
+                vertices.push_back(geometry->Vertices[2].Data[texIndex * 2 + 0]);
+                vertices.push_back(geometry->Vertices[2].Data[texIndex * 2 + 1]);
                 indices.push_back(i);
             }
             glGenVertexArrays(1, &mesh->VAO);

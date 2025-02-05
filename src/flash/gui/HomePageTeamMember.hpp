@@ -8,7 +8,7 @@ SceneRenderer* createHeroSprite(float width, float height, LogicCharacterData* c
     SceneRenderer* renderer = new SceneRenderer();
     renderer->bounds = Rect(width * -0.5, height * -0.5, width * 0.5, height * 0.5);
     renderer->addCharacter(character, skin);
-    renderer->perspectiveProjection = glm::perspective(20.0f, width / height, 10.5f, 1050.0f);
+    renderer->perspectiveProjection = glm::perspective(20.0f, width / height, 10.5f, 199.5f);
     // glm::mat4 view = camera.GetViewMatrix();
     renderer->lookAt = glm::lookAt(glm::vec3(0.0f, 5.0f, 105.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     renderer->unknownScaling = glm::inverse(glm::mat4(34.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -34.4f, 0.0f, 0.0f, 34.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f));
