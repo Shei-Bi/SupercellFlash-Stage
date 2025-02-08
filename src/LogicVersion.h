@@ -5,7 +5,7 @@ class LogicVersion
 public:
     static bool isChinaVersion() { return false; };
     static bool isContentValidationMode() {
-#ifdef false
+#ifndef false
         return true;
 #else 
         return false;

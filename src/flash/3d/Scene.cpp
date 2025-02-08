@@ -34,22 +34,34 @@ void Scene::createFromSCWFile(SCW::File* scwFile) {
             // geometry->Materials
 
             int pointCount = geometry->Materials[0].TrianglesCount * 3;
-            std::vector<float> vertices;
+            constexpr int stride = 8 * 4 + 4 * 1 + 4 * 4;
+            auto vertices = new unsigned char[pointCount * stride];
+            // std::vector<float> vertices;
             std::vector<unsigned int> indices;
-            vertices.reserve(pointCount * 8);
+            // vertices.reserve(pointCount * 8);
             indices.reserve(pointCount);
+            // geometry->SkinWeights
+            // int offset = 0;
             for (int i = 0;i < pointCount;i++) {
                 int verticeIndex = geometry->Materials[0].IndexBuffer[i * 3 + 0];
                 int normalIndex = geometry->Materials[0].IndexBuffer[i * 3 + 1];
                 int texIndex = geometry->Materials[0].IndexBuffer[i * 3 + 2];
-                vertices.push_back(geometry->Vertices[0].Data[verticeIndex * 3 + 0]);
-                vertices.push_back(geometry->Vertices[0].Data[verticeIndex * 3 + 1]);
-                vertices.push_back(geometry->Vertices[0].Data[verticeIndex * 3 + 2]);
-                vertices.push_back(geometry->Vertices[1].Data[normalIndex * 3 + 0]);
-                vertices.push_back(geometry->Vertices[1].Data[normalIndex * 3 + 1]);
-                vertices.push_back(geometry->Vertices[1].Data[normalIndex * 3 + 2]);
-                vertices.push_back(geometry->Vertices[2].Data[texIndex * 2 + 0]);
-                vertices.push_back(geometry->Vertices[2].Data[texIndex * 2 + 1]);
+                *(float*)(vertices + i * stride + 0) = (float)geometry->Vertices[0].Data[verticeIndex * 3 + 0];
+                *(float*)(vertices + i * stride + 4) = (float)geometry->Vertices[0].Data[verticeIndex * 3 + 1];
+                *(float*)(vertices + i * stride + 8) = (float)geometry->Vertices[0].Data[verticeIndex * 3 + 2];
+                *(float*)(vertices + i * stride + 12) = (float)geometry->Vertices[1].Data[normalIndex * 3 + 0];
+                *(float*)(vertices + i * stride + 16) = (float)geometry->Vertices[1].Data[normalIndex * 3 + 1];
+                *(float*)(vertices + i * stride + 20) = (float)geometry->Vertices[1].Data[normalIndex * 3 + 2];
+                *(float*)(vertices + i * stride + 24) = (float)geometry->Vertices[2].Data[texIndex * 2 + 0];
+                *(float*)(vertices + i * stride + 28) = (float)geometry->Vertices[2].Data[texIndex * 2 + 1];
+                *(unsigned char*)(vertices + i * stride + 32) = geometry->SkinWeights[verticeIndex].Joints[0];
+                *(unsigned char*)(vertices + i * stride + 33) = geometry->SkinWeights[verticeIndex].Joints[1];
+                *(unsigned char*)(vertices + i * stride + 34) = geometry->SkinWeights[verticeIndex].Joints[2];
+                *(unsigned char*)(vertices + i * stride + 35) = geometry->SkinWeights[verticeIndex].Joints[3];
+                *(float*)(vertices + i * stride + 36) = geometry->SkinWeights[verticeIndex].Weights[0] / 65536.0f;
+                *(float*)(vertices + i * stride + 40) = geometry->SkinWeights[verticeIndex].Weights[1] / 65536.0f;
+                *(float*)(vertices + i * stride + 44) = geometry->SkinWeights[verticeIndex].Weights[2] / 65536.0f;
+                *(float*)(vertices + i * stride + 48) = geometry->SkinWeights[verticeIndex].Weights[3] / 65536.0f;
                 indices.push_back(i);
             }
             glGenVertexArrays(1, &mesh->VAO);
@@ -57,20 +69,25 @@ void Scene::createFromSCWFile(SCW::File* scwFile) {
             glGenBuffers(1, &mesh->EBO);
             glBindVertexArray(mesh->VAO);
             glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
-            glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, pointCount * stride, vertices, GL_STATIC_DRAW);
+            mesh->buffer = vertices;
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
             glEnableVertexAttribArray(1);
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
             glEnableVertexAttribArray(2);
 
             glBindVertexArray(0);
             mesh->indicesSize = indices.size();
             mesh->indicesType = GL_UNSIGNED_INT;
+            glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
+            glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &mesh->verticesSize);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
             meshes.push_back(mesh);
+            geometrys.push_back(geometry);
         }
     }
     else if (scwFile->glTFFbs != nullptr) {
@@ -147,6 +164,9 @@ void Scene::createFromSCWFile(SCW::File* scwFile) {
                         abort();
                     }
                     auto bv = glb->bufferViews()->Get(accessor->bufferView());
+                    // if (vaa == 0) {
+                    //     mesh->verticesSize
+                    // }
                     glVertexAttribPointer(vaa, size, accessor->componentType() & 0xFFFF,/* true || */accessor->normalized(), bv->byteStride(), (void*)accessor->byteOffset());
                     error = glGetError();
                     if (error != 0) {
@@ -165,6 +185,7 @@ void Scene::createFromSCWFile(SCW::File* scwFile) {
                 mesh->indicesSize = indices->count();
                 mesh->indicesType = indices->componentType() & 0xFFFF;
                 mesh->indicesOffset = indices->byteOffset();
+                glGetNamedBufferParameteriv(mesh->VBO, GL_BUFFER_SIZE, &mesh->verticesSize);
                 meshes.push_back(mesh);
             }
         }
@@ -182,4 +203,8 @@ Mesh* Scene::getMesh(int index) {
 
 void Scene::setTransformation(int index, const glm::mat4& matrix) {
     meshes[index]->matrix = matrix;
+}
+
+SCW::Geometry* Scene::getMeshGeometry(int index) {
+    return geometrys[index];
 }

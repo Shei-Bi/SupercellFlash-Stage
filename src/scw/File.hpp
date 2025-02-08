@@ -13,8 +13,6 @@
 
 #include "glTF_generated.h"
 
-#include "flash/3d/Mesh.h"
-
 namespace SCW
 {
 

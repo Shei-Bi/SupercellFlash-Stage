@@ -57,4 +57,8 @@ public:
         sceneRenderer = createHeroSprite(player_area->getWidth(), player_area->getWidth(), (LogicCharacterData*)clientHome->characters[0], nullptr);
         addChildAt(sceneRenderer, 0);
     }
+
+    void update(float deltaTime) {
+        sceneRenderer->update(deltaTime);
+    }
 };

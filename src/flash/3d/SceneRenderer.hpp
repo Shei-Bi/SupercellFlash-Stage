@@ -62,4 +62,8 @@ public:
         delete n;
         return false;
     }
+
+    void update(float deltaTime) {
+        character->update(deltaTime);
+    }
 };

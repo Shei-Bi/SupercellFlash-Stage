@@ -40,7 +40,7 @@ enum DataType {
     Campaign = 21,
     Boss = 22,
     Card = 23,
-    Animation = 24,
+    Animati0n = 24,
     AllianceRole = 25,
     Tutorial = 26,
     Tile = 27,

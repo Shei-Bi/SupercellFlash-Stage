@@ -126,8 +126,7 @@ void HomePage::refreshSelectedCharacters(bool initialize) {
 void HomePage::refreshSelectedEvent() {
     selectedEvent = nullptr;
     int availableslot = 0;
-    while (selectedEvent == nullptr)
-        selectedEvent = GameStateManager::getInstance()->home->getActiveEventForSlot(availableslot++);
+    // selectedEvent = GameStateManager::getInstance()->home->getActiveEventForSlot(availableslot++);
     selectedEvent = GameStateManager::getInstance()->home->getFirstEventOfGMV(20);
     auto button_mode_clip = getButtonByName("button_mode")->timelineClip;
     // button_mode_clip->debugPrintChildNames();
@@ -214,6 +213,8 @@ void HomePage::update(float deltaTime) {
     getButtonByName("button_ranked")->visible = false;
 
     getButtonByName("button_championship_challenge")->visible = false;
+
+    if (player1) player1->update(deltaTime);
 }
 
 void HomePage::handleModeButtonPress() {

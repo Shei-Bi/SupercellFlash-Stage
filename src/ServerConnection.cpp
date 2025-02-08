@@ -36,11 +36,17 @@ void ServerConnection::connect() {
 #endif
 }
 void ServerConnection::update(float deltaTime) {
+    OwnHomeDataMessage* ohd;
     switch (state) {
     case Start:
         if (LogicVersion::isContentValidationMode()) {
+            if (!LogicDataTables::isLoaded())
+                break;
             state = Logined;
-            MessageManager::getInstance()->receiveMessage(new OwnHomeDataMessage());
+            ohd = new OwnHomeDataMessage();
+            ohd->home = new LogicClientHome();
+            ohd->home->characters.push_back((LogicData*)LogicDataTables::getCharacterByName("Percenter"));
+            MessageManager::getInstance()->receiveMessage(ohd);
             return;
         }
         connect();

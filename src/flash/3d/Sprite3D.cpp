@@ -20,7 +20,7 @@ void Sprite3D::render(const glm::mat4& transform) {
 
 void Sprite3D::renderScene(const glm::mat4& transform) {
     for (int i = 0;i < scene.getMeshCount();i++) {
-        scene.getMesh(i)->render(transform);
+        scene.getMesh(i)->render(transform, getDynamicMesh(i));
     }
 }
 
@@ -45,5 +45,21 @@ void Sprite3D::createFromFile(std::string& filename) {
 }
 
 void Sprite3D::createFromFile(SCW::File* scwFile) {
+    fileReference = scwFile;
     scene.createFromSCWFile(scwFile);
+
+    skeleton = new Skeleton();
+    skeleton->initialize(scwFile);
+    createDynamicMeshes(skeleton);
+}
+
+void Sprite3D::createDynamicMeshes(Skeleton* skeleton) {
+    for (int i = 0;i < scene.getMeshCount();i++) {
+        dynamicMeshes.push_back(scene.getMesh(i)->createDynamicMesh(skeleton, scene.getMeshGeometry(i)));
+    }
+}
+
+DynamicMesh* Sprite3D::getDynamicMesh(int index) {
+    if (dynamicMeshes.size() <= index) return nullptr;
+    return dynamicMeshes[index];
 }
