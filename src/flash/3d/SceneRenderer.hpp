@@ -1,3 +1,5 @@
+#pragma once
+
 #include "SceneCharacter.hpp"
 #include "data/LogicCharacterData.h"
 #include "data/LogicSkinData.h"
@@ -48,13 +50,20 @@ public:
         // 0.6696727275848389
         // 0.016308657824993134
         // -0.5951389670372009
+
+        character->faceTexture->update(deltaTime);
+
         Stage->start3D();
 
         renderTarget->reshape(Stage->right, Stage->bottom);
         renderTarget->begin();
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
-        character->sprite->render(/*glm::translate(glm::mat4(1.0f), glm::vec3(0.5f)) * glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)) **/ transformation * (lookAt * unknownScaling));
+        character->sprite->render(
+            transformation *
+            (lookAt *
+                (glm::rotate(glm::mat4(1.0f), glm::radians(character->yaw), glm::vec3(0.0f, 1.0f, 0.0f)) *
+                    (glm::rotate(glm::mat4(1.0f), glm::radians(character->pitch), glm::vec3(1.0f, 0.0f, 0.0f)) * unknownScaling))));
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
         renderTarget->end();

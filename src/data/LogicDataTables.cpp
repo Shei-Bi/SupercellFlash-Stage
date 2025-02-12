@@ -58,6 +58,12 @@ LogicData* LogicDataTables::getDataById(int globalID) {
 LogicTileData* LogicDataTables::getOpenTileData() {
     return sm_pOpenTileData;
 }
+LogicAnimationData* LogicDataTables::getNonConstAnimationByName(const std::string& name) {
+    return (LogicAnimationData*)TABLES[Animati0n]->getDataByName(name, nullptr);
+}
+LogicFaceData* LogicDataTables::getFaceByName(const std::string& name) {
+    return (LogicFaceData*)TABLES[Face]->getDataByName(name, nullptr);
+}
 void LogicDataTables::createReferences() {
     for (int i = 0;i < 101;i++) {
         if (TABLES[i]) TABLES[i]->createReferences();

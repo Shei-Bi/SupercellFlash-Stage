@@ -4,6 +4,7 @@
 
 HomePage::HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
     player1 = nullptr;
+    player1_button = nullptr;
 
     getMovieClip()->initScreenContainers("mainscreen_", screenContainers);
     // return;
@@ -51,6 +52,8 @@ HomePage::HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
     // player_1_area->setChildVisible("item_ph", false);
     button_play_club_league = getButtonByName("button_play_club_league");
     // getClipFromContainers("player_1_area")->visible = false;
+    player1_button = addPlayerButton(getClipFromContainers("player_1_area"), "player_1");
+
     getClipFromContainers("player_2_area")->visible = false;
     getClipFromContainers("player_3_area")->visible = false;
     getClipFromContainers("player_4_area")->visible = false;
@@ -86,6 +89,7 @@ HomePage::~HomePage() {
     if (panel_other_invite_4) delete panel_other_invite_4;
     if (gamemode_icon) delete gamemode_icon;
     if (player1) delete player1;
+    if (player1_button) delete player1_button;
     for (MovieClip* mc : screenContainers) {
         if (!mc) continue;
         delete mc;
@@ -120,6 +124,7 @@ void HomePage::refreshSelectedCharacters(bool initialize) {
     }
     else {
         player1 = new HomePageTeamMember(this, getClipFromContainers("player_1_area"));
+        player1_button->setHeroSprite(player1->sceneRenderer);
     }
 }
 
@@ -214,6 +219,8 @@ void HomePage::update(float deltaTime) {
 
     getButtonByName("button_championship_challenge")->visible = false;
 
+    if (player1_button) player1_button->update(deltaTime);
+
     if (player1) player1->update(deltaTime);
 }
 
@@ -223,7 +230,10 @@ void HomePage::handleModeButtonPress() {
 
 void HomePage::buttonClicked(GameButton* button) {
     auto clientHome = GameStateManager::getInstance()->home;
-    if (strcmp(button->name, "button_mode") == 0) {
+    if (button == player1_button) {
+        // abort();
+    }
+    else if (strcmp(button->name, "button_mode") == 0) {
         handleModeButtonPress();
     }
     else if (strcmp(button->name, "brawl_button") == 0) {
@@ -232,7 +242,7 @@ void HomePage::buttonClicked(GameButton* button) {
     }
 }
 
-void HomePage::startGame(EventData* event, LogicData* location, int type, LogicData* character, std::vector<LogicData*>& characters) {
+void HomePage::startGame(EventData* event, LogicData* location, int type, LogicCharacterData* character, std::vector<LogicCharacterData*>& characters) {
     auto HomeMode = HomeMode::getInstance();
     HomeMode->getHomeScreen()->openMatchMakingPopup();
     switch (type) {
@@ -243,4 +253,13 @@ void HomePage::startGame(EventData* event, LogicData* location, int type, LogicD
         MessageManager::getInstance()->sendMessage(new SinglePlayerMatchRequestMessage(8, character, nullptr, false, location));
         break;
     }
+}
+
+RotateHeroButton* HomePage::addPlayerButton(MovieClip* movieClip, const char* name) {
+    auto mc = movieClip->getMovieClipByName(name);
+    auto btn = new RotateHeroButton(mc);
+    buttons.push_back(btn);
+    movieClip->addChildAt(btn, mc->indexInParent);
+    btn->setButtonListener(this);
+    return btn;
 }

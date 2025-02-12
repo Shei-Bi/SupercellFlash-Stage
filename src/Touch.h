@@ -1,6 +1,5 @@
 #pragma once
 class Touch {
 public:
-
-    float x, y;
+    float x, y, previousX, previousY, initialX, initialY;
 };

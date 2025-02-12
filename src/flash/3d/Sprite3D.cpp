@@ -1,6 +1,7 @@
 #include "Sprite3D.h"
 #include <fstream>
 #include "flash/Stage.h"
+#include "ResourceManager.h"
 
 void Sprite3D::render(const glm::mat4& transform) {
     Stage::getInstance()->start3D();
@@ -25,23 +26,7 @@ void Sprite3D::renderScene(const glm::mat4& transform) {
 }
 
 void Sprite3D::createFromFile(std::string& filename) {
-    std::ifstream is("assets/sc3d/" + filename, std::ios_base::binary);
-    is.seekg(0, std::ios::end);
-    size_t length = is.tellg();
-    is.seekg(0, std::ios::beg);
-
-    unsigned char* buf = new unsigned char[length];
-    is.read((char*)buf, length);
-    is.close();
-
-    SCW::File* scwFile = new SCW::File(buf, length);
-
-    if (!scwFile->LoadSCglTF()) {
-        delete scwFile;
-        scwFile = new SCW::File(buf, length);
-        scwFile->Load();
-    }
-    createFromFile(scwFile);
+    createFromFile(ResourceManager::getSC3D(filename));
 }
 
 void Sprite3D::createFromFile(SCW::File* scwFile) {

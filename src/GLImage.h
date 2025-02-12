@@ -14,4 +14,5 @@ public:
     void unbind();
     void createWithFormat(SWFTexture* texture);
     void createWithFormat(const sc::texture::SCTX::TextureData* texture, std::vector<const sc::texture::SCTX::MipMap*>& mipmaps, unsigned char* levels);
+    void createWrapper(unsigned int id);
 };

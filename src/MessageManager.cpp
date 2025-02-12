@@ -12,6 +12,7 @@
 #include "battle/LogicBattleModeClient.h"
 #include "network/ClientInfoMessage.h"
 #include "battle/ClientInputManager.h"
+#include "network/KeepAliveMessage.h"
 
 MessageManager* MessageManager::sm_pInstance = nullptr;
 MessageManager* MessageManager::getInstance() {
@@ -21,6 +22,7 @@ MessageManager::MessageManager(Messaging* m) {
     messaging = m;
     isUdpConnectionInfoMessageReceived = false;
     udpSocket = nullptr;
+    timeSinceLastKeepAlive = 0.0f;
 }
 void MessageManager::constructInstance(Messaging* m)
 {
@@ -91,5 +93,16 @@ bool MessageManager::sendMessage(PiranhaMessage* m) {
 }
 
 void MessageManager::update(float deltaTime) {
+    if (ServerConnection::getInstance()->state == ServerConnection::Logined) {
+        timeSinceLastKeepAlive += deltaTime;
+    }
+    if (timeSinceLastKeepAlive > 5.0f)
+        sendKeepAliveMessage();
+
     if (udpSocket) udpSocket->update(this, 0.0f, deltaTime);
+}
+
+void MessageManager::sendKeepAliveMessage() {
+    if (sendMessage(new KeepAliveMessage()))
+        timeSinceLastKeepAlive = 0.0f;
 }

@@ -102,7 +102,7 @@ void RenderTarget::begin(int x, int y, int width, int height) {
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, (int*)&previousFrameBuffer);
 
     glBindFramebuffer(GL_FRAMEBUFFER, multisampledFrameBuffer != 0 ? multisampledFrameBuffer : frameBuffer);
-    // glViewport(x, y, width, height);
+    glViewport(x, y, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -113,5 +113,5 @@ void RenderTarget::end() {
         glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, previousFrameBuffer);
-    // glViewport(previousViewport.left, previousViewport.top, previousViewport.right, previousViewport.bottom);
+    glViewport(previousViewport.x, previousViewport.y, previousViewport.width, previousViewport.height);
 }

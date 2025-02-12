@@ -45,7 +45,7 @@ void ServerConnection::update(float deltaTime) {
             state = Logined;
             ohd = new OwnHomeDataMessage();
             ohd->home = new LogicClientHome();
-            ohd->home->characters.push_back((LogicData*)LogicDataTables::getCharacterByName("Percenter"));
+            ohd->home->characters.push_back(LogicDataTables::getCharacterByName("Percenter"));
             MessageManager::getInstance()->receiveMessage(ohd);
             return;
         }

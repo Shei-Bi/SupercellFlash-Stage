@@ -1,14 +1,15 @@
 #pragma once
 #include <network/PiranhaMessage.h>
+#include "data/LogicCharacterData.h"
 
 class MatchmakeRequestMessage : public PiranhaMessage {
     int id;
     int slot;
     LogicData* character;
-    std::vector<LogicData*> characters;
+    std::vector<LogicCharacterData*> characters;
 public:
 
-    MatchmakeRequestMessage(LogicData* character, std::vector<LogicData*>& characters, int eventId, int eventSlot) :id(eventId), slot(eventSlot), character(character), characters(characters) {
+    MatchmakeRequestMessage(LogicCharacterData* character, std::vector<LogicCharacterData*>& characters, int eventId, int eventSlot) :id(eventId), slot(eventSlot), character(character), characters(characters) {
         ;
     }
     ~MatchmakeRequestMessage() {

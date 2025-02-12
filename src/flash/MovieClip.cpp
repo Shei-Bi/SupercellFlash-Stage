@@ -346,6 +346,14 @@ void MovieClip::changeTimelineChild(const char* fromName, DisplayObject* to) {
 bool MovieClip::isStopped() {
     return state == STOPPED;
 }
+void MovieClip::gotoAbsoluteTimeRecursive(float absTime) {
+    auto frameIndex = (int)(absTime / secondPerFrame) % totalFrames;
+    loopFrame = -1;
+    if (frameIndex >= 0 && totalFrames >= 0) setFrame(frameIndex);
+    for (int i = 0;i < timelineChildrenCount;i++)
+        if (timelineChildren[i] && timelineChildren[i]->isMovieClip())
+            ((MovieClip*)timelineChildren[i])->gotoAbsoluteTimeRecursive(absTime);
+}
 void MovieClip::moveThisToTopLayer() {
     if (parent) parent->addChildAt(this, parent->size);
 }

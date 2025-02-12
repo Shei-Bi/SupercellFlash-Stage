@@ -5,6 +5,7 @@
 #include <string>
 #include "GLImage.h"
 #include <map>
+#include "scw/File.hpp"
 
 class ResourceManager
 {
@@ -19,6 +20,7 @@ public:
     static GLImage* getImage(const std::string& file);
     static void addFile(const char* file);
     static SupercellSWF* getSupercellSWF(const char* name, const char* needby);
+    static SCW::File* getSC3D(const std::string& file);
     static void loadNextResource();
     static bool resourceToLoad();
 };

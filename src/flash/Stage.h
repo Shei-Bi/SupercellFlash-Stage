@@ -48,7 +48,8 @@ public:
     int bottom;
     float pointSize;
     void init(int, int, int, int);
-    void firstTimeShaderInit(Shader*, glm::mat4);
+    void firstTimeShaderInit(Shader*, const glm::mat4&);
+    void initShaders(const glm::mat4&);
     void loadDefaultShader(int);
     Shader* shader;
     Shader* uber_shader;
@@ -70,6 +71,7 @@ public:
     static void updateBound(Rect* r, float x, float y);
     std::vector<Sprite*>& getObjectsUnderPoint(float, float);
     std::vector<Sprite*> objectsUnderPoint;
+    std::vector<Sprite*> touchContainer;
     bool isRectVisibleInTouch(float, float, float, float);
     bool touchPressed(Touch&);
     bool touchMoved(Touch&);

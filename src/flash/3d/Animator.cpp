@@ -5,17 +5,36 @@ Animator::Animator() {
 }
 
 void Animator::update(Skeleton* skeleton, float deltaTime) {
-    time += deltaTime;
-    while (time > 6.0f)
-        time -= 6.0f;
+    updateAnimations(deltaTime);
     updateSkeleton(skeleton);
 }
 
-void Animator::updateSkeleton(Skeleton* skeleton) {
-    applyAnimation(skeleton->rootBone, glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
+void Animator::updateAnimations(float deltaTime) {
+    time += deltaTime;
+    auto data = getAnimation(currentAnimation)->animationData;
+    float startTime = data->getStartFrame() / 30.0f;
+    float endTime = data->getEndFrame() / 30.0f - data->getTransitionOutMs() / 1000.0f;
+    if (time > endTime) {
+        if (!data->getLooping()) {
+            if (defaultAnimation >= 0) goto changeToDefault;
+            time = endTime;
+        }
+        else {
+            while (time > endTime)
+                time -= (endTime - startTime);
+        }
+    }
+    return;
+changeToDefault:
+    currentAnimation = defaultAnimation;
+    time = getAnimation(currentAnimation)->animationData->getStartFrame() / 30.0f;
 }
 
-void Animator::applyAnimation(Skeleton::Bone* bone, const glm::mat4& parentTransform) {
+void Animator::updateSkeleton(Skeleton* skeleton) {
+    applyAnimation(getAnimation(currentAnimation), skeleton->rootBone, glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
+}
+
+void Animator::applyAnimation(Animation* currentAnimation, Skeleton::Bone* bone, const glm::mat4& parentTransform) {
     auto node = currentAnimation->boneTransforms.find(bone->name);
     auto currentTransform = bone->localBindTransform;
     // if (bone->name == "R_upperLeg_s") {
@@ -23,14 +42,14 @@ void Animator::applyAnimation(Skeleton::Bone* bone, const glm::mat4& parentTrans
     //     currentTransform = glm::rotate(currentTransform, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     // }
     if (node != currentAnimation->boneTransforms.end()) {
-        for (auto& frame : (*node).second->Frames) {
-            // printf("%d\n", frame.ID);
-            if (frame.ID / 30.0f > time) {
-                currentTransform = getLocalTransform(frame);
-                break;
-            }
-        }
-        // currentTransform =
+        auto& frames = (*node).second->Frames;
+        int nextFrame = 0;
+        while (frames[nextFrame].ID / 30.0f <= time && nextFrame < frames.size() - 1)
+            nextFrame++;
+
+        currentTransform = nextFrame == 0 ? getLocalTransform(frames[0]) : getLocalTransformLerp(frames[nextFrame - 1], frames[nextFrame], (time - frames[nextFrame - 1].ID / 30.0f) / (frames[nextFrame].ID / 30.0f - frames[nextFrame - 1].ID / 30.0f));
+        // currentTransform = getLocalTransform(frame);
+
     }
     // currentTransform = glm::
     currentTransform = parentTransform * currentTransform;
@@ -58,6 +77,32 @@ void Animator::applyAnimation(Skeleton::Bone* bone, const glm::mat4& parentTrans
     // printf("%s x: %.6f y: %.6f z: %.6f\n", bone->name.c_str(), finalPos[3][0], finalPos[3][1], finalPos[3][2]);
 
     for (Skeleton::Bone* bone : bone->childrens) {
-        applyAnimation(bone, currentTransform);
+        applyAnimation(currentAnimation, bone, currentTransform);
     }
+}
+
+void Animator::addAnimation(Animation* animation) {
+    animations.push_back(animation);
+}
+
+void Animator::setDefaultAnimation(int index) {
+    defaultAnimation = index;
+}
+
+int Animator::getDefaultAnimation() {
+    return defaultAnimation;
+}
+
+Animation* Animator::getCurrentAnimation() {
+    return getAnimation(currentAnimation);
+}
+
+Animation* Animator::getAnimation(int index) {
+    for (auto anim : animations) if (anim->index == index) return anim;
+    abort();
+    return nullptr;
+}
+
+void Animator::changeAnimationTo(int index) {
+    currentAnimation = index;
 }

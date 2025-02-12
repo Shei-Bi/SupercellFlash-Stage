@@ -35,6 +35,8 @@ void InitState::initDataTables() {
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/area_effects.csv"), AreaEffect);
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/skills.csv"), Skill);
         LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_logic/skin_confs.csv"), SkinConf);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_client/animations.csv"), Animati0n);
+        LogicDataTables::initDataTable(CSVNode::fromFile("assets/csv_client/faces.csv"), Face);
         LogicDataTables::createReferences();
     }
 }

@@ -15,6 +15,8 @@
 #include "LogicAreaEffectData.h"
 #include "LogicSkillData.h"
 #include "LogicSkinConfData.h"
+#include "LogicFaceData.h"
+#include "LogicAnimationData.h"
 
 class LogicDataTable {
     int tableIndex;
@@ -72,6 +74,10 @@ public:
             return new LogicSkillData(csvRow, this);
         case SkinConf:
             return new LogicSkinConfData(csvRow, this);
+        case Face:
+            return new LogicFaceData(csvRow, this);
+        case Animati0n:
+            return new LogicAnimationData(csvRow, this);
         default:
             abort();
         }

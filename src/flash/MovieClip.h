@@ -54,6 +54,7 @@ public:
     void changeTimelineChild(DisplayObject*, DisplayObject*);
     void changeTimelineChild(const char*, DisplayObject*);
     bool isStopped();
+    void gotoAbsoluteTimeRecursive(float absTime);
 
     void initScreenContainers(const char*, std::vector<MovieClip*>&);
     MovieClip* createScreenContainer(const char*, int);

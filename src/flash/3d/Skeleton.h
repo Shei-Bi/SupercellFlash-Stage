@@ -7,6 +7,7 @@
 #include "Mesh.h"
 
 glm::mat4 getLocalTransform(SCW::KeyFrame& frame);
+glm::mat4 getLocalTransformLerp(SCW::KeyFrame& frame, SCW::KeyFrame& frame2, float t);
 
 class Skeleton {
 public:

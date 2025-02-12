@@ -54,7 +54,8 @@ public:
     void refresh() {
         auto clientHome = GameStateManager::getInstance()->home;
 
-        sceneRenderer = createHeroSprite(player_area->getWidth(), player_area->getWidth(), (LogicCharacterData*)clientHome->characters[0], nullptr);
+        sceneRenderer = createHeroSprite(player_area->getWidth(), player_area->getWidth(), clientHome->characters[0], clientHome->getSkin(clientHome->characters[0]));
+        sceneRenderer->character->changeAnimationTo(6);
         addChildAt(sceneRenderer, 0);
     }
 

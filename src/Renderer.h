@@ -10,5 +10,5 @@ public:
     static int right;
     static int bottom;
     static void setViewport(int, int, int, int);
-    static glm::mat4 getPixelMatrix();
+    static const glm::mat4 getPixelMatrix();
 };

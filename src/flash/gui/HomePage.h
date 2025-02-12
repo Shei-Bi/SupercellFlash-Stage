@@ -13,6 +13,7 @@
 #include "GameStateManager.h"
 #include <HomeMode.h>
 #include "network/SinglePlayerMatchRequestMessage.h"
+#include "RotateHeroButton.hpp"
 
 class HomePageTeamMember;
 // #pragma optimize("",off)
@@ -41,6 +42,7 @@ public:
     EventData* selectedEvent;
 
     HomePageTeamMember* player1;
+    RotateHeroButton* player1_button;
 
     HomePage();
     ~HomePage();
@@ -60,5 +62,6 @@ public:
     void update(float deltaTime);
     void handleModeButtonPress();
     void buttonClicked(GameButton* button);
-    void startGame(EventData* event, LogicData* location, int type, LogicData* character, std::vector<LogicData*>& characters);
+    void startGame(EventData* event, LogicData* location, int type, LogicCharacterData* character, std::vector<LogicCharacterData*>& characters);
+    RotateHeroButton* addPlayerButton(MovieClip* movieClip, const char* name);
 };

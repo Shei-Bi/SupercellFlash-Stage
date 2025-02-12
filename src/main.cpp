@@ -78,6 +78,8 @@ int main(int argc, char* argv[])
 	// glfwSetWindowOpacity(window, 0.5f);
 
 	glfwMaximizeWindow(window);
+	// glfwSetWindowSize(window, 2532, 1170);
+
 	int width;
 	int height;
 	glfwGetWindowSize(window, &width, &height);
@@ -98,7 +100,7 @@ int main(int argc, char* argv[])
 		programPrevTime = now;
 		GameMain->update(dTSS, dT);
 		GameMain->draw(1.0f);
-		// printf("fps: %f\n", 1.0f / dT);
+		// printf("mspt: %.0f\n------------------------------\n", xTimer::getPassedTimeMs(now, xTimer::getNativeTime()));
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);

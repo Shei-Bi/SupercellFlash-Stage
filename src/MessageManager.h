@@ -16,8 +16,10 @@ public:
     bool sendMessage(PiranhaMessage*);
 
     void update(float deltaTime);
+    void sendKeepAliveMessage();
 
     Messaging* messaging;
     UdpLaserSocket* udpSocket;
     bool isUdpConnectionInfoMessageReceived;
+    float timeSinceLastKeepAlive;
 };

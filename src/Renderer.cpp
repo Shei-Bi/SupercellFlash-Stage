@@ -13,6 +13,6 @@ void Renderer::setViewport(int l, int t, int r, int b) {
     bottom = b;
     glViewport(l, t, r, b);
 }
-glm::mat4 Renderer::getPixelMatrix() {
+const glm::mat4 Renderer::getPixelMatrix() {
     return glm::ortho((float)left, (float)right, (float)bottom, (float)top, -1.0f, 1.0f);
 }

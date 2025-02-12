@@ -85,7 +85,7 @@ void ResourceManager::loadNextResource() {
         GLImage* image = new GLImage();
         std::vector<const sc::texture::SCTX::MipMap*> mipmaps;
 
-        std::ifstream is((fs::path("assets") / "sc3d" / file).generic_string().c_str(), std::ios_base::binary);
+        std::ifstream is(fs::path("assets") / "sc3d" / file, std::ios_base::binary);
         is.seekg(0, std::ios::end);
         size_t length = is.tellg();
         is.seekg(0, std::ios::beg);
@@ -140,6 +140,25 @@ void ResourceManager::loadNextResource() {
 
         Resources[file] = image;
     }
+    else if (extension == ".scw") {
+        std::ifstream is(fs::path("assets") / "sc3d" / file, std::ios_base::binary);
+        is.seekg(0, std::ios::end);
+        size_t length = is.tellg();
+        is.seekg(0, std::ios::beg);
+
+        unsigned char* buf = new unsigned char[length];
+        is.read((char*)buf, length);
+        is.close();
+
+        SCW::File* scwFile = new SCW::File(buf, length);
+
+        if (!scwFile->LoadSCglTF()) {
+            delete scwFile;
+            scwFile = new SCW::File(buf, length);
+            scwFile->Load();
+        }
+        Resources[file] = scwFile;
+    }
     else abort();
 
 }
@@ -152,4 +171,15 @@ SupercellSWF* ResourceManager::getSupercellSWF(const char* name, const  char* ne
     if (it != Resources.end()) return (SupercellSWF*)it->second;
     abort();
     return nullptr;
+}
+
+SCW::File* ResourceManager::getSC3D(const std::string& file) {
+    auto it = Resources.find(file);
+    if (it != Resources.end()) return (SCW::File*)it->second;
+    else {
+        addFile(file.c_str());
+        while (resourceToLoad())
+            loadNextResource();
+        return (SCW::File*)(*Resources.find(file)).second;
+    }
 }

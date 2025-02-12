@@ -112,3 +112,38 @@ glm::mat4 getLocalTransform(SCW::KeyFrame& frame) {
     auto mat2 = createTRS(frame.Translation.X, frame.Translation.Y, frame.Translation.Z, frame.Rotation.X, frame.Rotation.Y, frame.Rotation.Z, frame.Rotation.W, frame.Scale.X, frame.Scale.Y, frame.Scale.Z);
     return mat2;
 }
+
+glm::mat4 getLocalTransformLerp(SCW::KeyFrame& frame, SCW::KeyFrame& frame2, float t) {
+    auto translation = SCW::Vector3();
+    auto rotation = SCW::Quaternion();
+    auto scale = SCW::Vector3();
+    translation.X = frame.Translation.X + (frame2.Translation.X - frame.Translation.X) * t;
+    translation.Y = frame.Translation.Y + (frame2.Translation.Y - frame.Translation.Y) * t;
+    translation.Z = frame.Translation.Z + (frame2.Translation.Z - frame.Translation.Z) * t;
+
+    float dot = frame.Rotation.W * frame2.Rotation.W + frame.Rotation.X * frame2.Rotation.X + frame.Rotation.Y * frame2.Rotation.Y + frame.Rotation.Z * frame2.Rotation.Z;
+    float tI = 1.0f - t;
+    if (dot < 0.0f) {
+        rotation.X = frame.Rotation.X * tI - frame2.Rotation.X * t;
+        rotation.Y = frame.Rotation.Y * tI - frame2.Rotation.Y * t;
+        rotation.Z = frame.Rotation.Z * tI - frame2.Rotation.Z * t;
+        rotation.W = frame.Rotation.W * tI - frame2.Rotation.W * t;
+    }
+    else {
+        rotation.X = frame.Rotation.X * tI + frame2.Rotation.X * t;
+        rotation.Y = frame.Rotation.Y * tI + frame2.Rotation.Y * t;
+        rotation.Z = frame.Rotation.Z * tI + frame2.Rotation.Z * t;
+        rotation.W = frame.Rotation.W * tI + frame2.Rotation.W * t;
+    }
+    float dot2 = sqrtf(rotation.X * rotation.X + rotation.Y * rotation.Y + rotation.Z * rotation.Z + rotation.W * rotation.W);
+    rotation.X /= dot2;
+    rotation.Y /= dot2;
+    rotation.Z /= dot2;
+    rotation.W /= dot2;
+
+    scale.X = frame.Scale.X + (frame2.Scale.X - frame.Scale.X) * t;
+    scale.Y = frame.Scale.Y + (frame2.Scale.Y - frame.Scale.Y) * t;
+    scale.Z = frame.Scale.Z + (frame2.Scale.Z - frame.Scale.Z) * t;
+
+    return createTRS(translation.X, translation.Y, translation.Z, rotation.X, rotation.Y, rotation.Z, rotation.W, scale.X, scale.Y, scale.Z);
+}

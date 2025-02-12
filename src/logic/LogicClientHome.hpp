@@ -6,6 +6,8 @@
 #include "BrawlPassSeasonData.hpp"
 #include "EventData.hpp"
 #include <assert.h>
+#include "data/LogicSkinData.h"
+#include "data/LogicCharacterData.h"
 
 // #define log(x) (printf("%d\n",x))
 #define log(x) (x)
@@ -28,7 +30,7 @@ public:
     LogicData* thumbnail;
     LogicData* namecolor;
     std::vector<LogicOfferBundle*> offerBundles;
-    std::vector<LogicData*> characters;
+    std::vector<LogicCharacterData*> characters;
     const char* currentRegion;
     const char* supportedCC;
     std::vector<IntValueEntry*> intValues;
@@ -36,6 +38,7 @@ public:
     std::vector<BrawlPassSeasonData*> bpSeasons;
     std::vector<EventData*> events;
     std::vector<EventData*> upcomingEvents;
+    std::vector<LogicSkinData*> selectedSkins;
 
     EventData* getFirstEventOfGMV(int variadtion) {
         for (EventData* e : events) if (e->location && e->location->getGameModeVariation() == variadtion) return e;
@@ -46,6 +49,13 @@ public:
         for (EventData* e : events) if (e->slot == slot) return e;
         return nullptr;
     }
+
+    LogicSkinData* getSkin(LogicCharacterData* character) {
+        for (auto skin : selectedSkins)
+            if (skin->conf->character == character) return skin;
+        return nullptr;
+    }
+
     void decode(ByteStream* stream) {
         log(stream->readVInt());
         log(stream->readVInt());
@@ -59,7 +69,11 @@ public:
         thumbnail = stream->readDataReference();
         namecolor = stream->readDataReference();
         skipIntArray;
-        skipDataReferenceArray;
+        int selectSkinSize = stream->readVInt();
+        selectedSkins.reserve(selectSkinSize);
+        for (int i = 0;i < selectSkinSize;i++) {
+            selectedSkins.push_back((LogicSkinData*)stream->readDataReference());
+        }
         skipDataReferenceArray;
         skipDataReferenceArray;
         skipDataReferenceArray;
@@ -101,7 +115,7 @@ public:
         int characterSize = stream->readByte();
         // assert(characterSize == 3);
         characters.reserve(characterSize);
-        for (int i = 0;i < characterSize;i++) characters.push_back(stream->readDataReference());
+        for (int i = 0;i < characterSize;i++) characters.push_back((LogicCharacterData*)stream->readDataReference());
         currentRegion = stream->readString(120);
         supportedCC = stream->readString(120);
         int intValueSize = stream->readVInt();

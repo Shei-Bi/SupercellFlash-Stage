@@ -20,6 +20,12 @@ void Stage::constructInstance()
         Stage::sm_pInstance = new Stage();
 }
 
+void Stage::initShaders(const glm::mat4& mat4) {
+    shader->use();
+    shader->setVec4("myPMVMatrix", mat4[0][0], mat4[1][1], 1.0, 1.0);
+    glUniform1i(glGetUniformLocation(shader->ID, "TEX_SAMPLER"), 0);
+}
+
 void Stage::loadDefaultShader(int index) {
     //     shader = new Shader(
     //         R"(#ifdef GL_ES
@@ -113,8 +119,11 @@ layout (location = 2) in vec2 a_uv0;
 uniform mat4 view_matrix;
 uniform float a_texMul;
 
+// uniform vec4 u_stencilScaleOffset;
+
 out vec2 v_texCoord;
 out vec3 v_normal;
+out vec2 v_texCoordStencil;
 
 void main(void)
 {
@@ -123,17 +132,24 @@ void main(void)
 	v_texCoord.xy = a_uv0 * a_texMul;
 	v_normal = normalize(vec3(view_matrix * vec4(a_normal, 0.0)));
 
+    v_texCoordStencil = a_uv0 * vec2(2.0f, -2.0f) + vec2(0.0f, 2.0f);
+
 	gl_Position = pos;
 })", R"(#version 330 core
 in vec2 v_texCoord;
 in vec3 v_normal;
+in vec2 v_texCoordStencil;
 
 uniform sampler2D diffuseTex;
+uniform sampler2D stencilTex;
 
 void main (void)
 {
 	vec4 color = vec4(1.0);
 	color = texture2D(diffuseTex, v_texCoord.xy);
+
+    vec4 stencilColor = texture2D(stencilTex, v_texCoordStencil);
+    color.rgb = color.rgb * (1.0 - stencilColor.a) + stencilColor.rgb;
 
 	gl_FragColor = color;
 }
@@ -185,7 +201,7 @@ void main (void)
 }
 )");
 }
-void Stage::firstTimeShaderInit(Shader* shader, glm::mat4 mat4) {
+void Stage::firstTimeShaderInit(Shader* shader, const glm::mat4& mat4) {
     shader->use();
     shader->setVec4("myPMVMatrix", mat4[0][0], mat4[1][1], 1.0, 1.0);
     glUniform1i(glGetUniformLocation(shader->ID, "TEX_SAMPLER"), 0);
@@ -431,28 +447,41 @@ void Stage::updateBound(Rect* r, float x, float y) {
     else if (r->bottom < y) r->bottom = y;
 }
 bool Stage::touchPressed(Touch& touch) {
-    touch.x /= pointSize;
-    touch.y /= pointSize;
-    std::vector<Sprite*> e = getObjectsUnderPoint(touch.x, touch.y);
-    for (auto s = e.rbegin();s != e.rend();s++) {
+    auto scaledTouch = touch;
+    scaledTouch.x /= pointSize;
+    scaledTouch.y /= pointSize;
+    scaledTouch.previousX /= pointSize;
+    scaledTouch.previousY /= pointSize;
+    scaledTouch.initialX /= pointSize;
+    scaledTouch.initialY /= pointSize;
+    touchContainer = getObjectsUnderPoint(touch.x, touch.y);
+    for (auto s = touchContainer.rbegin();s != touchContainer.rend();s++) {
         if ((*s)->touchPressed(touch)) break;
     }
     return true;
 }
 bool Stage::touchMoved(Touch& touch) {
-    touch.x /= pointSize;
-    touch.y /= pointSize;
-    std::vector<Sprite*> e = getObjectsUnderPoint(touch.x, touch.y);
-    for (auto s = e.rbegin();s != e.rend();s++) {
+    auto scaledTouch = touch;
+    scaledTouch.x /= pointSize;
+    scaledTouch.y /= pointSize;
+    scaledTouch.previousX /= pointSize;
+    scaledTouch.previousY /= pointSize;
+    scaledTouch.initialX /= pointSize;
+    scaledTouch.initialY /= pointSize;
+    for (auto s = touchContainer.rbegin();s != touchContainer.rend();s++) {
         if ((*s)->touchMoved(touch)) break;
     }
     return true;
 }
 bool Stage::touchReleased(Touch& touch) {
-    touch.x /= pointSize;
-    touch.y /= pointSize;
-    std::vector<Sprite*> e = getObjectsUnderPoint(touch.x, touch.y);
-    for (auto s = e.rbegin();s != e.rend();s++) {
+    auto scaledTouch = touch;
+    scaledTouch.x /= pointSize;
+    scaledTouch.y /= pointSize;
+    scaledTouch.previousX /= pointSize;
+    scaledTouch.previousY /= pointSize;
+    scaledTouch.initialX /= pointSize;
+    scaledTouch.initialY /= pointSize;
+    for (auto s = touchContainer.rbegin();s != touchContainer.rend();s++) {
         if ((*s)->touchReleased(touch)) break;
     }
     return true;

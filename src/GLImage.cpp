@@ -60,3 +60,7 @@ void GLImage::createWithFormat(const sc::texture::SCTX::TextureData* texture, st
     printf("Error: %d\n", glGetError());
     unbind();
 }
+
+void GLImage::createWrapper(unsigned int id) {
+    this->id = id;
+}

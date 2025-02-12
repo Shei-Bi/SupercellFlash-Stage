@@ -4,6 +4,7 @@
 #include <ResourceManager.h>
 #include <GameStateManager.h>
 #include <ServerConnection.h>
+#include "Trace.hpp"
 
 GameMain* GameMain::sm_pInstance = nullptr;
 GameMain* GameMain::getInstance() {
@@ -38,12 +39,12 @@ void GameMain::init() {
 }
 void GameMain::update(float sinceStart, float deltaTime) {
     this->deltaTime = deltaTime;
-    GameStateManager::getInstance()->update(sinceStart, deltaTime);
-    ServerConnection::getInstance()->update(deltaTime);
-    inputSystem->update();
+    TRACE(GameStateManager::getInstance()->update(sinceStart, deltaTime));
+    TRACE(ServerConnection::getInstance()->update(deltaTime));
+    TRACE(inputSystem->update());
 }
 void GameMain::draw(float e) {
-    Stage::getInstance()->render(deltaTime, true);
+    TRACE(Stage::getInstance()->render(deltaTime, true));
 }
 GameMain::GameMain() {
     ;

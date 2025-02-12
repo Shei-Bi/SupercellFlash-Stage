@@ -11,7 +11,10 @@ public:
     int samples;
     GLImage multisampledTexture;
     GLImage texture;
-    Rect previousViewport;
+    struct
+    {
+        int x, y, width, height;
+    } previousViewport;
     unsigned int previousFrameBuffer;
     RenderTarget(int samples);
     void init(int width, int height);

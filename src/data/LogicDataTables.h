@@ -13,6 +13,8 @@ class LogicProjectileData;
 class LogicCharacterData;
 class LogicSkinConfData;
 class LogicSkinData;
+class LogicAnimationData;
+class LogicFaceData;
 
 extern LogicDataTable* TABLES[101];
 enum DataType {
@@ -46,6 +48,7 @@ enum DataType {
     Tile = 27,
     PlayerThumbnail = 28,
     Skin = 29,
+    Face = 30,
     Hint = 36,
     Milestone = 39,
     Theme = 41,
@@ -111,5 +114,7 @@ public:
     static LogicSkinData* getSkinByName(const std::string& name);
     static LogicData* getDataById(int globalID);
     static LogicTileData* getOpenTileData();
+    static LogicAnimationData* getNonConstAnimationByName(const std::string& name);
+    static LogicFaceData* getFaceByName(const std::string& name);
 };
 #endif
