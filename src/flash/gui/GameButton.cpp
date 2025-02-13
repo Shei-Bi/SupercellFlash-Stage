@@ -130,6 +130,7 @@ bool GameButton::touchReleased(Touch&) {
         setState(2);
         buttonPressed();
     }
+    touchIned = false;
     // Sprite::touchPressed(touch);
     return true;
 }

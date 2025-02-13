@@ -5,10 +5,10 @@
 
 class MovieClip;
 class GameButton :public Sprite {
+public:
     MovieClip* buttonClip;
     int state;
     bool touchIned;
-public:
     MovieClip* timelineClip;
     const char* name;
     IButtonListener* buttonListener;
