@@ -63,14 +63,16 @@ public:
 
         renderTarget->reshape(Stage->right, Stage->bottom);
         renderTarget->begin();
-        // glEnable(GL_DEPTH_TEST);
-        // glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
+        // glDepthMask(GL_TRUE);
+        glEnable(GL_CULL_FACE);
         character->sprite->render(
             transformation *
             (lookAt *
                 (getRotMat(character->yaw, character->pitch) * unknownScaling)));
-        // glDisable(GL_DEPTH_TEST);
-        // glDisable(GL_CULL_FACE);
+        glDisable(GL_DEPTH_TEST);
+        // glDepthMask(GL_FALSE);
+        glDisable(GL_CULL_FACE);
         renderTarget->end();
         characterImpostor->render();
         delete n;

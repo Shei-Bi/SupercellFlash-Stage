@@ -336,12 +336,12 @@ void Stage::addTriangles(int count) {
 
 void Stage::render(float deltaTime, bool clear) {
     if (clear) {
-        glDepthMask(GL_TRUE);
+        // glDepthMask(GL_TRUE);
         glStencilMask(0xFF);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glClearStencil(0);
         glStencilMask(0x00);
-        glDepthMask(GL_FALSE);
+        // glDepthMask(GL_FALSE);
     }
     resetRenderVariables();
     Matrix2x3* matrix = new Matrix2x3();
