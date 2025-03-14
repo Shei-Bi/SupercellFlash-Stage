@@ -10,6 +10,7 @@
 class LogicBattleModeClient {
 public:
     std::vector<LogicPlayer*> players;
+    int roundState;
     bool startLoadingReceived;
     bool visionUpdateReceived;
     int lastHandledTick;
@@ -37,6 +38,7 @@ public:
         gmvData = nullptr;
         location = nullptr;
         tileMap = new LogicTileMap();
+        roundState = -1;
     }
 
     void setGameModeVariationData(int v) {
@@ -60,7 +62,7 @@ public:
     }
     void update(float sinceStart, float deltaTime) {
         if (cachedVisions.size() < 3) return;
-        objectManager->decode(cachedVisions.back()->visionBitStream, players, false, this, nullptr);
+        objectManager->decode(cachedVisions.back()->visionBitStream, players, true, this, nullptr);
         cachedVisions.back()->visionBitStream->resetOffset();
     }
     bool canProceedToBattle() {

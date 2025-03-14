@@ -88,8 +88,8 @@ void Stage::loadDefaultShader(int index) {
         const vec4 constantList = vec4(-1.0, 1.0, 0.0, 0.0);
         gl_Position = myPMVMatrix * vec4(aPos, 0.0, 1.0)+constantList;
         texCoord = aTexCoord;
-        colorMul = aColorMul;
-        colorAdd = aColorAdd;
+        colorMul = (aColorMul * constantList.yyyz + constantList.zzzy) * aColorMul.a;
+        colorAdd = aColorAdd * aColorMul.a;
     })",
         R"(
         #version 330 core
@@ -105,10 +105,7 @@ void Stage::loadDefaultShader(int index) {
     void main()
     {
         vec4 sample = texture2D(TEX_SAMPLER, texCoord);
-        vec4 color = sample * colorMul;
-        color.rgb += colorAdd * color.a;
-        gl_FragColor = vec4(color.rgb * colorMul.a, color.a);
-        // FragColor = sample;
+        gl_FragColor = sample * colorMul + vec4(colorAdd, 0.0) * sample.a;
     })");
     uber_shader = new Shader(
         R"(#version 330 core
@@ -252,12 +249,15 @@ Stage::Stage() {
     glGenBuffers(1, &EBO);
 
     loadDefaultShader(0);
-    abort = false;
     isCalculatingBounds = false;
     currentBounds = nullptr;
     glEnable(GL_BLEND);
     glBlendEquation(GL_FUNC_ADD);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_STENCIL_TEST);
+    glDisable(GL_CULL_FACE);
+    currentBlendMode = 0;
 }
 Stage::~Stage() {
     glDeleteVertexArrays(1, &VAO);
@@ -294,7 +294,7 @@ bool Stage::shapeStart(float left, float top, float right, float bottom, GLImage
     //     forceNewBucket = false;
     //     goto newBucket;
     // }
-    if (currentBucket && currentBucket->texture == texture && currentBucket->renderConfig == renderConfig) return true;
+    if (!forceNewBucket && currentBucket && currentBucket->texture == texture && currentBucket->renderConfig == renderConfig) return true;
     // for (int i = 0;i < bucketsUsed;i++) {
     //     if (buckets[i]->texture == texture && buckets[i]->renderConfig == renderConfig) {
     //         currentBucket = buckets[i];
@@ -335,7 +335,14 @@ void Stage::addTriangles(int count) {
 }
 
 void Stage::render(float deltaTime, bool clear) {
-    if (clear) glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    if (clear) {
+        glDepthMask(GL_TRUE);
+        glStencilMask(0xFF);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glClearStencil(0);
+        glStencilMask(0x00);
+        glDepthMask(GL_FALSE);
+    }
     resetRenderVariables();
     Matrix2x3* matrix = new Matrix2x3();
     matrix->a = pointSize;
@@ -372,9 +379,50 @@ void Stage::renderBuckets() {
 
     for (int i = 0;i < bucketsUsed;i++) {
         StageDrawBucket* currentBucket = buckets[i];
-        if (currentBucket->texture) currentBucket->texture->bind();
-        bindBlendMode(currentBucket->renderConfig & 0x380);
-        glDrawElements(GL_TRIANGLES, currentBucket->triangleCount * 3, GL_UNSIGNED_INT, (const void*)(currentBucket->indicesIndex * sizeof(unsigned int)));
+        if (currentBucket->stencilType != 0) {
+            // switch (currentBucket->stencilType) {
+            // case 2:
+            //     printf("Stencil test started, stack size: %d\n", stencilStack.size());
+            //     // if (stencilStack.size() > 0) {
+            //     stencilStack.push_back(2);
+            //     //     break;//multiple stencil not supported yet
+            //     // }
+            //     // stencilStack.push_back(2);
+            //     // glEnable(GL_STENCIL_TEST);
+            //     // glStencilFunc(GL_ALWAYS, 1, 0xFF); // ¡ì?¡ì?¡ì?¡ì?¡ì¨ª¡ì? ¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì? ¡ì¨¤¡ì?¡ì?¡ì¨¤¡ì?¡ì?¡ì? ¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì¨ª¡ì? ¡ì?¡ì?¡ì?¡ì?¡ì?
+            //     // glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+            //     // glStencilMask(0xFF); // ¡ì?¡ì?¡ì?¡ì?¡ì¨¦¡ì?¡ì?¡ì? ¡ì?¡ì?¡ì¨¢¡ì?¡ì?¡ì? ¡ì? ¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì¨ª¡ì? ¡ì?¡ì?¡ì?¡ì?¡ì?
+            //     // glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+            //     // glDepthMask(GL_FALSE);
+            //     // glClear(GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
+            //     break;
+            // case 3:
+            //     // printf("Stencil test ended\n");
+            //     // if (stencilStack.size() > 0) {
+            //     //     break;//multiple stencil not supported yet
+            //     // }
+            //     // glStencilFunc(GL_EQUAL, 1, 0xFF);
+            //     // glStencilMask(0x00); // ¡ì¨¤¡ì?¡ì?¡ì?¡ì?¡ì¨¦¡ì?¡ì?¡ì? ¡ì?¡ì?¡ì¨¢¡ì?¡ì?¡ì? ¡ì? ¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì?¡ì¨ª¡ì? ¡ì?¡ì?¡ì?¡ì?¡ì?
+            //     // glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+            //     break;
+            // case 4:
+            //     printf("Stencil ended, stack size: %d\n", stencilStack.size());
+            //     if (stencilStack.size() <= 0) printf("Stencil stack size == 0 !!!\n");
+            //     if (stencilStack.size() > 0)
+            //         stencilStack.pop_back();
+            //     // if (stencilStack.size() > 0) {
+            //     //     break;//multiple stencil not supported yet
+            //     // }
+            //     // glDisable(GL_STENCIL_TEST);
+            //     break;
+            // }
+        }
+        else {
+            if (currentBucket->texture) currentBucket->texture->bind();
+            bindBlendMode(currentBucket->renderConfig & 0x380);
+            glDrawElements(GL_TRIANGLES, currentBucket->triangleCount * 3, GL_UNSIGNED_INT, (const void*)(currentBucket->indicesIndex * sizeof(unsigned int)));
+        }
 
     }
     glBindVertexArray(0);
@@ -384,16 +432,21 @@ void Stage::renderBuckets() {
 }
 bool Stage::bindBlendMode(int b) {
     int v2 = b & 0x380;
-    switch ((v2 - 128) >> 7)
-    {
+    if (currentBlendMode == v2) return false;
+    currentBlendMode = v2;
+    // printf("blend mode %d\n", v2);
+    switch ((v2 - 128) >> 7) {
+    case -1:
+        // glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        break;
     case 0:
         // glDisable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         break;
     default:
-        // glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        break;
+        ;
+        // abort();
     }
     return true;
 }
@@ -454,10 +507,17 @@ bool Stage::touchPressed(Touch& touch) {
     scaledTouch.previousY /= pointSize;
     scaledTouch.initialX /= pointSize;
     scaledTouch.initialY /= pointSize;
-    touchContainer = getObjectsUnderPoint(touch.x, touch.y);
+    touchContainer = getObjectsUnderPoint(scaledTouch.x, scaledTouch.y);
     for (auto s = touchContainer.rbegin();s != touchContainer.rend();s++) {
-        if ((*s)->touchPressed(touch)) break;
+        if ((*s)->touchPressed(scaledTouch)) break;
     }
+#ifdef MOVIECLIP_DEBUG
+    printf("touchin result:\n----------------------\n");
+    for (auto s = touchContainer.rbegin();s != touchContainer.rend();s++) {
+        if ((*s)->name != nullptr) printf("%s\n", (*s)->name);
+    }
+    printf("----------------------\n");
+#endif
     return true;
 }
 bool Stage::touchMoved(Touch& touch) {
@@ -469,7 +529,7 @@ bool Stage::touchMoved(Touch& touch) {
     scaledTouch.initialX /= pointSize;
     scaledTouch.initialY /= pointSize;
     for (auto s = touchContainer.rbegin();s != touchContainer.rend();s++) {
-        if ((*s)->touchMoved(touch)) break;
+        if ((*s)->touchMoved(scaledTouch)) break;
     }
     return true;
 }
@@ -482,9 +542,15 @@ bool Stage::touchReleased(Touch& touch) {
     scaledTouch.initialX /= pointSize;
     scaledTouch.initialY /= pointSize;
     for (auto s = touchContainer.rbegin();s != touchContainer.rend();s++) {
-        if ((*s)->touchReleased(touch)) break;
+        if ((*s)->touchReleased(scaledTouch)) break;
     }
     return true;
+}
+void Stage::setStencilRenderingState(int state) {
+    if (bucketsUsed == bucketCapacity) increaseBucketCapacity(bucketsUsed * 5 / 4);
+    currentBucket = buckets[bucketsUsed++];
+    currentBucket->initForUse(nullptr, 0, indicesBucket.size());
+    currentBucket->stencilType = state;
 }
 std::vector<Sprite*>& Stage::getObjectsUnderPoint(float x, float y) {
     isCalculatingBounds = true;

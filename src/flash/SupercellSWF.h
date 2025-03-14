@@ -7,7 +7,7 @@
 #include "MovieClipOriginal.h"
 #include "TextFieldOriginal.h"
 #include "SWFTexture.h"
-#include "MovieClipModifier.h"
+#include "MovieClipModifierOriginal.h"
 #include "ScMatrixBank.hpp"
 #include "Matrix2x3.h"
 #include "ColorTransform.h"
@@ -29,7 +29,7 @@ public:
     std::vector<MovieClipOriginal> movieClips;
     std::vector<TextFieldOriginal> textFields;
     std::vector<SWFTexture> textures;
-    std::vector<MovieClipModifier> movieClipModifiers;
+    std::vector<MovieClipModifierOriginal> movieClipModifiers;
     std::vector<ScMatrixBank*> matrixBanks;
     bool loadInternal(std::filesystem::path& path);
     unsigned short readShort();

@@ -56,8 +56,6 @@ public:
     bool isStopped();
     void gotoAbsoluteTimeRecursive(float absTime);
 
-    void initScreenContainers(const char*, std::vector<MovieClip*>&);
-    MovieClip* createScreenContainer(const char*, int);
     MovieClip* getMovieClipRecursive(const char*);
 
     //MovieClipHelper

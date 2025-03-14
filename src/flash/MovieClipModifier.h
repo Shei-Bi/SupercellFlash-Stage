@@ -1,10 +1,12 @@
-#ifndef MOVIECLIPMODIFIER_H
-#define MOVIECLIPMODIFIER_H
-#include "DisplayObjectOriginal.h"
-class MovieClipModifier :public DisplayObjectOriginal {
+#pragma once
+#include <flash/DisplayObject.h>
+class MovieClipModifierOriginal;
+
+class MovieClipModifier :public DisplayObject
+{
 public:
     int type;
-    void load(SupercellSWF* sc, int type);
-    DisplayObject* clone(SupercellSWF*, Rect*);
+    MovieClipModifier(MovieClipModifierOriginal* original);
+    bool render(Matrix2x3* mat, ColorTransform* c, int, float);
+    bool collisionRender(Matrix2x3* mat);
 };
-#endif

@@ -27,15 +27,15 @@ MovieClip* MovieClip::createMovieClip(MovieClipOriginal* movieClipOriginal, Supe
     for (int i = 0;i < movieClip->timelineChildrenCount;i++) {
         DisplayObjectOriginal* a = movieClipOriginal->timelineChildren[i];
         DisplayObject* b = a->clone(swf, movieClipOriginal->scalingGrid);
-        // if (a) b = MovieClip::createMovieClip((sc::flash::MovieClipOriginal*)a, swf);
-        // if (a->is_shape()) {
-        //     b = movieClipOriginal->scaling_grid.has_value() ? Shape9Slice::createShape((sc::flash::ShapeOriginal*)a, &movieClipOriginal->scaling_grid.value()) : Shape::createShape((sc::flash::ShapeOriginal*)a);
-        // }
-        // if (a->is()) b = nullptr;
-        // if (a->is_movieclip()) b = nullptr;
-        if (b) b->setBlendMode(BLEND_MODE_MAP[(int)movieClipOriginal->childrenBlendModes[i] & 0x3F]);
+        if (b) {
+            // printf("childrenBlendModes = %d\n", (int)movieClipOriginal->childrenBlendModes[i]);
+            b->setBlendMode(BLEND_MODE_MAP[(int)movieClipOriginal->childrenBlendModes[i] & 0x3F]);
+            b->setInteractiveRecursive(true);
+        }
+#ifdef MOVIECLIP_DEBUG
+        if (b) b->name = movieClipOriginal->childrenNames[i];
+#endif
         movieClip->timelineChildren[i] = b;
-        //b.setInteractiveResureiosx']/
     }
     // printf("%d", movieClipOriginal->frames[0].frameElements[0]->colorTransform_index);
     movieClip->matrixBank = swf->matrixBanks[movieClipOriginal->matrixBankIndex];
@@ -172,72 +172,6 @@ void MovieClip::removeChildAt(short index) {
         if (timelineChildren[i] == children[index]) timelineChildren[i] = nullptr;
     }
     Sprite::removeChildAt(index);
-}
-MovieClip* MovieClip::createScreenContainer(const char* name, int index) {
-    std::string s("");
-    float x = Stage::getInstance()->matrixX;
-    float y = Stage::getInstance()->matrixY;
-    switch (index) {
-    case 0:
-        s = "bg";
-        x *= 0.5f;
-        y *= 0.5f;
-        break;
-    case 1:
-        s = "center";
-        x *= 0.5f;
-        y *= 0.5f;
-        break;
-    case 2:
-        s = "hud_top";
-        x *= 0.5f;
-        y = 0.0f;
-        break;
-    case 3:
-        s = "hud_bottom";
-        x *= 0.5f;
-        break;
-    case 4:
-        s = "hud_bottom_right";
-        break;
-    case 5:
-        s = "hud_left";
-        x = 0.0f;
-        y *= 0.5f;
-        break;
-    case 6:
-        s = "hud_right";
-        y *= 0.5f;
-        break;
-    case 7:
-        s = "hud_top_left";
-        x = 0.0f;
-        y = 0.0f;
-        break;
-    case 8:
-        s = "hud_top_right";
-        y = 0.0f;
-        break;
-    case 9:
-        s = "hud_bottom_left";
-        x = 0.0f;
-        break;
-    }
-    SupercellSWF* supercellSWF = ResourceManager::getSupercellSWF("sc/ui.sc", nullptr);
-
-    MovieClip* c = nullptr;
-    if (supercellSWF->hasExportName((char*)(std::string(name) + s).c_str())) {
-        c = ResourceManager::getMovieClip("sc/ui.sc", (char*)(std::string(name) + s).c_str());
-        addChild(c);
-        c->setPixelSnappedXY(x, y);
-        c->setInteractiveRecursive(true);
-    }
-    return c;
-}
-void MovieClip::initScreenContainers(const char* name, std::vector<MovieClip*>& vector) {
-    for (int i = 0;i < 10;i++) {
-        vector.push_back(createScreenContainer(name, i));
-    }
 }
 MovieClip* MovieClip::getMovieClipRecursive(const char* name) {
     DisplayObject* e = nullptr;

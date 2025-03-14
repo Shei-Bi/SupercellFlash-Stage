@@ -49,6 +49,13 @@ void GameStateManager::setGameData(LogicClientHome* h, LogicClientAvatar* a) {
     avatar = a;
     gameDataLoaded = 1;
 }
+void GameStateManager::clearGameData() {
+    if (home) delete home;
+    home = nullptr;
+    if (avatar) delete avatar;
+    avatar = nullptr;
+    gameDataLoaded = -1;
+}
 bool GameStateManager::isState(StateId id) {
     return currentStateId == id;
 }

@@ -13,6 +13,7 @@
 #include "network/ClientInfoMessage.h"
 #include "battle/ClientInputManager.h"
 #include "network/KeepAliveMessage.h"
+#include "network/BattleEndMessage.h"
 
 MessageManager* MessageManager::sm_pInstance = nullptr;
 MessageManager* MessageManager::getInstance() {
@@ -79,6 +80,11 @@ bool MessageManager::receiveMessage(PiranhaMessage* m) {
             return false;
         }
         else return true;
+    case 23456:
+        BattleMode = BattleMode::getInstance();
+        if (BattleMode == nullptr) return true;
+        BattleMode->setGameOverResult(((BattleEndMessage*)m)->result);
+        return true;
     }
 }
 

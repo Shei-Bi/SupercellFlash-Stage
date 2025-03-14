@@ -2,6 +2,7 @@
 #include <flash/DisplayObject.h>
 #include <flash/Sprite.h>
 #include <flash/Stage.h>
+#include "DisplayObject.h"
 
 DisplayObject::DisplayObject(/* args */)
 {
@@ -9,6 +10,9 @@ DisplayObject::DisplayObject(/* args */)
     renderConfig = 0;
     parent = nullptr;
     indexInParent = -1;
+#ifdef MOVIECLIP_DEBUG
+    name = nullptr;
+#endif
 }
 
 DisplayObject::~DisplayObject() {
@@ -80,4 +84,10 @@ float DisplayObject::getHeight() {
     Stage::getInstance()->calculateDisplayObjectBounds(this, nullptr, &rect);
     this->visible = visible;
     return rect.bottom - rect.top;
+}
+void DisplayObject::getGlobalBounds(Rect* boundsOut, bool) {
+    bool visible = this->visible;
+    this->visible = true;
+    Stage::getInstance()->calculateDisplayObjectBounds(this, nullptr, boundsOut);
+    this->visible = visible;
 }

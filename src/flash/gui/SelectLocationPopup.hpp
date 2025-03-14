@@ -7,8 +7,8 @@ public:
         setUpScreenHeader();
         movieClip->setX(Stage::getInstance()->matrixX * 0.5f);
     }
-    void buttonClicked(GameButton*) {
-        delete this;
+    void buttonClicked(GameButton* button) {
+        GenericPopup::buttonClicked(button);
     }
 
 };

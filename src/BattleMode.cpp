@@ -73,6 +73,9 @@ BattleMode* BattleMode::getInstance() {
     if (i->isState(GameStateManager::Battle)) return (BattleMode*)i->currentState;
     return nullptr;
 }
+void BattleMode::setGameOverResult(int result) {
+    battleClient->roundState = result;
+}
 bool BattleMode::touchReleased(Touch& t) {
     battleClient->objectManager->debugLog();
     inputManager->addInput(new ClientInput(1));

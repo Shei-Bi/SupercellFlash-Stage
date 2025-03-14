@@ -15,4 +15,9 @@ public:
         ;
     }
 
+    void buttonClicked(GameButton* button) {
+        if (button->name == "button_home" || button->name == "button_back") {
+            delete this;
+        }
+    }
 };

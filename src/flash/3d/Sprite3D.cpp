@@ -5,7 +5,13 @@
 
 void Sprite3D::render(const glm::mat4& transform) {
     Stage::getInstance()->start3D();
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+    // glEnable(GL_CULL_FACE);
     renderScene(transform);
+    glDepthMask(GL_FALSE);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
     // glm::mat4 projection = glm::perspective(20.0f, (float)800 / (float)600, 10.5f, 199.5f);
     // // glm::mat4 view = camera.GetViewMatrix();
     // glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 105.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));

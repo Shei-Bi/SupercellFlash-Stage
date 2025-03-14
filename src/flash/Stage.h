@@ -56,7 +56,6 @@ public:
     Shader* impostor_outline_shader;
     void increaseVertexBucketCapacity(int);
     void increaseBucketCapacity(int);
-    bool abort;
     void setPointSize(float);
     void updateStageSizeVariables();
     float matrixX;
@@ -67,6 +66,7 @@ public:
     Rect* currentBounds;
     float currentTouchX;
     float currentTouchY;
+    int currentBlendMode;
     void calculateDisplayObjectBounds(DisplayObject*, const Sprite*, Rect*);
     static void updateBound(Rect* r, float x, float y);
     std::vector<Sprite*>& getObjectsUnderPoint(float, float);
@@ -76,6 +76,8 @@ public:
     bool touchPressed(Touch&);
     bool touchMoved(Touch&);
     bool touchReleased(Touch&);
+    void setStencilRenderingState(int state);
+    std::vector<int> stencilStack;
 
     unsigned int VBO, VAO, EBO;
 

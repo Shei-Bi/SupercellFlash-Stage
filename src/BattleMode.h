@@ -26,6 +26,7 @@ public:
 
     static BattleMode* getInstance();
     BattleScreen* getBattleScreen();
+    void setGameOverResult(int result);
 
     bool touchReleased(Touch& t);
 };

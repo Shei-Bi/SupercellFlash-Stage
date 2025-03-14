@@ -96,11 +96,11 @@ public:
         std::vector<std::string_view> lines;
         int line_start = 0;
         for (int i = 0;i < length;i++) {
-            if (data[i] != '\n') continue;
+            if (data[i] != '\n' && data[i] != '\r') continue;
             if (i - line_start >= 1) {
-                lines.emplace_back((char const*)&data[line_start], i - line_start - 1);
-                line_start = i + 1;
+                lines.emplace_back((char const*)&data[line_start], i - line_start);
             }
+            line_start = i + 1;
         }
         // for (auto it : lines) {
         //     std::cout << it << std::endl;

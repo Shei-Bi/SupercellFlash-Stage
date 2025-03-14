@@ -1,6 +1,7 @@
 #include "HomePage.h"
 #include "HomeScreen.hpp"
 #include "HomePageTeamMember.hpp"
+#include "HeroPopup.hpp"
 
 HomePage::HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
     player1 = nullptr;
@@ -75,6 +76,31 @@ HomePage::HomePage() : DropGUIContainer("sc/ui.sc", "screen_area") {
 
     refreshSelectedEvent();
     refreshSelectedCharacters(true);
+
+    //not implenented
+    getButtonByName("button_navi_login_calendar_1")->visible = false;
+    getButtonByName("button_navi_login_calendar_2")->visible = false;
+    getButtonByName("button_navi_login_calendar_3")->visible = false;
+    getButtonByName("button_navi_team")->visible = false;
+    getButtonByName("button_navi_friends")->visible = false;
+    getButtonByName("button_navi_shop")->visible = false;
+    getButtonByName("button_navi_esports")->visible = false;
+    getButtonByName("button_navi_clan")->visible = false;
+    getButtonByName("button_news")->visible = false;
+    getButtonByName("button_cctv")->visible = false;
+    getButtonByName("button_pending_donation")->visible = false;
+    getButtonByName("button_competitive")->visible = false;
+    getButtonByName("button_brawl_pass")->visible = false;
+    getButtonByName("button_navi_collab")->visible = false;
+    getButtonByName("button_recruit_road")->visible = false;
+    getButtonByName("button_quests")->visible = false;
+    getButtonByName("button_winstreak")->visible = false;
+    getClipFromContainers("important_notice")->visible = false;
+    getClipFromContainers("ranked_diamond_format_tooltip")->visible = false;
+    getClipFromContainers("team_info")->visible = false;
+    // getClipFromContainers("collab_play_reward_icon")->visible = false;
+    getButtonByName("collab_play_reward_button")->visible = false;
+    getClipFromContainers("locked_rank_warning_container")->visible = false;
 }
 
 HomePage::~HomePage() {
@@ -156,6 +182,8 @@ void HomePage::refreshSelectedEvent() {
 
     info->setChildVisible("icon_brawler", false);
 
+    getClipFromContainers("rank_team_warning_container")->visible = false;
+
     gamemode_icon = new DataIcon(nullptr);
     gamemode_icon->setIconClip(std::string("sc/ui.sc"), LogicDataTables::getGameModeVariationData(6)->getGameModeIconName());
     gamemode_icon->replaceInstanceWithIcon(info->getMovieClipByName("gamemode_icon"), "icon", 1, 1);
@@ -231,7 +259,7 @@ void HomePage::handleModeButtonPress() {
 void HomePage::buttonClicked(GameButton* button) {
     auto clientHome = GameStateManager::getInstance()->home;
     if (button == player1_button) {
-        // abort();
+        GUI::getInstance()->showPopup(new HeroPopup());
     }
     else if (strcmp(button->name, "button_mode") == 0) {
         handleModeButtonPress();
@@ -245,6 +273,7 @@ void HomePage::buttonClicked(GameButton* button) {
 void HomePage::startGame(EventData* event, LogicData* location, int type, LogicCharacterData* character, std::vector<LogicCharacterData*>& characters) {
     auto HomeMode = HomeMode::getInstance();
     HomeMode->getHomeScreen()->openMatchMakingPopup();
+    return;
     switch (type) {
     case Trophies:
         MessageManager::getInstance()->sendMessage(new MatchmakeRequestMessage(character, characters, event->id, event->slot));

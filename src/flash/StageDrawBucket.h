@@ -13,6 +13,7 @@ public:
     int pointCount;
     GLImage* texture;
     int renderConfig;
+    int stencilType;
 
     // void StageDrawBucket() {
     //     ;
@@ -23,6 +24,7 @@ public:
         this->indicesIndex = indicesIndex;
         triangleCount = 0;
         pointCount = 0;
+        stencilType = 0;
     }
     void reset() {
         indicesIndex = 0;

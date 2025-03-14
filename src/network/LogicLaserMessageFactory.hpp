@@ -6,6 +6,7 @@
 #include <network/UdpConnectionInfoMessage.h>
 #include <network/StartLoadingMessage.h>
 #include <network/VisionUpdateMessage.h>
+#include "network/BattleEndMessage.h"
 
 class LogicLaserMessageFactory {
 public:
@@ -23,6 +24,8 @@ public:
             return new StartLoadingMessage();
         case 24109:
             return new VisionUpdateMessage();
+        case 23456:
+            return new BattleEndMessage();
         }
         return nullptr;
     }

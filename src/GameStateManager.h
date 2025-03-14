@@ -27,6 +27,7 @@ public:
     bool isChangingMode();
     bool hasGameData();
     void setGameData(LogicClientHome*, LogicClientAvatar*);
+    void clearGameData();
     bool isState(StateId);
     void changeState(StateId);
     void changeToState();

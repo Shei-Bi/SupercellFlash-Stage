@@ -1,7 +1,7 @@
 #include "SupercellSWF.h"
 #include <stdio.h>
 #include "Matrix2x3.h"
-#include "MovieClipModifier.h"
+#include "MovieClipModifierOriginal.h"
 #include "ShapeOriginal.h"
 #include "MovieClipOriginal.h"
 #include "TextFieldOriginal.h"
@@ -156,7 +156,8 @@ void SupercellSWF::loadTags() {
             break;
         default:
             printf("unknwon tag: %d\n", tag);
-            abort();
+            skip(length);
+            // abort();
             break;
         }
     }
@@ -205,7 +206,7 @@ DisplayObjectOriginal* SupercellSWF::getOriginalDisplayObject(unsigned short id)
     for (MovieClipOriginal& mc : movieClips)if (mc.id == id) return &mc;
     for (ShapeOriginal& s : shapes)if (s.id == id) return &s;
     for (TextFieldOriginal& tf : textFields)if (tf.id == id) return &tf;
-    for (MovieClipModifier& mcm : movieClipModifiers)if (mcm.id == id) return &mcm;
+    for (MovieClipModifierOriginal& mcm : movieClipModifiers)if (mcm.id == id) return &mcm;
     abort();
 }
 bool SupercellSWF::hasExportName(char* name) {

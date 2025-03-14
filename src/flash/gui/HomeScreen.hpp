@@ -5,6 +5,7 @@
 #include <ResourceManager.h>
 #include "HomePage.h"
 #include "GUI.h"
+#include "WaitingPopup.hpp"
 
 #include <stdio.h>
 
@@ -35,7 +36,8 @@ public:
         screen1->addChild(homePage);
     }
     void openMatchMakingPopup() {
-        // GUI::getInstance()->showPopup
+        GUI::getInstance()->showPopup(new WaitingPopup());
+        if (homePage) homePage->visible = false;
     }
     void update(float deltaTime) {
         homePage->update(deltaTime);

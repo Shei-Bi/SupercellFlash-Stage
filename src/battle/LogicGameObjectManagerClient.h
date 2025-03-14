@@ -12,7 +12,6 @@ public:
     int ownObjectID;
     int willowObjectID;
     int gemGrabCountDown;
-    int roundState;
     void decode(BitStream* stream, std::vector<LogicPlayer*>& players, bool overwriteCurrentState, LogicBattleModeClient* battleClient, std::vector<LogicPlayer*>* interpolatedProjectiles);
     void debugLog();
 };

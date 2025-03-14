@@ -14,7 +14,9 @@ public:
     int renderConfig;
     Sprite* parent;
     int indexInParent;
-
+#ifdef MOVIECLIP_DEBUG
+    const char* name;
+#endif
 public:
     DisplayObject(/* args */);
     virtual ~DisplayObject();
@@ -36,6 +38,7 @@ public:
     void setAlpha(float);
     float getWidth();
     float getHeight();
+    void getGlobalBounds(Rect* boundsOut, bool);
 
     virtual bool isShape() const { return false; };
     virtual bool isMovieClip() const { return false; };

@@ -27,8 +27,12 @@ void LogicGameObjectManagerClient::decode(BitStream* stream, std::vector<LogicPl
     else if (LogicGameModeUtil::isKnockOut(battleClient->gameModeVariation) || battleClient->gameModeVariation == 24) {
         abort();//todo
     }
-    stream->readBoolean();
-    roundState = stream->readIntMax15();
+    bool idk = stream->readBoolean();
+    int roundState = stream->readIntMax15();
+    if (overwriteCurrentState) {
+        if (battleClient->roundState == -1)
+            battleClient->roundState = roundState;
+    }
     stream->readBoolean();
     stream->readBoolean();
     stream->readBoolean();
